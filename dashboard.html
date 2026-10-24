@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbox v0.4.5 | pKa Shift &amp; Microenvironment Workbench</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="description" content="Carbox — Systematic Structural Survey &amp; Analysis of Anomalous Carboxyl-Carboxyl Interactions and pKa Shifts in High-Resolution Protein Crystal Structures.">
+    <meta name="theme-color" content="#090d16">
+    <meta name="author" content="Carbox &amp; CarboxMol Platform Architecture Team">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://carbox.github.io/Carbox/">
+    <meta property="og:title" content="Carbox · pKa Shift &amp; Microenvironment Workbench">
+    <meta property="og:description" content="Systematic Structural Survey &amp; Analysis of Anomalous Carboxyl-Carboxyl Interactions and pKa Shifts in High-Resolution Protein Crystal Structures.">
+    <meta property="og:image" content="https://carbox.github.io/Carbox/assets/carbox_logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Carbox · pKa Shift &amp; Microenvironment Workbench">
+    <meta name="twitter:description" content="Systematic Structural Survey &amp; Analysis of Anomalous Carboxyl-Carboxyl Interactions and pKa Shifts in High-Resolution Protein Crystal Structures.">
+    <meta name="twitter:image" content="https://carbox.github.io/Carbox/assets/carbox_logo.png">
+    <!-- Progressive Web App (Silent / Add to Home Screen) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Carbox">
+    <meta name="application-name" content="Carbox">
+    <link rel="icon" type="image/svg+xml" href="assets/carbox_logo.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/carbox_favicon32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/carbox_favicon64.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/carbox_pwa_icon_192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/carbox_pwa_icon_512.png">
+    <link rel="shortcut icon" href="assets/carbox_favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/carbox_apple_touch_icon.png">
+    <link rel="stylesheet" href="styles.css?v=0.4.5">
+    <script defer src="pwa-sync.js?v=0.4.5"></script>
+</head>
+<body>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon" style="background:transparent;padding:0;overflow:hidden;width:34px;height:34px;border-radius:8px;">
+                    <img src="assets/carbox_logo.png?v=0.4.6" alt="Carbox Logo" style="width:100%;height:100%;object-fit:contain;" onerror="this.onerror=null;this.src='assets/carbox_logo.svg';">
+                </div>
+                <div class="brand-text">
+                    <h2>Carbox</h2>
+                    <span data-i18n="brand_sub">v0.4.5 · High-Throughput Mining</span>
+                </div>
+            </div>
+            <nav class="nav-menu" id="nav-menu">
+                <a href="#dashboard" class="nav-item active"><img src="assets/carbox_logo.png" alt="Carbox" style="width: 15px; height: 15px; object-fit: contain; vertical-align: middle; border-radius: 3px;"> <span data-i18n="nav_dashboard">Carbox</span></a>
+                <a href="#dataset" class="nav-item"><i class="fa-solid fa-table"></i> <span data-i18n="nav_dataset">pKa Anomalies Dataset</span></a>
+                <a href="studio.html" class="nav-item" title="Open CarboxMol 3D Crystallographic Workbench"><img src="assets/carboxmol_logo.png" alt="CarboxMol" style="width: 15px; height: 15px; object-fit: contain; vertical-align: middle; border-radius: 3px;"> <span data-i18n="btn_workbench">CarboxMol</span></a>
+                <a href="downloads.html" class="nav-item" title="Open Downloads &amp; Distribution Hub"><img src="assets/download_favicon32.png" alt="Downloads" style="width: 15px; height: 15px; object-fit: contain; vertical-align: middle; border-radius: 3px;"> <span data-i18n="nav_downloads">Downloads</span></a>
+                <a href="docs.html" class="nav-item" title="Open Documentation Portal"><img src="assets/docs_favicon32.png" alt="Docs" style="width: 15px; height: 15px; object-fit: contain; vertical-align: middle; border-radius: 3px;"> <span data-i18n="nav_docs">Documentation</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="status-card">
+                    <span class="status-indicator online"></span>
+                    <div class="status-info">
+                        <span class="status-title" data-i18n="status_filters_title">Core Filters Active</span>
+                        <span class="status-sub" data-i18n="status_filters_sub">Distance · Burial · Microenvironment</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Top Navigation Bar (Carbox / Contact / About) -->
+            <div class="top-nav-bar">
+                <div class="top-nav-tabs" id="top-nav-tabs">
+                    <button class="top-nav-tab active" id="tab-carbox" data-tab="carbox">
+                        <i class="fa-solid fa-atom"></i><span data-i18n="tab_carbox">Carbox</span>
+                    </button>
+                    <button class="top-nav-tab" id="tab-contact" data-tab="contact">
+                        <i class="fa-solid fa-envelope"></i><span data-i18n="tab_contact">Contact</span>
+                    </button>
+                    <button class="top-nav-tab" id="tab-about" data-tab="about">
+                        <i class="fa-solid fa-circle-info"></i><span data-i18n="tab_about">About Carbox</span>
+                    </button>
+                </div>
+                <div class="top-nav-actions">
+                    <a href="studio.html" class="btn" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 11.5px; border-radius: 6px; text-decoration: none; font-weight: 600;" title="Open CarboxMol 3D Crystallographic Workbench">
+                        <img src="assets/carboxmol_logo.png" alt="CarboxMol" style="width: 13px; height: 13px; vertical-align: middle; border-radius: 2px;"> <span data-i18n="btn_workbench">CarboxMol</span>
+                    </a>
+                    <a href="downloads.html" class="btn" style="background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); color: #38bdf8; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 11.5px; border-radius: 6px; text-decoration: none; font-weight: 600;" title="Open Downloads &amp; Distribution Hub">
+                        <img src="assets/download_favicon32.png" alt="Downloads" style="width: 13px; height: 13px; vertical-align: middle; border-radius: 2px;"> <span data-i18n="btn_downloads">Downloads</span>
+                    </a>
+                    <a href="docs.html" class="btn" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; font-size: 11.5px; border-radius: 6px; text-decoration: none; font-weight: 600;" title="Open Documentation Portal">
+                        <img src="assets/docs_favicon32.png" alt="Docs" style="width: 13px; height: 13px; vertical-align: middle; border-radius: 2px;"> <span data-i18n="btn_docs">Docs</span>
+                    </a>
+                    <div class="studio-lang-selector-wrap" style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:4px 8px;">
+                        <i class="fa-solid fa-globe" style="color:#06b6d4;font-size:11px;"></i>
+                        <select id="main-lang-select" style="background:transparent;border:none;outline:none;color:#fff;font-size:11.5px;font-weight:600;cursor:pointer;" title="Change Language / Dili dəyiş / שפת ממשק">
+                            <option value="en" style="background:#0f172a;color:#fff;">&#127468;&#127463; English</option>
+                            <option value="az" style="background:#0f172a;color:#fff;">&#127462;&#127487; Az&#601;rbaycan</option>
+                            <option value="he" style="background:#0f172a;color:#fff;">&#127470;&#127473; &#1506;&#1489;&#1512;&#1497;&#1514;</option>
+                        </select>
+                    </div>
+                    <div class="badge-tag" data-i18n="badge_resolution"><i class="fa-solid fa-shield-halved"></i> Resolution &le; 1.20 &Aring; (Tier 1 PDB)</div>
+                    <button class="btn btn-primary" id="btn-refresh-data"><i class="fa-solid fa-sync" id="refresh-icon"></i> <span data-i18n="btn_reload">Reload Analysis</span></button>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!-- PANEL: Carbox                                 -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <div class="tab-panel active" id="panel-carbox">
+
+                <!-- Sub-header with survey count -->
+                <div class="survey-subheader">
+                    <div class="survey-subheader-left">
+                        <h1 data-i18n="header_title">Aspartate &amp; Glutamate pKa Shift Workbench</h1>
+                        <p data-i18n="header_subtitle">Carbox Crystallographic Criteria &amp; Full-PDB Tier 1 Validation (&le; 1.20 &Aring;)</p>
+                    </div>
+                    <div class="survey-count-badge" id="survey-count-badge">
+                        <div class="survey-count-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                        <div class="survey-count-info">
+                            <span class="survey-count-number" id="survey-count-num">&#8212;</span>
+                            <span class="survey-count-label" data-i18n="survey_entries">Survey Entries</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Stats -->
+                <section id="dashboard" class="content-section">
+                    <div class="stats-grid">
+                        <div class="stat-card interactive" id="card-pdbs" title="Click to view all 7,230 screened PDB structures">
+                            <div class="stat-icon blue"><i class="fa-solid fa-database"></i></div>
+                            <div class="stat-details">
+                                <span class="stat-label" data-i18n="stat_screened_label">PDB Structures Screened</span>
+                                <h3 id="stat-pdbs-count">7,230</h3>
+                                <span class="stat-subtext" data-i18n="stat_screened_sub">&le; 1.20 &Aring; Atomic Resolution, PDB-wide</span>
+                            </div>
+                        </div>
+                        <div class="stat-card interactive" id="card-total" title="Click to reset filters and view all 6,759 dyads">
+                            <div class="stat-icon orange"><i class="fa-solid fa-circle-nodes"></i></div>
+                            <div class="stat-details">
+                                <span class="stat-label" data-i18n="stat_contacts_label">Total Carboxyl Dyads</span>
+                                <h3 id="stat-total-count">--</h3>
+                                <span class="stat-subtext" data-i18n="stat_contacts_sub">d &le; 3.20 &Aring; across PDB</span>
+                            </div>
+                        </div>
+                        <div class="stat-card interactive" id="card-lbhb" title="Click to filter to Golden Reliable LBHBs (3,804 validated pairs)">
+                            <div class="stat-icon red"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="stat-details">
+                                <span class="stat-label" data-i18n="stat_lbhb_label">Golden Reliable LBHBs</span>
+                                <h3 id="stat-lbhb-count">--</h3>
+                                <span class="stat-subtext" data-i18n="stat_lbhb_sub">Carbox Validated Core Density</span>
+                            </div>
+                        </div>
+                        <div class="stat-card interactive" id="card-buried" title="Click to inspect Filtered Noise, Outliers &amp; Metal Chelates (2,955 pairs)">
+                            <div class="stat-icon purple"><i class="fa-solid fa-filter-circle-xmark"></i></div>
+                            <div class="stat-details">
+                                <span class="stat-label" data-i18n="stat_buried_label">Filtered Noise &amp; Chelates</span>
+                                <h3 id="stat-buried-count">--</h3>
+                                <span class="stat-subtext" data-i18n="stat_buried_sub">Thermal Outliers + Metal Bridges</span>
+                            </div>
+                        </div>
+                        <div class="stat-card interactive" id="card-top-pair" title="Click to filter to dominant pair type ASP – GLU">
+                            <div class="stat-icon teal"><i class="fa-solid fa-percentage"></i></div>
+                            <div class="stat-details">
+                                <span class="stat-label" data-i18n="stat_dominant_label">Dominant Pair Type</span>
+                                <h3 id="stat-top-pair" style="font-size:16px;">ASP &#8211; GLU</h3>
+                                <span class="stat-subtext" data-i18n="stat_dominant_sub">Protonation landscape</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-column"></i> <span data-i18n="chart_dist_title">Distance Distribution</span></h3>
+                                <span class="chart-badge" data-i18n="chart_dist_badge">LBHB boundary: 2.55 &Aring;</span>
+                            </div>
+                            <div class="chart-container"><canvas id="distanceHistChart"></canvas></div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h3><i class="fa-solid fa-chart-pie"></i> <span data-i18n="chart_verdict_title">Carbox Status &amp; LBHB Classification</span></h3>
+                                <span class="chart-badge" id="verdict-chart-badge" data-i18n="chart_verdict_badge">5 Categories</span>
+                            </div>
+                            <div class="chart-container"><canvas id="envDonutChart"></canvas></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Split View: Survey Table LEFT + MCP Viewer RIGHT -->
+                <section id="dataset" class="content-section">
+                    <div class="split-view-container">
+
+                        <!-- Left: Survey Table -->
+                        <div class="survey-table-panel">
+                            <div class="table-card">
+                                <div class="table-header-bar">
+                                    <div class="table-title">
+                                        <h3><i class="fa-solid fa-filter"></i> <span data-i18n="table_header_title">pKa Shift &amp; Microenvironment Dataset</span></h3>
+                                        <span class="table-count" id="table-record-count" data-i18n="table_loading">Loading dataset...</span>
+                                    </div>
+                                    <div class="table-controls">
+                                        <div class="search-box">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                            <input type="text" id="table-search" placeholder="Search PDB, residue, chain..." data-i18n-ph="search_placeholder">
+                                        </div>
+                                        <select id="filter-env" class="select-input">
+                                            <option value="ALL" data-i18n="filter_env_all">All Environments</option>
+                                            <option value="Buried (Low Dielectric)" data-i18n="filter_env_buried">Buried (Low Dielectric)</option>
+                                            <option value="Solvent-Exposed" data-i18n="filter_env_exposed">Solvent-Exposed</option>
+                                        </select>
+                                        <select id="filter-tier" class="select-input">
+                                            <option value="ALL" data-i18n="filter_tier_all">All Distance Tiers</option>
+                                            <option value="Ultra-Short (Strong pKa Shift / Shared H)" data-i18n="filter_tier_ultra">Ultra-Short (&le; 2.55 &Aring;)</option>
+                                            <option value="Short H-Bond (Protonated Carboxyl)" data-i18n="filter_tier_short">Short H-Bond (2.55&#8211;3.20 &Aring;)</option>
+                                        </select>
+                                        <select id="filter-status" class="select-input">
+                                            <option value="ALL" data-i18n="filter_status_all">All Carbox Criteria</option>
+                                            <option value="GOLDEN_RELIABLE" data-i18n="filter_status_golden">★ Golden Reliable LBHBs (3,804)</option>
+                                            <option value="MILD_B_ELEVATED" data-i18n="filter_status_mild">Mild B-Elevated (110)</option>
+                                            <option value="REJECTED_EXTREME_B_OUTLIER" data-i18n="filter_status_outlier">⚠️ Extreme B Outliers (114)</option>
+                                            <option value="METAL_BRIDGED_COMPLEX" data-i18n="filter_status_metal">⚙️ Metal-Bridged Chelates (1,559)</option>
+                                            <option value="PARTIAL_OCCUPANCY_SPLIT" data-i18n="filter_status_split">✂️ Conformation Splits (1,272)</option>
+                                        </select>
+                                        <button class="btn btn-secondary" id="btn-benchmark-20" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:#fbbf24;font-weight:600;display:inline-flex;align-items:center;gap:6px;" title="Carbox 20 Benchmark Representative Proteins" data-i18n-title="btn_benchmark_20_title"><i class="fa-solid fa-award"></i> <span data-i18n="btn_benchmark_20">20 Benchmarks</span></button>
+                                        <button class="btn btn-secondary" id="btn-reset-filters" title="Reset all filters" data-i18n-title="btn_clear_filters_title"><i class="fa-solid fa-filter-circle-xmark"></i> <span data-i18n="btn_clear_filters">Clear</span></button>
+                                        <button class="btn btn-secondary" id="btn-export-csv"><i class="fa-solid fa-download"></i> <span data-i18n="btn_export_csv">Export CSV</span></button>
+                                    </div>
+                                </div>
+
+                                <!-- Horizontal-scrollable table -->
+                                <div class="table-wrapper survey-table-scroll">
+                                    <table class="data-table" id="interactions-table">
+                                        <thead>
+                                            <tr>
+                                                <th data-sort="PDB" class="sortable"><span data-i18n="th_pdb">PDB</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Res1" class="sortable"><span data-i18n="th_res1">Residue 1</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Res2" class="sortable"><span data-i18n="th_res2">Residue 2</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="PairType" class="sortable"><span data-i18n="th_pair_type">Pair Type</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Distance_A" class="sortable"><span data-i18n="th_distance">Distance (&Aring;)</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Carbox_Status" class="sortable"><span data-i18n="th_status">Carbox Status</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Max_B" class="sortable"><span data-i18n="th_max_b">Max B / Bz</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Protonation_Verdict" class="sortable"><span data-i18n="th_verdict">Protonation Verdict</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Closest_Water_A" class="sortable"><span data-i18n="th_water">Closest Water (&Aring;)</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Resolution" class="sortable"><span data-i18n="th_resolution">Resolution</span> <i class="fa-solid fa-sort"></i></th>
+                                                <th data-sort="Occupancy" class="sortable"><span data-i18n="th_occupancy">Occ</span> <i class="fa-solid fa-sort"></i></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-body">
+                                            <!-- Populated dynamically by app.js -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Enterprise-Grade CarboxMol Viewer Panel -->
+                        <div class="mcp-viewer-panel enterprise-viewer" id="mcp-viewer-panel">
+                            <!-- Enterprise Header -->
+                            <div class="mcp-panel-header">
+                                <div class="mcp-panel-title">
+                                    <div class="mcp-brand-icon">
+                                        <img src="assets/carboxmol_logo.png?v=0.4.6" alt="Carboxmol Logo" style="width:20px;height:20px;display:block;">
+                                    </div>
+                                    <span id="mcp-panel-title-text" data-i18n="mcp_title">CarboxMol 3D Studio</span>
+                                    <span class="mcp-pdb-tag" id="mcp-pdb-badge" style="display:none;">4LGN</span>
+                                </div>
+                                <div class="mcp-panel-actions">
+                                    <span class="mcp-server-badge" id="mcp-server-badge" title="CarboxMol MCP Server connected"><i class="fa-solid fa-server"></i> MCP v0.4.5</span>
+                                    <button class="mcp-tool-btn" id="mcp-btn-spin" title="Toggle Auto-Rotation"><i class="fa-solid fa-rotate"></i></button>
+                                    <button class="mcp-tool-btn" id="mcp-btn-reset" title="Reset Camera View"><i class="fa-solid fa-arrows-to-dot"></i></button>
+                                    <button class="mcp-tool-btn" id="mcp-btn-snapshot" title="Export High-Res PNG Screenshot"><i class="fa-solid fa-camera"></i></button>
+                                    <button class="mcp-tool-btn" id="mcp-btn-fullscreen" title="Toggle Fullscreen"><i class="fa-solid fa-expand"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- Enterprise Quick Controls Toolbar -->
+                            <div class="mcp-toolbar" id="mcp-toolbar" style="display:none;">
+                                <div class="mcp-tool-group">
+                                    <span class="mcp-tool-label" data-i18n="mcp_style_label">Style:</span>
+                                    <button class="mcp-chip active" data-style="stick"><i class="fa-solid fa-lines-leaning"></i> Stick</button>
+                                    <button class="mcp-chip" data-style="cartoon"><i class="fa-solid fa-ribbon"></i> Cartoon</button>
+                                    <button class="mcp-chip" data-style="sphere"><i class="fa-solid fa-circle-dot"></i> Sphere</button>
+                                    <button class="mcp-chip" data-style="surface"><i class="fa-solid fa-cubes"></i> Surface</button>
+                                </div>
+                                <div class="mcp-tool-group">
+                                    <span class="mcp-tool-label" data-i18n="mcp_density_label">Density:</span>
+                                    <button class="mcp-chip chip-density" id="chip-density-2fofc" data-sigma="1.0"><i class="fa-solid fa-wave-square"></i> 2Fo-Fc (1.0&sigma;)</button>
+                                    <button class="mcp-chip chip-density" id="chip-density-fofc" data-sigma="3.0"><i class="fa-solid fa-plus-minus"></i> Fo-Fc (&plusmn;3&sigma;)</button>
+                                </div>
+                            </div>
+
+                            <!-- Telemetry Metric Bar -->
+                            <div class="mcp-telemetry-bar" id="mcp-telemetry-bar" style="display:none;">
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">Pair:</span> <span class="mcp-tele-v" id="tele-pair">--</span></div>
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">d(O&middot;&middot;&middot;O):</span> <span class="mcp-tele-v text-cyan" id="tele-dist">-- &Aring;</span></div>
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">Verdict:</span> <span class="mcp-tele-v text-amber" id="tele-verdict">--</span></div>
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">Carbox Status:</span> <span class="mcp-tele-v text-emerald" id="tele-carbox-status">--</span></div>
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">Max B / Bz:</span> <span class="mcp-tele-v text-amber" id="tele-bfactor">--</span></div>
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">Res:</span> <span class="mcp-tele-v" id="tele-res">-- &Aring;</span></div>
+                                <div class="mcp-tele-item"><span class="mcp-tele-k">Occ:</span> <span class="mcp-tele-v" id="tele-occ">--</span></div>
+                            </div>
+
+                            <!-- Viewer Body -->
+                            <div class="mcp-panel-body" id="mcp-panel-body">
+                                <!-- Placeholder -->
+                                <div class="mcp-placeholder" id="mcp-placeholder">
+                                    <div class="mcp-placeholder-icon"><i class="fa-solid fa-microscope"></i></div>
+                                    <p class="mcp-placeholder-title" data-i18n="mcp_placeholder_title">Select an Interaction Record</p>
+                                    <p class="mcp-placeholder-sub" data-i18n="mcp_placeholder_sub">Click any row in the survey dataset to execute CXL rendering on the CarboxMol MCP engine with live electron density map contouring.</p>
+                                </div>
+                                <!-- Progressive Spinner -->
+                                <div class="mcp-spinner" id="mcp-spinner" style="display:none;">
+                                    <div class="mcp-spinner-ring"></div>
+                                    <p class="mcp-spinner-text" id="mcp-spinner-text" data-i18n="mcp_spinner_text">Executing CarboxMol CXL Script&#8230;</p>
+                                    <span class="mcp-spinner-sub" id="mcp-spinner-sub" data-i18n="mcp_spinner_sub">Synthesizing 3D coordinate geometry &amp; density meshes</span>
+                                </div>
+                                <!-- Embedded 3D Frame -->
+                                <iframe class="mcp-iframe" id="mcp-iframe" style="display:none;" title="CarboxMol MCP Result" sandbox="allow-scripts allow-same-origin allow-downloads"></iframe>
+                                <!-- Error Fallback -->
+                                <div class="mcp-error" id="mcp-error" style="display:none;">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <p class="mcp-error-title" data-i18n="mcp_error_title">CarboxMol Engine Offline</p>
+                                    <p class="mcp-error-sub" id="mcp-error-msg" data-i18n="mcp_error_msg">Could not reach the local CarboxMol server at localhost:8050. Ensure <code>server.py</code> is running.</p>
+                                    <div class="mcp-error-actions">
+                                        <button class="btn btn-secondary" id="mcp-retry-btn"><i class="fa-solid fa-rotate-right"></i> <span data-i18n="mcp_retry_btn">Retry Connection</span></button>
+                                        <button class="btn btn-primary" id="mcp-fallback-btn"><i class="fa-solid fa-cube"></i> <span data-i18n="mcp_fallback_btn">Local WebGL Viewer</span></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CXL Script Terminal & Action Strip -->
+                            <div class="cxl-script-strip" id="cxl-script-strip" style="display:none;">
+                                <div class="cxl-strip-header">
+                                    <span><i class="fa-solid fa-terminal"></i> <span data-i18n="mcp_cxl_title">CarboxMol CXL Macro Script</span></span>
+                                    <div class="cxl-strip-actions">
+                                        <button class="btn-cxl-tool" id="btn-cxl-copy" title="Copy CXL Script"><i class="fa-solid fa-copy"></i> Copy</button>
+                                        <button class="btn-cxl-tool" id="btn-cxl-download" title="Download .cxl file"><i class="fa-solid fa-file-arrow-down"></i> .CXL</button>
+                                        <a href="studio.html" target="_blank" class="btn-cxl-tool btn-studio-link" title="Open in CarboxMol Studio"><img src="assets/carboxmol_logo.png" alt="CarboxMol" style="width: 12px; height: 12px; vertical-align: middle;"> <span>CarboxMol</span></a>
+                                    </div>
+                                </div>
+                                <pre class="cxl-code" id="cxl-code-display"></pre>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div><!-- /panel-carbox -->
+
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!-- PANEL: Contact                                    -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <div class="tab-panel" id="panel-contact" style="display:none;">
+                <div class="page-hero">
+                    <div class="page-hero-icon contact-hero-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                    <h1 class="page-hero-title" data-i18n="contact_hero_title">Contact the Authors</h1>
+                    <p class="page-hero-sub" data-i18n="contact_hero_sub">Have questions about Carbox, CarboxMol, or collaboration opportunities? Reach out to the research team.</p>
+                </div>
+
+                <div class="contact-grid">
+                    <div class="contact-card">
+                        <div class="contact-avatar contact-avatar-sh"><i class="fa-solid fa-cube"></i></div>
+                        <div class="contact-info">
+                            <h3 class="contact-name">Carbox Architecture Team</h3>
+                            <p class="contact-role" data-i18n="contact_sh_role">Core Computational Library &middot; Physical Modeling</p>
+                            <div class="contact-links">
+                                <a href="https://github.com/carbox/carbox" target="_blank" rel="noopener" class="contact-link"><i class="fa-brands fa-github"></i> Repository</a>
+                                <a href="mailto:info@carbox.org" class="contact-link"><i class="fa-solid fa-envelope"></i> Email</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-avatar contact-avatar-gm"><i class="fa-solid fa-desktop"></i></div>
+                        <div class="contact-info">
+                            <h3 class="contact-name">CarboxMol Engineering Group</h3>
+                            <p class="contact-role" data-i18n="contact_gm_role">3D Crystallographic Workbench &middot; Web Studio</p>
+                            <div class="contact-links">
+                                <a href="https://github.com/carbox/carbox" target="_blank" rel="noopener" class="contact-link"><i class="fa-brands fa-github"></i> Repository</a>
+                                <a href="mailto:support@carboxmol.org" class="contact-link" title="Support"><i class="fa-solid fa-envelope"></i> Email</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="contact-card contact-card-wide">
+                        <div class="contact-avatar contact-avatar-gh"><i class="fa-brands fa-github"></i></div>
+                        <div class="contact-info">
+                            <h3 class="contact-name" data-i18n="contact_issues_title">GitHub Issues &amp; Bug Reports</h3>
+                            <p class="contact-role" data-i18n="contact_issues_role">Feature requests, bug reports, and community discussions</p>
+                            <div class="contact-links">
+                                <a href="https://github.com/carbox/carbox/issues" target="_blank" rel="noopener" class="contact-link contact-link-primary"><i class="fa-solid fa-circle-exclamation"></i> <span data-i18n="contact_issues_btn">Open an Issue</span></a>
+                                <a href="https://github.com/carbox/carbox/discussions" target="_blank" rel="noopener" class="contact-link"><i class="fa-solid fa-comments"></i> <span data-i18n="contact_discussions_btn">Discussions</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="affiliation-banner">
+                    <i class="fa-solid fa-dna"></i>
+                    <div>
+                        <strong data-i18n="affiliation_banner_inst">Institute of Molecular Biology &amp; Western Caspian University</strong>
+                        <span data-i18n="affiliation_banner_loc">&middot; Baku, Azerbaijan</span>
+                    </div>
+                </div>
+            </div><!-- /panel-contact -->
+
+
+            <!-- ══════════════════════════════════════════════════ -->
+            <!-- PANEL: About Carbox                           -->
+            <!-- ══════════════════════════════════════════════════ -->
+            <div class="tab-panel" id="panel-about" style="display:none;">
+                <div class="page-hero">
+                    <div class="page-hero-icon about-hero-icon">
+                        <img src="assets/carbox_logo.png?v=0.4.6" alt="Carbox Logo" style="width:52px;height:52px;object-fit:contain;" onerror="this.style.display='none'">
+                    </div>
+                    <h1 class="page-hero-title" data-i18n="about_hero_title">About Carbox</h1>
+                    <p class="page-hero-sub" data-i18n="about_hero_sub">A systematic high-throughput survey and microenvironment workbench for anomalous carboxyl&#8211;carboxyl interactions and pKa shifts in high-resolution protein crystal structures.</p>
+
+                    <!-- GitHub Repository Button -->
+                    <a href="https://github.com/carbox/carbox" target="_blank" rel="noopener" class="btn-github-repo" id="btn-github-repo">
+                        <i class="fa-brands fa-github"></i>
+                        <span data-i18n="about_repo_btn">Visit the GitHub Repository</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:11px;opacity:0.7;"></i>
+                    </a>
+
+                    <!-- CarboxMol Version Badge -->
+                    <div class="carboxmol-version-badge">
+                        <i class="fa-solid fa-cube"></i>
+                        <span>CarboxMol</span>
+                        <span class="version-pill" id="carboxmol-version-pill">v0.4.5</span>
+                        <span class="version-sub">&middot; Macromolecular Crystallography Workbench</span>
+                    </div>
+                </div>
+
+                <div class="about-sections">
+                    <div class="about-section-card">
+                        <div class="about-section-icon"><i class="fa-solid fa-flask-vial"></i></div>
+                        <div class="about-section-content">
+                            <h3 data-i18n="about_what_title">What is Carbox?</h3>
+                            <p data-i18n="about_what_p">Carbox is an automated pipeline that screens tens of thousands of high-resolution (&le; 2.0 &Aring;) X-ray protein crystal structures from the Protein Data Bank (PDB) to identify anomalous carboxyl&#8211;carboxyl pairs (Asp&#8211;Asp, Asp&#8211;Glu, Glu&#8211;Glu) with short O&middot;&middot;&middot;O distances indicative of strong pKa perturbation and possible Low-Barrier Hydrogen Bonds (LBHBs).</p>
+                        </div>
+                    </div>
+                    <div class="about-section-card">
+                        <div class="about-section-icon" style="color:#38bdf8;background:rgba(56,189,248,0.1);"><i class="fa-solid fa-cube"></i></div>
+                        <div class="about-section-content">
+                            <h3 data-i18n="about_integration_title">CarboxMol Integration</h3>
+                            <p data-i18n="about_integration_p">CarboxMol is the crystallographic computation engine powering this workbench. It provides real-space refinement, stereochemical validation, protonation state modeling, CXL macro scripting, and interactive 3D visualization directly from your browser via the local MCP server.</p>
+                        </div>
+                    </div>
+                    <div class="about-section-card">
+                        <div class="about-section-icon" style="color:#a78bfa;background:rgba(167,139,250,0.1);"><i class="fa-solid fa-ruler-combined"></i></div>
+                        <div class="about-section-content">
+                            <h3 data-i18n="about_method_title">Methodology &amp; Filters</h3>
+                            <p data-i18n="about_method_p">Three-criterion filter pipeline: (1) O&middot;&middot;&middot;O distance &le; 3.20 &Aring; for carboxyl&#8211;carboxyl proximity, (2) Microenvironment burial assessment via nearest-water distance (&gt; 3.0 &Aring; = buried, &epsilon; &asymp; 2&#8211;4), (3) Distance tier classification into Ultra-Short LBHB (&le; 2.55 &Aring;) or Short H-Bond (2.55&#8211;3.20 &Aring;) categories.</p>
+                        </div>
+                    </div>
+                    <div class="about-section-card about-citation-card">
+                        <div class="about-section-icon" style="color:#f59e0b;background:rgba(245,158,11,0.1);"><i class="fa-solid fa-book-open"></i></div>
+                        <div class="about-section-content">
+                            <h3 data-i18n="about_citation_title">Citation</h3>
+                            <p data-i18n="about_citation_p">If you use Carbox in your research, please cite:</p>
+                            <div class="citation-block">
+                                <code id="citation-text">Carbox &amp; CarboxMol Development Team (2026). Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures. Carbox &amp; CarboxMol Macromolecular Crystallography Suite. https://github.com/carbox/carbox</code>
+                                <button class="btn-copy-citation" id="btn-copy-citation" title="Copy citation"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-section-card">
+                        <div class="about-section-icon" style="color:#10b981;background:rgba(16,185,129,0.1);"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <div class="about-section-content">
+                            <h3 data-i18n="about_license_title">License</h3>
+                            <p data-i18n="about_license_p">Carbox is released under the <strong>Mozilla Public License Version 2.0 (MPL-2.0)</strong>. CarboxMol is distributed under the same modular license. You are free to use, modify, and distribute this software with attribution.</p>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /panel-about -->
+
+        </main>
+    </div>
+
+    <script src="libs/chart.min.js"></script>
+    <script src="libs/3Dmol-min.js"></script>
+    <script src="data.js?v=0.4.5"></script>
+    <script src="structures.js?v=0.4.5"></script>
+    <script src="app.js?v=0.4.5"></script>
+    <script>
+        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- Silent PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarboxMol | System Maintenance &amp; Upgrades</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script>
+        if (window.location.hostname.includes("carboxmol.vercel.app")) {
+            window.location.replace("https://carboxmol.github.io" + window.location.pathname + window.location.search);
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-blue: #0284c7;
+            --accent-blue-bg: #f0f9ff;
+            --accent-blue-border: #bae6fd;
+            --accent-purple: #9333ea;
+            --accent-purple-bg: #f3e8ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+
+        .card {
+            max-width: 780px;
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+            padding: 48px 44px;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 12px;
+            }
+            .card {
+                padding: 28px 18px;
+                border-radius: 18px;
+            }
+        }
+
+        .logo-box {
+            width: 82px;
+            height: 82px;
+            background: #090d16;
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px -3px rgba(11, 15, 25, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-img {
+            width: 54px;
+            height: 54px;
+            object-fit: contain;
+        }
+
+        .badge-maintenance {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 14px;
+            border-radius: 9999px;
+            background: var(--accent-blue-bg);
+            border: 1px solid var(--accent-blue-border);
+            color: var(--accent-blue);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 6px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin: 0 0 32px;
+        }
+
+        .lang-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 34px;
+        }
+
+        .lang-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 22px;
+            text-align: left;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .lang-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .lang-card.rtl {
+            text-align: right;
+            direction: rtl;
+            font-family: 'Heebo', 'Inter', system-ui, sans-serif;
+        }
+
+        .lang-header {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: #475569;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .lang-card.rtl .lang-header {
+            justify-content: flex-start;
+        }
+
+        .lang-card-title {
+            font-size: 15.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .lang-card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        .authors-divider {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .authors-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 640px) {
+            .authors-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .author-card {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .author-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .author-icon.scholar {
+            background: var(--accent-blue-bg);
+            color: var(--accent-blue);
+        }
+
+        .author-icon.mrc {
+            background: var(--accent-purple-bg);
+            color: var(--accent-purple);
+        }
+
+        .author-info strong {
+            display: block;
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .author-info span {
+            display: block;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .footer {
+            font-size: 11.5px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <main class="card">
+        
+        <!-- Logo -->
+        <div class="logo-box">
+            <img src="assets/carboxmol_logo.png" alt="CarboxMol Logo" class="logo-img"
+                 onerror="this.onerror=null; this.src='assets/carboxmol_logo.png';">
+        </div>
+
+        <!-- Badge -->
+        <div>
+            <div class="badge-maintenance">
+                <span class="badge-dot"></span>
+                <span>System Maintenance &amp; Upgrades</span>
+            </div>
+        </div>
+
+        <!-- Title & Subtitle -->
+        <h1 class="title">CarboxMol</h1>
+        <p class="subtitle">Macromolecular Crystallography &amp; Structural Bioinformatics Workbench</p>
+
+        <!-- Trilingual Language Stack (AZ, EN, HE) -->
+        <section class="lang-stack" aria-label="Development &amp; Maintenance Notices">
+            
+            <!-- Azerbaijani -->
+            <article class="lang-card">
+                <div class="lang-header">
+                    <span>🇦🇿</span>
+                    <span>AZƏRBAYCAN</span>
+                </div>
+                <h2 class="lang-card-title">Layihə inkişaf etdirilməkdədir</h2>
+                <p class="lang-card-desc">CarboxMol platforması hazırda aktiv inkişaf mərhələsindədir və tezliklə yenilənmiş versiya ilə yenidən deploy olunacaqdır.</p>
+            </article>
+
+            <!-- English -->
+            <article class="lang-card">
+                <div class="lang-header">
+                    <span>🇬🇧</span>
+                    <span>ENGLISH</span>
+                </div>
+                <h2 class="lang-card-title">Project Under Active Development</h2>
+                <p class="lang-card-desc">CarboxMol is currently undergoing comprehensive engineering upgrades and will be redeployed shortly.</p>
+            </article>
+
+            <!-- Hebrew (RTL) -->
+            <article class="lang-card rtl" dir="rtl" lang="he">
+                <div class="lang-header">
+                    <span>🇮🇱</span>
+                    <span>עברית</span>
+                </div>
+                <h2 class="lang-card-title">הפרויקט נמצא כעת בפיתוח פעיל</h2>
+                <p class="lang-card-desc">פלטפורמת CarboxMol עוברת כעת שדרוגים מקיפים ותועלה מחדש בקרוב בגרסה מעודכנת.</p>
+            </article>
+
+        </section>
+
+        <!-- Scientific Authors & Reference -->
+        <section class="authors-section" aria-label="Scientific Authors">
+            <div class="authors-divider">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <span>SCIENTIFIC AUTHORS &amp; REFERENCE</span>
+            </div>
+
+            <div class="authors-grid">
+                <div class="author-card">
+                    <div class="author-icon scholar">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div class="author-info">
+                        <strong>Suleiman Hajizadeh</strong>
+                        <span>Institute of Molecular Biology, Ministry of Science and Education of the Republic of Azerbaijan</span>
+                        <span>Western Caspian University, Baku, Azerbaijan</span>
+                    </div>
+                </div>
+
+                <div class="author-card">
+                    <div class="author-icon mrc">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div class="author-info">
+                        <strong>Garib N. Murshudov</strong>
+                        <span>MRC Laboratory of Molecular Biology (LMB)</span>
+                        <span>Cambridge Biomedical Campus, Cambridge, United Kingdom</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>All rights reserved © 2026 CarboxMol Research Team.</span>
+        </footer>
+
+    </main>
+
+</body>
+</html>

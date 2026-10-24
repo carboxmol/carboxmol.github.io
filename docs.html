@@ -1,0 +1,3115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="doc-page-title">Carbox &amp; CarboxMol Documentation Portal (Release 2026)</title>
+    <meta name="description"
+        content="Official comprehensive documentation for Carbox (High-Throughput Protonation & Contact Engine), CarboxMol (3D Macromolecular Crystallography Workbench), and Downloads. Authors: Carbox & CarboxMol Engineering Group (2026).">
+
+    <!-- Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Heebo:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Dynamic Browser Tab Favicon (Switches dynamically per portal: Docs, Carbox, CarboxMol, Downloads) -->
+    <link rel="icon" id="dynamic-favicon" type="image/svg+xml" href="assets/docs_logo.svg">
+    <link rel="shortcut icon" id="dynamic-shortcut-icon" href="assets/docs_logo.svg">
+
+    <style>
+        /* ─── Eye-Friendly Light Theme (Normal ReadTheDocs / Sphinx style) ─── */
+        :root {
+            --bg-page: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --bg-code: #0f172a;
+            --border-subtle: #e2e8f0;
+            --border-focus: #0284c7;
+            --text-main: #1e293b;
+            --text-heading: #0f172a;
+            --text-muted: #64748b;
+            --accent-carbox: #0284c7;
+            --accent-carbox-bg: rgba(2, 132, 199, 0.08);
+            --accent-carboxmol: #7c3aed;
+            --accent-carboxmol-bg: rgba(124, 58, 237, 0.08);
+            --accent-download: #059669;
+            --accent-download-bg: rgba(5, 150, 105, 0.08);
+            --accent-emerald: #059669;
+            --accent-amber: #d97706;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-subtle: 0 4px 20px rgba(15, 23, 42, 0.05);
+            --shadow-float: 0 10px 30px rgba(15, 23, 42, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.68;
+            font-size: 14.5px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* RTL typography adjustments */
+        html[dir="rtl"] body {
+            font-family: 'Heebo', 'Inter', -apple-system, sans-serif;
+        }
+
+        /* ─── Top Navbar ───────────────────────────────────────────────────────── */
+        .docs-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .brand-title-group h1 {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin: 0;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-badge-version {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: var(--text-muted);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .mobile-sidebar-toggle-btn {
+            display: none;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-heading);
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            cursor: pointer;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-switcher-group {
+            display: flex;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 2px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .lang-btn:hover {
+            color: var(--text-heading);
+        }
+
+        .lang-btn.active {
+            background: var(--accent-carbox);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+        }
+
+        .nav-link-btn {
+            font-size: 12.5px;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-link-btn:hover {
+            border-color: var(--accent-carbox);
+            color: var(--accent-carbox);
+            background: var(--accent-carbox-bg);
+        }
+
+        /* ─── Portal Switcher Bar ─────────────────────────────────────────────── */
+        .portal-bar-wrapper {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 8px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .portal-switch-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .switch-tab-btn {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .switch-tab-btn img.tab-logo {
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            object-fit: contain;
+        }
+
+        .switch-tab-btn:hover {
+            background: #ffffff;
+            color: var(--text-heading);
+            border-color: #cbd5e1;
+        }
+
+        .switch-tab-btn.active.carbox-active {
+            color: var(--accent-carbox);
+            background: var(--accent-carbox-bg);
+            border-color: rgba(2, 132, 199, 0.4);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.12);
+        }
+
+        .switch-tab-btn.active.carboxmol-active {
+            color: var(--accent-carboxmol);
+            background: var(--accent-carboxmol-bg);
+            border-color: rgba(124, 58, 237, 0.4);
+            box-shadow: 0 2px 8px rgba(124, 58, 237, 0.12);
+        }
+
+        .switch-tab-btn.active.download-active {
+            color: var(--accent-download);
+            background: var(--accent-download-bg);
+            border-color: rgba(5, 150, 105, 0.4);
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+        }
+
+        /* ─── Main Docs Layout ────────────────────────────────────────────────── */
+        .docs-container {
+            max-width: 1400px;
+            width: 95%;
+            margin: 24px auto 60px auto;
+            display: grid;
+            grid-template-columns: 290px 1fr;
+            gap: 32px;
+            flex: 1;
+        }
+
+        /* ─── Sidebar Navigation ──────────────────────────────────────────────── */
+        .docs-sidebar {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 76px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .sidebar-section-badge {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sidebar-search {
+            width: 100%;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            color: var(--text-heading);
+            margin-bottom: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .sidebar-search:focus {
+            border-color: var(--border-focus);
+            background: #ffffff;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .sidebar-link i {
+            font-size: 13px;
+            width: 16px;
+            color: var(--text-muted);
+            transition: color 0.15s;
+        }
+
+        .sidebar-link:hover {
+            background: var(--bg-subtle);
+            color: var(--text-heading);
+        }
+
+        .sidebar-link:hover i {
+            color: var(--accent-carbox);
+        }
+
+        .sidebar-link.active {
+            background: var(--accent-carbox-bg);
+            color: var(--accent-carbox);
+            font-weight: 700;
+        }
+
+        .sidebar-link.active i {
+            color: var(--accent-carbox);
+        }
+
+        /* ─── Documentation Content Body ──────────────────────────────────────── */
+        .docs-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 44px 52px;
+            box-shadow: var(--shadow-subtle);
+            min-width: 0;
+        }
+
+        .breadcrumbs {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .breadcrumbs a {
+            color: var(--accent-carbox);
+            text-decoration: none;
+        }
+
+        .module-banner-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 36px;
+        }
+
+        .module-banner-logo {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .module-banner-titles h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin: 0 0 6px 0;
+            letter-spacing: -0.4px;
+        }
+
+        .module-banner-titles p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .docs-content h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-top: 48px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .docs-content h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+
+        .docs-content p, .docs-content ul, .docs-content ol {
+            color: var(--text-main);
+            font-size: 14.5px;
+            line-height: 1.72;
+            margin-bottom: 16px;
+        }
+
+        .docs-content ul, .docs-content ol {
+            padding-left: 24px;
+        }
+
+        html[dir="rtl"] .docs-content ul,
+        html[dir="rtl"] .docs-content ol {
+            padding-left: 0;
+            padding-right: 24px;
+        }
+
+        .docs-content code:not(pre code) {
+            background: var(--bg-subtle);
+            color: #0f172a;
+            border: 1px solid var(--border-subtle);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        /* ─── Admonitions (Note, Tip, Important, Warning) ─────────────────────── */
+        .admonition {
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            margin: 20px 0;
+            font-size: 13.5px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .admonition.note {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #0284c7;
+            color: #0369a1;
+        }
+
+        .admonition.tip {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-left: 4px solid #16a34a;
+            color: #15803d;
+        }
+
+        .admonition.important {
+            background: #faf5ff;
+            border: 1px solid #e9d5ff;
+            border-left: 4px solid #9333ea;
+            color: #7e22ce;
+        }
+
+        .admonition.warning {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-left: 4px solid #d97706;
+            color: #b45309;
+        }
+
+        html[dir="rtl"] .admonition {
+            border-left: 1px solid var(--border-subtle);
+        }
+        html[dir="rtl"] .admonition.note { border-right: 4px solid #0284c7; }
+        html[dir="rtl"] .admonition.tip { border-right: 4px solid #16a34a; }
+        html[dir="rtl"] .admonition.important { border-right: 4px solid #9333ea; }
+        html[dir="rtl"] .admonition.warning { border-right: 4px solid #d97706; }
+
+        .admonition-icon {
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        /* ─── Code Blocks & Terminal Windows ─────────────────────────────────── */
+        .code-block-wrapper {
+            position: relative;
+            margin: 18px 0;
+            border-radius: var(--radius-md);
+            background: var(--bg-code);
+            border: 1px solid #1e293b;
+            overflow: hidden;
+            direction: ltr !important;
+            text-align: left !important;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 8px 14px;
+            border-bottom: 1px solid #334155;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94a3b8;
+        }
+
+        .code-copy-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #475569;
+            color: #cbd5e1;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .code-copy-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        pre code {
+            display: block;
+            padding: 16px;
+            overflow-x: auto;
+            color: #f1f5f9;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        /* Terminal Window Styling */
+        .terminal-block pre code {
+            color: #38bdf8;
+            background: #090d16;
+        }
+
+        /* ─── Tables ──────────────────────────────────────────────────────────── */
+        .docs-table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+        }
+
+        .docs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            text-align: left;
+        }
+
+        html[dir="rtl"] .docs-table {
+            text-align: right;
+        }
+
+        .docs-table th {
+            background: var(--bg-subtle);
+            color: var(--text-heading);
+            padding: 10px 14px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .docs-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-main);
+        }
+
+        .docs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .docs-table tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        /* ─── Author Citation Card ────────────────────────────────────────────── */
+        .docs-author-card {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+        }
+
+        .author-docs-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .back-to-top-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent-carbox);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            z-index: 900;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+            transition: all 0.25s ease;
+        }
+
+        .back-to-top-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        html[dir="rtl"] .back-to-top-btn {
+            right: auto;
+            left: 24px;
+        }
+
+        @media (max-width: 980px) {
+            .mobile-sidebar-toggle-btn {
+                display: inline-flex;
+            }
+
+            .docs-container {
+                grid-template-columns: 1fr;
+                width: 96%;
+                margin: 16px auto 40px auto;
+                gap: 20px;
+            }
+
+            .docs-sidebar {
+                position: fixed;
+                top: 0;
+                left: -320px;
+                width: 300px;
+                height: 100vh;
+                max-height: 100vh;
+                z-index: 9999;
+                background: #ffffff;
+                border-radius: 0;
+                border: none;
+                border-right: 1px solid var(--border-subtle);
+                box-shadow: 6px 0 35px rgba(0, 0, 0, 0.15);
+                overflow-y: auto;
+                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                padding: 24px 18px;
+            }
+
+            .docs-sidebar.drawer-open {
+                transform: translateX(320px);
+            }
+
+            html[dir="rtl"] .docs-sidebar {
+                left: auto;
+                right: -320px;
+                border-right: none;
+                border-left: 1px solid var(--border-subtle);
+                box-shadow: -6px 0 35px rgba(0, 0, 0, 0.15);
+            }
+
+            html[dir="rtl"] .docs-sidebar.drawer-open {
+                transform: translateX(-320px);
+            }
+
+            .sidebar-backdrop {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.4);
+                backdrop-filter: blur(2px);
+                z-index: 9998;
+            }
+
+            .sidebar-backdrop.active {
+                display: block;
+            }
+
+            .portal-bar-wrapper {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+                padding: 10px 16px;
+            }
+
+            .portal-switch-tabs {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .switch-tab-btn {
+                padding: 7px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .docs-content {
+                padding: 24px 16px;
+                border-radius: var(--radius-md);
+            }
+
+            .module-banner-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .module-banner-logo {
+                width: 48px;
+                height: 48px;
+            }
+
+            .docs-content h2 {
+                font-size: 18px;
+                margin-top: 30px;
+            }
+        }
+
+        /* ─── Footer ──────────────────────────────────────────────────────────── */
+        .docs-footer {
+            margin-top: auto;
+            background: #ffffff;
+            border-top: 1px solid var(--border-subtle);
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .docs-footer a {
+            color: var(--accent-carbox);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ─── Navbar ───────────────────────────────────────────────────────────── -->
+    <header class="docs-navbar">
+        <a href="dashboard.html" class="brand-container">
+            <img src="assets/docs_logo.svg" alt="Carbox Docs Logo" class="brand-logo-img">
+            <div class="brand-title-group">
+                <h1>Carbox &amp; CarboxMol Docs <span class="brand-badge-version">Release 2026</span></h1>
+            </div>
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <button class="mobile-sidebar-toggle-btn" id="btn-mobile-sidebar-toggle" onclick="toggleMobileSidebar()" title="Toggle Navigation">
+                <i class="fa-solid fa-bars"></i> <span class="mobile-toggle-text">Menu</span>
+            </button>
+
+            <div class="nav-actions">
+                <!-- Language Switcher -->
+                <div class="lang-switcher-group">
+                    <button class="lang-btn active" id="btn-lang-en" onclick="setDocLanguage('en')">🇬🇧 EN</button>
+                    <button class="lang-btn" id="btn-lang-az" onclick="setDocLanguage('az')">🇦🇿 AZ</button>
+                    <button class="lang-btn" id="btn-lang-he" onclick="setDocLanguage('he')">🇮🇱 עב</button>
+                </div>
+
+                <a href="dashboard.html" class="nav-link-btn" title="Open Carbox Survey Dashboard">
+                    <i class="fa-solid fa-chart-pie" style="color: var(--accent-carbox);"></i> <span id="nav-lbl-dashboard">Dashboard</span>
+                </a>
+                <a href="downloads.html" class="nav-link-btn" title="Open Downloads &amp; Binaries">
+                    <i class="fa-solid fa-download" style="color: var(--accent-emerald);"></i> <span id="nav-lbl-downloads">Downloads</span>
+                </a>
+                <a href="studio.html" class="nav-link-btn" title="Open 3D Web Studio">
+                    <i class="fa-solid fa-cube" style="color: var(--accent-carboxmol);"></i> <span id="nav-lbl-studio">3D Studio</span>
+                </a>
+                <a href="https://github.com/carbox/carbox" target="_blank" class="nav-link-btn">
+                    <i class="fa-brands fa-github"></i> <span>GitHub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Drawer Backdrop -->
+    <div id="mobile-sidebar-backdrop" class="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
+    <!-- ─── Portal Switcher Bar ─────────────────────────────────────────────── -->
+    <div class="portal-bar-wrapper">
+        <div class="portal-switch-tabs">
+            <button class="switch-tab-btn active carbox-active" id="btn-tab-carbox" onclick="switchDocPortal('carbox')">
+                <img src="assets/carbox_logo.png" alt="Carbox Logo" class="tab-logo">
+                <span id="tab-lbl-carbox">Carbox (Scientific Library)</span>
+            </button>
+            <button class="switch-tab-btn" id="btn-tab-carboxmol" onclick="switchDocPortal('carboxmol')">
+                <img src="assets/carboxmol_logo.png" alt="CarboxMol Logo" class="tab-logo">
+                <span id="tab-lbl-carboxmol">CarboxMol (Workbench Engine)</span>
+            </button>
+            <button class="switch-tab-btn" id="btn-tab-downloads" onclick="switchDocPortal('downloads')">
+                <img src="assets/download_logo.svg" alt="Downloads Logo" class="tab-logo">
+                <span id="tab-lbl-downloads">Downloads &amp; Releases</span>
+            </button>
+        </div>
+        <div style="font-size: 11.5px; color: var(--text-muted);" id="lbl-citation-quick">
+            Authors: <strong>Suleiman M Hajizadeh</strong> &amp; <strong>Garib N Murshudov</strong> (2026)
+        </div>
+    </div>
+
+    <!-- ─── Main Docs Container ─────────────────────────────────────────────── -->
+    <main class="docs-container">
+
+        <!-- Sidebar Navigation -->
+        <aside class="docs-sidebar">
+            <div class="sidebar-section-badge" id="sidebar-badge"><i class="fa-solid fa-book-bookmark"></i> CARBOX</div>
+            <input type="text" class="sidebar-search" id="docs-search-input" placeholder="Search commands &amp; APIs..." onkeyup="filterDocs(this.value)">
+
+            <!-- Carbox Menu -->
+            <ul class="sidebar-menu" id="menu-carbox">
+                <li><a href="#cx-overview" class="sidebar-link active"><i class="fa-solid fa-file-lines"></i> <span class="nav-item-txt" data-key="nav_cx_overview">1. Overview &amp; Architecture</span></a></li>
+                <li><a href="#cx-science" class="sidebar-link"><i class="fa-solid fa-atom"></i> <span class="nav-item-txt" data-key="nav_cx_science">2. Scientific Formulations &amp; pKa</span></a></li>
+                <li><a href="#cx-analyze" class="sidebar-link"><i class="fa-solid fa-magnifying-glass-chart"></i> <span class="nav-item-txt" data-key="nav_cx_analyze">3. Screening CLI (carbox analyze)</span></a></li>
+                <li><a href="#cx-validate" class="sidebar-link"><i class="fa-solid fa-shield-halved"></i> <span class="nav-item-txt" data-key="nav_cx_validate">4. Suspicious Atom Audit</span></a></li>
+                <li><a href="#cx-quantum" class="sidebar-link"><i class="fa-solid fa-wave-square"></i> <span class="nav-item-txt" data-key="nav_cx_quantum">5. Quantum Proton Simulation</span></a></li>
+                <li><a href="#cx-ligands" class="sidebar-link"><i class="fa-solid fa-capsules"></i> <span class="nav-item-txt" data-key="nav_cx_ligands">6. Ligand Carboxylate Screening</span></a></li>
+                <li><a href="#cx-graph" class="sidebar-link"><i class="fa-solid fa-network-wired"></i> <span class="nav-item-txt" data-key="nav_cx_graph">7. Native Graph Engine Code</span></a></li>
+                <li><a href="#cx-density" class="sidebar-link"><i class="fa-solid fa-layer-group"></i> <span class="nav-item-txt" data-key="nav_cx_density">8. Electron Density &amp; Omit Maps</span></a></li>
+                <li><a href="#cx-refinement" class="sidebar-link"><i class="fa-solid fa-dna"></i> <span class="nav-item-txt" data-key="nav_cx_refinement">9. Carbox Refinement Restraints</span></a></li>
+                <li><a href="#cx-citation" class="sidebar-link"><i class="fa-solid fa-quote-left"></i> <span class="nav-item-txt" data-key="nav_cx_citation">10. Citation &amp; References (2026)</span></a></li>
+            </ul>
+
+            <!-- CarboxMol Menu -->
+            <ul class="sidebar-menu" id="menu-carboxmol" style="display: none;">
+                <li><a href="#cm-overview" class="sidebar-link active"><i class="fa-solid fa-cube"></i> <span class="nav-item-txt" data-key="nav_cm_overview">1. Workbench Overview</span></a></li>
+                <li><a href="#cm-cli" class="sidebar-link"><i class="fa-solid fa-terminal"></i> <span class="nav-item-txt" data-key="nav_cm_cli">2. CarboxMol CLI Reference</span></a></li>
+                <li><a href="#cm-core" class="sidebar-link"><i class="fa-solid fa-sitemap"></i> <span class="nav-item-txt" data-key="nav_cm_core">3. In-Memory Atomic Data Model</span></a></li>
+                <li><a href="#cm-metal" class="sidebar-link"><i class="fa-solid fa-ring"></i> <span class="nav-item-txt" data-key="nav_cm_metal">4. 4-Fold &amp; 6-Fold Metal Centers</span></a></li>
+                <li><a href="#cm-geom" class="sidebar-link"><i class="fa-solid fa-circle-check"></i> <span class="nav-item-txt" data-key="nav_cm_geom">5. Ramachandran &amp; Stereochemistry</span></a></li>
+                <li><a href="#cm-pli" class="sidebar-link"><i class="fa-solid fa-handshake"></i> <span class="nav-item-txt" data-key="nav_cm_pli">6. Non-Covalent Interactions (PLI)</span></a></li>
+                <li><a href="#cm-refine" class="sidebar-link"><i class="fa-solid fa-wand-magic-sparkles"></i> <span class="nav-item-txt" data-key="nav_cm_refine">7. Real-Space Refinement Engine</span></a></li>
+                <li><a href="#cm-cxl" class="sidebar-link"><i class="fa-solid fa-scroll"></i> <span class="nav-item-txt" data-key="nav_cm_cxl">8. .CXL Macro Scripting Engine</span></a></li>
+                <li><a href="#cm-studio" class="sidebar-link"><i class="fa-solid fa-glasses"></i> <span class="nav-item-txt" data-key="nav_cm_studio">9. 3D WebGL Studio &amp; Telemetry</span></a></li>
+                <li><a href="#cm-citation" class="sidebar-link"><i class="fa-solid fa-quote-left"></i> <span class="nav-item-txt" data-key="nav_cm_citation">10. Citation &amp; References (2026)</span></a></li>
+            </ul>
+
+            <!-- Downloads Menu -->
+            <ul class="sidebar-menu" id="menu-downloads" style="display: none;">
+                <li><a href="#dl-packages" class="sidebar-link active"><i class="fa-solid fa-download"></i> <span class="nav-item-txt" data-key="nav_dl_packages">1. Packages &amp; Binaries</span></a></li>
+            </ul>
+        </aside>
+
+        <!-- Documentation Content Body -->
+        <article class="docs-content">
+
+            <div class="breadcrumbs">
+                <a href="dashboard.html">Docs</a> &gt; <span id="bc-portal">Carbox</span> &gt; <span id="bc-section">Overview</span>
+            </div>
+
+            <!-- Author & Citation Banner -->
+            <div class="docs-author-card">
+                <img src="assets/docs_logo.svg" alt="Docs Logo" class="author-docs-logo">
+                <div>
+                    <strong>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures</strong><br>
+                    <em>Suleiman M Hajizadeh<sup>1,2,*</sup> and Garib N Murshudov<sup>3</sup> (Release 2026)</em><br>
+                    <span style="color: var(--text-muted); font-size: 11.5px;">¹ Institute of Molecular Biology, Baku | ² Western Caspian University | ³ MRC Laboratory of Molecular Biology, Cambridge, UK</span>
+                </div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- PORTAL 1: CARBOX -->
+            <!-- ============================================================= -->
+            <div id="portal-carbox" class="portal-view">
+                <div class="module-banner-header">
+                    <img src="assets/carbox_logo.png" alt="Carbox Logo" class="module-banner-logo">
+                    <div class="module-banner-titles">
+                        <h1 id="lbl-cx-banner-title">Carbox — High-Throughput Computational Biology Library</h1>
+                        <p id="lbl-cx-banner-desc">Automated coordinate screening, quantum Morse PES simulation, water burial index, dielectric cavity estimation, and Carbox Refinement restraints.</p>
+                    </div>
+                </div>
+        <section id="cx-overview">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-file-lines" style="color: var(--accent-carbox);"></i> 1. Overview &amp; Architecture</h2>
+                <p>
+                    <strong>Carbox</strong> is an enterprise-grade computational biology library designed to automate the structural detection of anomalous carboxylate protonation states, Low-Barrier Hydrogen Bonds (LBHB, $d_{O\cdots O} \le 2.55\,\text{Å}$), desolvated dielectric cavity shielding ($\varepsilon_{\text{eff}} \approx 2-4$), and generate Carbox Refinement & Cryo-EM crystallographic restraints from high-resolution diffraction data.
+                </p>
+                <div class="admonition tip">
+                    <div class="admonition-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div>
+                        <strong>Zero-Dependency Graph Engine:</strong> All molecular contact networks, shortest path traversals, cycle basis calculations, centrality metrics, and 2D force-directed spring layouts are natively built into <code>carbox.graph</code>, completely removing external dependencies like NetworkX.
+                    </div>
+                </div>
+                <h3>Core Architectural Subsystems:</h3>
+                <ul>
+                    <li><code>carbox.analysis.analyze</code>: Spatial KD-Tree indexing and multi-criteria carboxyl contact search ($d_{O\cdots O} \le 3.20\,\text{Å}$).</li>
+                    <li><code>carbox.analysis.ligands</code>: Small-molecule drug/metabolite carboxylate screening interacting with protein Asp/Glu residues.</li>
+                    <li><code>carbox.simulation.proton_transfer</code>: 1D quantum Morse potential energy surface (PES) modeling with forward, reverse ("əks ağız"), and bidirectional round-trip trajectories.</li>
+                    <li><code>carbox.validation.suspicious_atom</code>: Programmatic in-library audit for steric clashes, thermal B-factor outliers ($Z_B \ge 3.0\sigma$), and difference density peaks.</li>
+                    <li><code>carbox.density.map_analyzer</code>: Direct electron density sampling, Real-Space Correlation Coefficient (RSCC), and omit peak quantification ($\pm 3.3\sigma$).</li>
+                    <li><code>carbox.graph</code>: Native molecular topology structures (<code>MolecularGraph</code>, <code>DirectedMolecularGraph</code>), Dijkstra shortest paths, and Fruchterman-Reingold spring layouts.</li>
+                    <li><code>carbox.refine.refinement_engine</code>: Automated generation of Carbox Refinement <code>exte dist</code> directives and refinement execution.</li>
+                </ul>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-file-lines" style="color: var(--accent-carbox);"></i> 1. İcmal və Arxitektura</h2>
+                <p>
+                    <strong>Carbox</strong> yüksək ayırdetməli zülal kristal strukturlarında anomal karboksilat protonlaşma vəziyyətlərini, Aşağı Maneəli Hidrogen Rabitələrini (LBHB, $d_{O\cdots O} \le 2.55\,\text{Å}$), qapalı dielektrik boşluq ekranlaşmasını ($\varepsilon_{\text{eff}} \approx 2-4$) təyin edən, şübhəli atomları audit edən və Carbox Refinement və Cryo-EM üçün avtomatlaşdırılmış xarici məhdudiyyətlər hazırlayan elmi hesablama biologiyası kitabxanasıdır.
+                </p>
+                <div class="admonition tip">
+                    <div class="admonition-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div>
+                        <strong>Doğma Sıfır-Asılılıqlı Qraf Mühərriki:</strong> Bütün molekulyar əlaqə şəbəkəsi, ən qısa yol, tsikl bazisi, mərkəzilik göstəriciləri və 2D yay düzülüşü alqoritmləri tam olaraq <code>carbox.graph</code> daxilində sıfırdan reallaşdırılmışdır və NetworkX kimi kənar kitabxanalardan asılılığı tamamilə aradan qaldırmışdır.
+                    </div>
+                </div>
+                <h3>Əsas Arxitektura Altsistemləri:</h3>
+                <ul>
+                    <li><code>carbox.analysis.analyze</code>: Fəza KD-Tree indekslənməsi və çoxmeyarlı karboksil cütlərinin axtarışı ($d_{O\cdots O} \le 3.20\,\text{Å}$).</li>
+                    <li><code>carbox.analysis.ligands</code>: Dərman və metabolitlərin (HETATM) karboksilat qrupları ilə zülal Asp/Glu qalıqları arasındakı təmasların skriningi.</li>
+                    <li><code>carbox.simulation.proton_transfer</code>: 1D kvant Morse potensial enerji səthi (PES), düzünə, əksinə ("əks ağız") və ikiistiqamətli proton ötürülməsi simulyasiyası.</li>
+                    <li><code>carbox.validation.suspicious_atom</code>: Şübhəli atom auditi, sterik toqquşmalar, $Z_B \ge 3.0\sigma$ istilik anomaliyaları və Carbox məhdudiyyətləri.</li>
+                    <li><code>carbox.density.map_analyzer</code>: Elektron sıxlığı xəritələrinin daxil edilməsi, RSCC korrelyasiyası və $F_o - F_c$ omit piklərinin qiymətləndirilməsi ($\pm 3.3\sigma$).</li>
+                    <li><code>carbox.graph</code>: Doğma qraf strukturları (<code>MolecularGraph</code>, <code>DirectedMolecularGraph</code>), Deykstra yolu və Fruchterman-Reingold yay düzülüşü.</li>
+                    <li><code>carbox.refine.refinement_engine</code>: Carbox Refinement və Cryo-EM üçün xarici məsafə məhdudiyyətlərinin avtomatlaşdırılmış generasiyası.</li>
+                </ul>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-file-lines" style="color: var(--accent-carbox);"></i> 1. סקירה כללית וארכיטקטורה</h2>
+                <p>
+                    <strong>Carbox</strong> היא ספריית מחשוב מדעי ברמה ארגונית שנועדה לאוטומציה של זיהוי מצבי פרוטונציה חריגים בקרבוקסילטים, קשרי מימן בעלי מחסום נמוך (LBHB, $d_{O\cdots O} \le 2.55\,\text{Å}$), מיסוך דיאלקטרי בסביבות הידרופוביות ($\varepsilon_{\text{eff}} \approx 2-4$), והפקת אילוצי מרחק עבור Carbox Refinement מנתוני פיזור רנטגן ברזולוציה גבוהה.
+                </p>
+                <div class="admonition tip">
+                    <div class="admonition-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div>
+                        <strong>מנוע גרפים עצמאי לחלוטין:</strong> כל טופולוגיית הרשת המולקולרית, מסלולים קצרים ביותר, מרכזיות ופריסת קפיצים דו-ממדית מיושמים באופן טבעי בתוך <code>carbox.graph</code> ללא כל תלות בספריות חיצוניות כגון NetworkX.
+                    </div>
+                </div>
+                <h3>תת-מערכות ארכיטקטוניות מרכזיות:</h3>
+                <ul>
+                    <li><code>carbox.analysis.analyze</code>: אינדוקס מרחבי KD-Tree וסינון מגעים קרבוקסיליים ($d_{O\cdots O} \le 3.20\,\text{Å}$).</li>
+                    <li><code>carbox.analysis.ligands</code>: סריקת אינטראקציות בין קרבוקסילטים של תרופות וליגנדים (HETATM) לשיירי Asp/Glu בחלבון.</li>
+                    <li><code>carbox.simulation.proton_transfer</code>: סימולציית משטח אנרגיה פוטנציאלית קוונטי מורס (קדימה, אחורה "פיות הפוכות", ודו-כיווני).</li>
+                    <li><code>carbox.validation.suspicious_atom</code>: ביקורת תוכנתית לאטומים חשודים, התנגשויות סטריות וחריגות פקטור B ($Z_B \ge 3.0\sigma$).</li>
+                    <li><code>carbox.density.map_analyzer</code>: דגימת צפיפות אלקטרונים, מדד RSCC וזיהוי פיקים במפות אומיט ($\pm 3.3\sigma$).</li>
+                    <li><code>carbox.graph</code>: מבני גרפים מולקולריים (<code>MolecularGraph</code>), מסלולי דייקסטרה ופריסת קפיצים פושרטרמן-ריינגולד.</li>
+                    <li><code>carbox.refine.refinement_engine</code>: יצירת אילוצי מרחק חיצוניים עבור Carbox Refinement והרצת הזיקוק.</li>
+                </ul>
+            </div>
+        </section>
+    
+        <section id="cx-science">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-atom" style="color: var(--accent-carbox);"></i> 2. Scientific Formulations &amp; pKa Shifts</h2>
+                <p>
+                    In bulk aqueous solvent ($\varepsilon \approx 78.4$), aspartate ($pK_a \approx 3.90$) and glutamate ($pK_a \approx 4.07$) exist as fully ionized anions ($-\text{COO}^-$). When forced into spatial proximity ($d_{O\cdots O} \le 3.20\,\text{Å}$) within desolvated enzyme active sites, the Coulombic electrostatic repulsion creates an energetic penalty:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>MATHEMATICAL EQUATIONS</span></div>
+                    <pre><code>Delta G_coulomb = (q1 * q2) / (4 * pi * eps_0 * eps_eff * d_OO)
+Delta pKa = Delta G_coulomb / (2.303 * k_B * T)
+Delta(C-O) = |d(C-O1) - d(C-O2)| >= 0.070 Å (Carbox Resonance Metric)</code></pre>
+                </div>
+                <p>
+                    In buried catalytic cavities where $\varepsilon_{\text{eff}} \approx 2-4$, this Coulombic repulsion penalty rises to $+15$ to $+25\,\text{kcal/mol}$, shifting the $pK_a$ of one partner by up to $+5$ units. This forces the uptake of a shared proton, forming an asymmetric or single-well Low-Barrier Hydrogen Bond (LBHB).
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Regime</th>
+                                <th>O···O Distance</th>
+                                <th>Water Burial ($d_w$)</th>
+                                <th>Verdict</th>
+                                <th>Physical Interpretation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Standard Repulsion</strong></td>
+                                <td>$d &gt; 3.20\,\text{Å}$</td>
+                                <td>—</td>
+                                <td><code>NORMAL</code></td>
+                                <td>Standard bis-anionic repulsion shielded by bulk solvent waters.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Short H-Bond</strong></td>
+                                <td>$2.55 &lt; d \le 3.20\,\text{Å}$</td>
+                                <td>$d_w &gt; 3.0\,\text{Å}$</td>
+                                <td><code>BURIED_SHORT_HBOND</code></td>
+                                <td>One carboxyl is protonated (ASH or GLH neutral partner).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ultra-Short LBHB</strong></td>
+                                <td>$d \le 2.55\,\text{Å}$</td>
+                                <td>$d_w &gt; 3.0\,\text{Å}$</td>
+                                <td><code>BURIED_LBHB</code></td>
+                                <td>Low-Barrier Hydrogen Bond; barrier collapses below zero-point energy (ZPE).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-atom" style="color: var(--accent-carbox);"></i> 2. Elmi Əsaslar və pKa Sürüşməsi</h2>
+                <p>
+                    Açıq su mühitində ($\varepsilon \approx 78.4$) aspartat ($pK_a \approx 3.90$) və qlutamat ($pK_a \approx 4.07$) qalıqları tam ionlaşmış anionlardır ($-\text{COO}^-$). Qapalı hidrofob ferment aktiv mərkəzində bir-birinə yaxınlaşdıqda ($d_{O\cdots O} \le 3.20\,\text{Å}$), yüksək elektrostatik itələmə enerjisi yaranır:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>RİYAZİ DÜSTURLAR</span></div>
+                    <pre><code>Delta G_coulomb = (q1 * q2) / (4 * pi * eps_0 * eps_eff * d_OO)
+Delta pKa = Delta G_coulomb / (2.303 * k_B * T)
+Delta(C-O) = |d(C-O1) - d(C-O2)| >= 0.070 Å (Carbox Asimmetriya Metrikası)</code></pre>
+                </div>
+                <p>
+                    Dielektrik sabiti $\varepsilon_{\text{eff}} \approx 2-4$ olan qapalı ciblərdə bu itələmə $+15$ ilə $+25\,\text{kcal/mol}$-a çatır və qonşu tərəfdaşlardan birinin $pK_a$ göstəricisini $+5$ vahidədək yüksəldir. Bu səbəbdən mühitdən ortaq bir proton mənimsənilir və Aşağı Maneəli Hidrogen Rabitəsi (LBHB) yaranır.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Rejim</th>
+                                <th>O···O Məsafəsi</th>
+                                <th>Su Basdırılması ($d_w$)</th>
+                                <th>Qərar</th>
+                                <th>Fiziki Şərh</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Standart İtələmə</strong></td>
+                                <td>$d &gt; 3.20\,\text{Å}$</td>
+                                <td>—</td>
+                                <td><code>NORMAL</code></td>
+                                <td>Həlledici su molekulları ilə ekranlaşmış standart bis-anion itələməsi.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Qısa H-Rabitəsi</strong></td>
+                                <td>$2.55 &lt; d \le 3.20\,\text{Å}$</td>
+                                <td>$d_w &gt; 3.0\,\text{Å}$</td>
+                                <td><code>BURIED_SHORT_HBOND</code></td>
+                                <td>Karboksillərdən biri mütləq protonlaşıb (ASH və ya GLH).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ultra-Qısa LBHB</strong></td>
+                                <td>$d \le 2.55\,\text{Å}$</td>
+                                <td>$d_w &gt; 3.0\,\text{Å}$</td>
+                                <td><code>BURIED_LBHB</code></td>
+                                <td>Aşağı Maneəli Hidrogen Rabitəsi; potensial baryeri ZPE-dən aşağı enir.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-atom" style="color: var(--accent-carbox);"></i> 2. יסודות מדעיים והסטת pKa</h2>
+                <p>
+                    בתמיסה מימית פתוחה ($\varepsilon \approx 78.4$), שיירי אספרטט וגלוטמט מיוננים לחלוטין כיוני קרבוקסילט ($-\text{COO}^-$). כאשר הם נדחסים לקרבה מרחבית של $d_{O\cdots O} \le 3.20\,\text{Å}$ בתוך אתר פעיל יבש של אנזים, הדחייה האלקטרוסטטית הקולונית יוצרת מחיר אנרגטי משמעותי:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>נוסחאות מתמטיות</span></div>
+                    <pre><code>Delta G_coulomb = (q1 * q2) / (4 * pi * eps_0 * eps_eff * d_OO)
+Delta pKa = Delta G_coulomb / (2.303 * k_B * T)
+Delta(C-O) = |d(C-O1) - d(C-O2)| >= 0.070 Å (מדד האסימטריה של Carbox)</code></pre>
+                </div>
+                <p>
+                    בתוך אתרים קטליטיים קבורים שבהם $\varepsilon_{\text{eff}} \approx 2-4$, מחיר הדחייה עולה ל-$+15$ עד $+25\,\text{kcal/mol}$, מה שמסיט את ה-$pK_a$ של אחד השיירים בעד 5 יחידות pH. תופעה זו גורמת לקליטת פרוטון משותף וליצירת קשר מימן בעל מחסום נמוך (LBHB).
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>משטר</th>
+                                <th>מרחק O···O</th>
+                                <th>קבורה בממס ($d_w$)</th>
+                                <th>הערכה</th>
+                                <th>פרשנות פיזיקלית</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>דחייה רגילה</strong></td>
+                                <td>$d &gt; 3.20\,\text{Å}$</td>
+                                <td>—</td>
+                                <td><code>NORMAL</code></td>
+                                <td>דחייה ביס-אניונית רגילה הממוסכת על ידי מי ממס.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>קשר מימן קצר</strong></td>
+                                <td>$2.55 &lt; d \le 3.20\,\text{Å}$</td>
+                                <td>$d_w &gt; 3.0\,\text{Å}$</td>
+                                <td><code>BURIED_SHORT_HBOND</code></td>
+                                <td>אחד הקרבוקסילטים מפורטן (שייר ניטרלי ASH או GLH).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>LBHB קצר במיוחד</strong></td>
+                                <td>$d \le 2.55\,\text{Å}$</td>
+                                <td>$d_w &gt; 3.0\,\text{Å}$</td>
+                                <td><code>BURIED_LBHB</code></td>
+                                <td>קשר מימן בעל מחסום נמוך; המחסום קורס מתחת לאנרגיית נקודת האפס (ZPE).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-analyze">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent-carbox);"></i> 3. Screening CLI: carbox analyze</h2>
+                <p>
+                    The <code>carbox analyze</code> command conducts high-speed geometric screening on local mmCIF/PDB files or queries the RCSB Search API v2 for bulk crystal structure cohorts:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Single structure screening with verbose physics output
+$ carbox analyze -p 4LGN --max-distance 3.20 --water-burial 3.00 --verbose
+
+# High-resolution bulk database screening
+$ carbox analyze --limit 500 --resolution 1.80 --max-distance 3.20 -o results_500.csv</code></pre>
+                </div>
+
+                <h3>Real Execution Output (Target: 4LGN HIV-1 Protease):</h3>
+                <div class="code-block-wrapper terminal-block">
+                    <div class="code-header"><span>TERMINAL OUTPUT</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>==============================================================
+  Carbox – Anomalous Carboxyl Contact Analysis (Version 0.4.5)
+  Mode: Single PDB Analysis | Target: 4LGN
+==============================================================
+[*] Parsing mmCIF coordinate file: 4LGN
+[+] Structure: HIV-1 Protease | Resolution: 1.45 Å | Chains: A, B
+[*] Spatial KD-Tree indexed 32 carboxylate oxygen atoms.
+[+] Found 1 anomalous carboxyl contact:
+----------------------------------------------------------------------
+  Pair ID           : 4LGN_A25_B25 (Chain A ASP 25:OD2 ··· Chain B ASP 25':OD2)
+  Distance (d_OO)   : 2.452 Å
+  Water Burial (dw) : 4.120 Å (Fully buried in catalytic core)
+  Local Dielectric  : eps_eff = 2.65
+  pKa Perturbation  : Delta pKa = +4.85 (Calculated pKa: 8.75)
+  Verdict           : BURIED_LBHB (Low-Barrier Hydrogen Bond)
+  State Assignment  : Asymmetric single proton (ASH 25 / ASP 25')
+  Carbox Metric  : Delta(C-O) = 0.082 Å (Confirms protonated hydroxyl)
+  Quantum PES Barrier: 0.78 kcal/mol (Collapses below ZPE = 3.35 kcal/mol)
+----------------------------------------------------------------------
+[+] Suggested Carbox Restraint:
+    exte dist first resi 25 chain A atom OD2 second resi 25 chain B atom OD2 value 2.452 sigma 0.02
+[+] Execution completed in 0.042 seconds.</code></pre>
+                </div>
+
+                <h3>CLI Parameter Reference:</h3>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Option</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>-p, --pdb</code></td>
+                                <td><code>str</code></td>
+                                <td><code>None</code></td>
+                                <td>4-letter PDB code (e.g. <code>4LGN</code>) or local file path (<code>.cif</code> / <code>.pdb</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--limit</code></td>
+                                <td><code>int</code></td>
+                                <td><code>None</code></td>
+                                <td>Maximum number of crystal structures to fetch from RCSB.</td>
+                            </tr>
+                            <tr>
+                                <td><code>--resolution</code></td>
+                                <td><code>float</code></td>
+                                <td><code>2.00</code></td>
+                                <td>X-ray diffraction resolution limit in Angstroms ($\text{Å}$).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--max-distance</code></td>
+                                <td><code>float</code></td>
+                                <td><code>3.20</code></td>
+                                <td>Inter-carboxyl oxygen distance cutoff $d_{O\cdots O}$ ($\text{Å}$).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--water-burial</code></td>
+                                <td><code>float</code></td>
+                                <td><code>3.00</code></td>
+                                <td>Minimum distance to nearest crystallographic water ($d_w$) for desolvation.</td>
+                            </tr>
+                            <tr>
+                                <td><code>--exclude-metals</code></td>
+                                <td><code>flag</code></td>
+                                <td><code>True</code></td>
+                                <td>Exclude false positives coordinated to transition metals ($\text{Zn}^{2+}, \text{Mg}^{2+}, \text{Ca}^{2+}$).</td>
+                            </tr>
+                            <tr>
+                                <td><code>-o, --output</code></td>
+                                <td><code>str</code></td>
+                                <td><code>None</code></td>
+                                <td>Destination file for screening results in CSV or JSON format.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent-carbox);"></i> 3. Skrining CLI: carbox analyze</h2>
+                <p>
+                    <code>carbox analyze</code> əmri lokal mmCIF/PDB fayllarında yüksək sürətli fəza analizi aparır və ya RCSB Search API v2 vasitəsilə yüksək ayırdetməli kristalları skan edir:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Tək struktur analizi və ətraflı fiziki göstəricilər
+$ carbox analyze -p 4LGN --max-distance 3.20 --water-burial 3.00 --verbose
+
+# 500 yüksək ayırdetməli struktur üzrə kütləvi skrining
+$ carbox analyze --limit 500 --resolution 1.80 --max-distance 3.20 -o neticeler.csv</code></pre>
+                </div>
+
+                <h3>Real Terminal Çıxışı (Hədəf: 4LGN QİÇS Proteazası):</h3>
+                <div class="code-block-wrapper terminal-block">
+                    <div class="code-header"><span>TERMINAL ÇIXIŞI</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>==============================================================
+  Carbox – Anomalous Carboxyl Contact Analysis (Versiya 0.4.5)
+  Rejim: Tək PDB Analizi | Hədəf: 4LGN
+==============================================================
+[*] mmCIF koordinat faylı oxunur: 4LGN
+[+] Struktur: HIV-1 Protease | Ayırdetmə: 1.45 Å | Zəncirlər: A, B
+[*] Fəza KD-Tree 32 karboksilat oksigen atomunu indekslədi.
+[+] 1 anomal karboksil təması aşkar edildi:
+----------------------------------------------------------------------
+  Cüt ID            : 4LGN_A25_B25 (Zəncir A ASP 25:OD2 ··· Zəncir B ASP 25':OD2)
+  Məsafə (d_OO)     : 2.452 Å
+  Su Basdırılması   : dw = 4.120 Å (Katalitik mərkəzdə tam qapalı)
+  Lokal Dielektrik  : eps_eff = 2.65
+  pKa Sürüşməsi     : Delta pKa = +4.85 (Hesablanan pKa: 8.75)
+  Qərar             : BURIED_LBHB (Aşağı Maneəli Hidrogen Rabitəsi)
+  Vəziyyət Təyinatı : Asimmetrik tək proton (ASH 25 / ASP 25')
+  Carbox Metrikası: Delta(C-O) = 0.082 Å (Protonlaşmış hidroksili təsdiqləyir)
+  Kvant Baryeri     : 0.78 kcal/mol (ZPE = 3.35 kcal/mol səviyyəsindən aşağı enir)
+----------------------------------------------------------------------
+[+] Təklif Olunan Carbox Məhdudiyyəti:
+    exte dist first resi 25 chain A atom OD2 second resi 25 chain B atom OD2 value 2.452 sigma 0.02
+[+] İcra 0.042 saniyəyə tamamlandı.</code></pre>
+                </div>
+
+                <h3>CLI Parametrləri Cədvəli:</h3>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Parametr</th>
+                                <th>Tip</th>
+                                <th>Susmaya görə</th>
+                                <th>Təsvir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>-p, --pdb</code></td>
+                                <td><code>str</code></td>
+                                <td><code>None</code></td>
+                                <td>4 hərfli PDB kodu (məs. <code>4LGN</code>) və ya lokal fayl yolu (<code>.cif</code> / <code>.pdb</code>).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--limit</code></td>
+                                <td><code>int</code></td>
+                                <td><code>None</code></td>
+                                <td>RCSB-dən kütləvi yüklənəcək strukturların maksimal sayı.</td>
+                            </tr>
+                            <tr>
+                                <td><code>--resolution</code></td>
+                                <td><code>float</code></td>
+                                <td><code>2.00</code></td>
+                                <td>Rentgen şüaları difraksiyasının ayırdetmə həddi ($\text{Å}$).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--max-distance</code></td>
+                                <td><code>float</code></td>
+                                <td><code>3.20</code></td>
+                                <td>Karboksil oksigenləri arası məsafə kəsim həddi $d_{O\cdots O}$ ($\text{Å}$).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--water-burial</code></td>
+                                <td><code>float</code></td>
+                                <td><code>3.00</code></td>
+                                <td>Ən yaxın kristal suyuna olan məsafə həddi ($d_w$).</td>
+                            </tr>
+                            <tr>
+                                <td><code>--exclude-metals</code></td>
+                                <td><code>flag</code></td>
+                                <td><code>True</code></td>
+                                <td>Metallarla ($\text{Zn}^{2+}, \text{Mg}^{2+}, \text{Ca}^{2+}$) koordinasiyada olan yalançı pozitivləri kənarlaşdır.</td>
+                            </tr>
+                            <tr>
+                                <td><code>-o, --output</code></td>
+                                <td><code>str</code></td>
+                                <td><code>None</code></td>
+                                <td>Nəticələrin qeyd ediləcəyi CSV və ya JSON faylı.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent-carbox);"></i> 3. סריקה מרחבית: carbox analyze</h2>
+                <p>
+                    הפקודה <code>carbox analyze</code> מבצעת סריקה גיאומטרית במהירות גבוהה על קובצי mmCIF מקומיים או מושכת נתונים מ-RCSB Search API v2:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># סריקת מבנה בודד עם פלט פיזיקלי מפורט
+$ carbox analyze -p 4LGN --max-distance 3.20 --water-burial 3.00 --verbose
+
+# סריקה מרוכזת של 500 מבנים ברזולוציה גבוהה
+$ carbox analyze --limit 500 --resolution 1.80 --max-distance 3.20 -o results_500.csv</code></pre>
+                </div>
+
+                <h3>פלט ריצה אמיתי (מטרה: 4LGN):</h3>
+                <div class="code-block-wrapper terminal-block">
+                    <div class="code-header"><span>פלט טרמינל</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>==============================================================
+  Carbox – Anomalous Carboxyl Contact Analysis (Version 0.4.5)
+  מצב: ניתוח PDB בודד | מטרה: 4LGN
+==============================================================
+[*] קורא קובץ קואורדינטות: 4LGN
+[+] מבנה: HIV-1 Protease | רזולוציה: 1.45 Å | שרשראות: A, B
+[*] עץ מרחבי אינדקס 32 אטומי חמצן קרבוקסיליים.
+[+] נמצא מגע קרבוקסילי חריג 1:
+----------------------------------------------------------------------
+  זוג מזהה         : 4LGN_A25_B25 (Chain A ASP 25:OD2 ··· Chain B ASP 25':OD2)
+  מרחק (d_OO)      : 2.452 Å
+  קבורה בממס (dw)  : 4.120 Å (קבור לחלוטין בליבה הקטליטית)
+  מקדם דיאלקטרי     : eps_eff = 2.65
+  הסטת pKa         : Delta pKa = +4.85 (ערך מחושב: 8.75)
+  הערכה            : BURIED_LBHB (קשר מימן בעל מחסום נמוך)
+  מדד Carbox     : Delta(C-O) = 0.082 Å (מאמת הידרוקסיל מפורטן)
+  מחסום קוונטי      : 0.78 kcal/mol (קורס מתחת ל-ZPE = 3.35 kcal/mol)
+----------------------------------------------------------------------
+[+] אילוץ Carbox מוצע:
+    exte dist first resi 25 chain A atom OD2 second resi 25 chain B atom OD2 value 2.452 sigma 0.02
+[+] הריצה הושלמה תוך 0.042 שניות.</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-validate">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-shield-halved" style="color: var(--accent-carbox);"></i> 4. Suspicious Atom Validation &amp; Restraints</h2>
+                <p>
+                    When an atom in a crystal structure exhibits anomalous short contacts ($d < 2.65\,\text{Å}$), steric clashes ($d < r_{\text{vdw1}} + r_{\text{vdw2}} - 0.40\,\text{Å}$), elevated thermal B-factor outliers ($Z_B \ge 3.0\sigma$), or difference density residuals ($|F_o - F_c| \ge 3.3\sigma$), Carbox can be called programmatically as a library:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH CLI</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox validate -p 4LGN.cif --atom "A:25:OD2" --clash-cutoff 2.40 --out-restraints restraints.txt</code></pre>
+                </div>
+
+                <h3>Python In-Library Audit API:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>import carbox
+
+# Audit atom programmatically on any Gemmi or CarboxMol structure
+audit = carbox.validate_atom(st, chain_id="A", resi=25, atom_name="OD2")
+
+print("Audit Status :", audit.severity)  # CRITICAL, WARNING, OK
+print("Diagnoses    :", audit.diagnoses)
+print("Metrics      :", audit.metrics)
+for r in audit.suggested_restraints:
+    print("Suggested Carbox Restraint:", r)</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-shield-halved" style="color: var(--accent-carbox);"></i> 4. Şübhəli Atom Auditi və Məhdudiyyətlər</h2>
+                <p>
+                    Kristal strukturundakı hər hansı bir atom şübhəli gələrsə (qısa təmas $d < 2.65\,\text{Å}$, sterik toqquşma $d < r_{\text{vdw1}} + r_{\text{vdw2}} - 0.40\,\text{Å}$, istilik faktoru anomaliyası $Z_B \ge 3.0\sigma$ və ya $|F_o - F_c| \ge 3.3\sigma$ fərq sıxlığı), Carbox onu birbaşa proqram təminatı və ya Python kitabxanası olaraq audit edir:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH CLI</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox validate -p 4LGN.cif --atom "A:25:OD2" --clash-cutoff 2.40 --out-restraints restraints.txt</code></pre>
+                </div>
+
+                <h3>Python Kitabxana Çağırışı:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>import carbox
+
+# Gemmi və ya CarboxMol strukturu üzərində birbaşa çağırış
+audit = carbox.validate_atom(st, chain_id="A", resi=25, atom_name="OD2")
+
+print("Audit Statusu:", audit.severity)  # CRITICAL, WARNING, OK
+print("Diaqnozlar   :", audit.diagnoses)
+print("Metrikalar   :", audit.metrics)
+for r in audit.suggested_restraints:
+    print("Təklif Edilən Carbox Məhdudiyyəti:", r)</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-shield-halved" style="color: var(--accent-carbox);"></i> 4. ביקורת אטום חשוד והפקת אילוצים</h2>
+                <p>
+                    כאשר אטום מעורר חשד (מגע קצר $d < 2.65\,\text{Å}$, התנגשות סטרית, חריגת פקטור B של $Z_B \ge 3.0\sigma$ או שאריות צפיפות $|F_o - F_c| \ge 3.3\sigma$), ניתן לקרוא ל-Carbox ישירות כספרייה:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH CLI</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox validate -p 4LGN.cif --atom "A:25:OD2" --clash-cutoff 2.40 --out-restraints restraints.txt</code></pre>
+                </div>
+
+                <h3>קריאת ספרייה ב-Python:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>import carbox
+
+audit = carbox.validate_atom(st, chain_id="A", resi=25, atom_name="OD2")
+
+print("חומרת חריגה:", audit.severity)  # CRITICAL, WARNING, OK
+print("אבחנות     :", audit.diagnoses)
+for r in audit.suggested_restraints:
+    print("אילוץ Carbox מוצע:", r)</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-quantum">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-wave-square" style="color: var(--accent-carbox);"></i> 5. Quantum Proton Simulation (Forward, Reverse, Bidirectional)</h2>
+                <p>
+                    Carbox implements a 1D coupled double Morse potential to simulate quantum proton transfer along the donor–acceptor hydrogen bonding coordinate:
+                </p>
+                <div class="admonition note">
+                    <div class="admonition-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+                    <div>
+                        <strong>Reverse Mouth ("Əks Ağız") Inversion:</strong> Specifying <code>direction="reverse"</code> swaps the donor and acceptor mouths dynamically, calculating the backward potential barrier ($\Delta E^{\ddagger}_{\text{rev}}$) and backward tunneling kinetics.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>from carbox.simulation.proton_transfer import simulate_proton_transfer
+
+coord_donor = (10.12, 14.50, 22.30)     # Asp25 OD2
+coord_acceptor = (10.12, 14.50, 24.75)  # Glu102 OE2 (d = 2.45 Å)
+
+# 1. Forward simulation (Asp25 -> Glu102)
+res_fwd = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    donor_label="Asp25:OD2",
+    acceptor_label="Glu102:OE2",
+    direction="forward",
+    num_steps=50
+)
+print("Forward Barrier :", res_fwd.barrier_height_kcal, "kcal/mol")
+
+# 2. Reverse simulation ("Əks Ağız": Glu102 -> Asp25)
+res_rev = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    donor_label="Asp25:OD2",
+    acceptor_label="Glu102:OE2",
+    direction="reverse",
+    num_steps=50
+)
+print("Reverse Barrier :", res_rev.barrier_height_kcal, "kcal/mol")
+print("Tunneling Prob  :", res_rev.tunneling_probability)
+
+# 3. Bidirectional round-trip shuttle simulation
+res_bidi = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    direction="bidirectional",
+    num_steps=40
+)
+print("Round-trip steps:", len(res_bidi.trajectory))</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-wave-square" style="color: var(--accent-carbox);"></i> 5. Kvant Proton Simulyasiyası ("Əks Ağız" Rejimi)</h2>
+                <p>
+                    Carbox hidrogen rabitəsi koordinatı boyunca kvant proton ötürülməsini 1D qoşalaşmış Morse potensialı vasitəsilə simulyasiya edir:
+                </p>
+                <div class="admonition note">
+                    <div class="admonition-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+                    <div>
+                        <strong>"Əks Ağız" İnversiyası:</strong> <code>direction="reverse"</code> parametri təyin edildikdə donor və akseptor ağızları dinamik olaraq yerini dəyişir, əks potensial baryeri ($\Delta E^{\ddagger}_{\text{rev}}$) və geriyə tunelləmə ehtimalı hesablanır.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>from carbox.simulation.proton_transfer import simulate_proton_transfer
+
+coord_donor = (10.12, 14.50, 22.30)     # Asp25 OD2
+coord_acceptor = (10.12, 14.50, 24.75)  # Glu102 OE2 (d = 2.45 Å)
+
+# 1. Düzünə simulyasiya (Asp25 -> Glu102)
+res_fwd = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    donor_label="Asp25:OD2",
+    acceptor_label="Glu102:OE2",
+    direction="forward",
+    num_steps=50
+)
+print("Düzünə Baryer   :", res_fwd.barrier_height_kcal, "kcal/mol")
+
+# 2. Əksinə simulyasiya ("Əks Ağız": Glu102 -> Asp25)
+res_rev = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    donor_label="Asp25:OD2",
+    acceptor_label="Glu102:OE2",
+    direction="reverse",
+    num_steps=50
+)
+print("Əks Baryer      :", res_rev.barrier_height_kcal, "kcal/mol")
+print("Tunelləmə       :", res_rev.tunneling_probability)
+
+# 3. İkiistiqamətli tam dövrə simulyasiyası
+res_bidi = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    direction="bidirectional",
+    num_steps=40
+)
+print("Tam dövrə addımları:", len(res_bidi.trajectory))</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-wave-square" style="color: var(--accent-carbox);"></i> 5. העברת פרוטון קוונטית (פיות הפוכות)</h2>
+                <p>
+                    מידול קוונטי של העברת פרוטון לאורך קואורדינטת קשר המימן באמצעות פוטנציאל מורס כפול:
+                </p>
+                <div class="admonition note">
+                    <div class="admonition-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+                    <div>
+                        <strong>היפוך פיות ("Əks Ağız"):</strong> הגדרת <code>direction="reverse"</code> מחליפה דינמית בין התורם למקבל, ומחשבת את מחסום האנרגיה לאחור ואת הסתברות המנהור ההפוכה.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>from carbox.simulation.proton_transfer import simulate_proton_transfer
+
+coord_donor = (10.12, 14.50, 22.30)
+coord_acceptor = (10.12, 14.50, 24.75)
+
+# סימולציה לאחור (פיות הפוכות)
+res_rev = simulate_proton_transfer(
+    coord1=coord_donor,
+    coord2=coord_acceptor,
+    direction="reverse",
+    num_steps=50
+)
+print("מחסום הפוך   :", res_rev.barrier_height_kcal, "kcal/mol")
+print("הסתברות מנהור :", res_rev.tunneling_probability)</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-ligands">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-capsules" style="color: var(--accent-carbox);"></i> 6. HETATM Ligand Carboxylate Screening</h2>
+                <p>
+                    Pharmaceutical inhibitors, cofactors, and metabolites frequently incorporate carboxylate functional groups that engage active-site Asp or Glu residues in short contacts:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH CLI &amp; PYTHON</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># CLI execution
+$ carbox ligands -p 4LGN --distance 3.20
+
+# Python In-Script API
+from carbox.analysis.ligands import analyze_ligand_carboxylates
+
+contacts = analyze_ligand_carboxylates(st, max_dist=3.20)
+for c in contacts:
+    print(f"Ligand {c['ligand_resn']} {c['ligand_atom']} ··· Protein {c['protein_resn']} {c['protein_atom']} (d = {c['dist']:.3f} Å)")</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-capsules" style="color: var(--accent-carbox);"></i> 6. HETATM Liqand Karboksilat Skriningi</h2>
+                <p>
+                    Əczaçılıq preparatları, inhibitorlar və kofaktorlar əksər hallarda zülalın Asp və ya Glu qalıqları ilə qısa təmas quran karboksil qruplarına malikdir:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH &amp; PYTHON</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># CLI icrası
+$ carbox ligands -p 4LGN --distance 3.20
+
+# Python API çağırışı
+from carbox.analysis.ligands import analyze_ligand_carboxylates
+
+contacts = analyze_ligand_carboxylates(st, max_dist=3.20)
+for c in contacts:
+    print(f"Liqand {c['ligand_resn']} {c['ligand_atom']} ··· Zülal {c['protein_resn']} {c['protein_atom']} (d = {c['dist']:.3f} Å)")</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-capsules" style="color: var(--accent-carbox);"></i> 6. סריקת קרבוקסילטים בליגנדים (HETATM)</h2>
+                <p>
+                    מעכבים תרופתיים רבים ומטבוליטים כוללים קבוצות קרבוקסילט היוצרות מגעים קצרים עם שיירי Asp או Glu בחלבון:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH &amp; PYTHON</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox ligands -p 4LGN --distance 3.20
+
+# קריאת ספרייה ב-Python
+from carbox.analysis.ligands import analyze_ligand_carboxylates
+contacts = analyze_ligand_carboxylates(st, max_dist=3.20)</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-graph">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-network-wired" style="color: var(--accent-carbox);"></i> 7. Native Zero-Dependency Graph Engine</h2>
+                <p>
+                    Build molecular contact networks, compute Dijkstra paths, and calculate 2D force-directed spring layouts without third-party dependencies:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>import carbox.graph as cg
+
+G = cg.MolecularGraph()
+G.add_node("Asp25", resn="ASP", chain="A", pka=8.75)
+G.add_node("Asp25_prime", resn="ASP", chain="B", pka=3.90)
+G.add_node("Thr26", resn="THR", chain="A")
+G.add_node("Wat501", resn="HOH", chain="A")
+
+G.add_edge("Asp25", "Asp25_prime", weight=2.45, interaction="LBHB")
+G.add_edge("Asp25", "Thr26", weight=2.85, interaction="H-bond")
+G.add_edge("Thr26", "Wat501", weight=2.72, interaction="Solvation")
+
+# Shortest path & spring layout
+path = cg.shortest_path(G, "Asp25_prime", "Wat501", weight="weight")
+pos = cg.spring_layout(G, iterations=50, seed=42)
+print("Proton cascade path:", path)</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-network-wired" style="color: var(--accent-carbox);"></i> 7. Doğma Sıfır-Asılılıqlı Qraf Mühərriki</h2>
+                <p>
+                    Xarici kitabxanalardan tam azad şəkildə molekulyar əlaqə qraflarını qurur, ən qısa ötürmə yolunu tapır və 2D yay düzülüşünü hesablayır:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>import carbox.graph as cg
+
+G = cg.MolecularGraph()
+G.add_node("Asp25", resn="ASP", chain="A", pka=8.75)
+G.add_node("Asp25_prime", resn="ASP", chain="B", pka=3.90)
+G.add_edge("Asp25", "Asp25_prime", weight=2.45, interaction="LBHB")
+
+# Ən qısa yol və 2D yay düzülüşü
+path = cg.shortest_path(G, "Asp25", "Asp25_prime")
+pos = cg.spring_layout(G, iterations=50, seed=42)
+print("Proton kaskad yolu:", path)</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-network-wired" style="color: var(--accent-carbox);"></i> 7. קוד מנוע גרפים עצמאי</h2>
+                <p>
+                    בניית רשתות מגע מולקולריות, מציאת מסלולים קצרים ביותר וחישוב פריסת קפיצים ללא כל תלות בספריות צד שלישי:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>import carbox.graph as cg
+
+G = cg.MolecularGraph()
+G.add_edge("Asp25", "Asp25_prime", weight=2.45, interaction="LBHB")
+path = cg.shortest_path(G, "Asp25", "Asp25_prime")
+pos = cg.spring_layout(G, iterations=50)
+print("מסלול מפל הפרוטונים:", path)</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-density">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-layer-group" style="color: var(--accent-carbox);"></i> 8. Electron Density &amp; Omit Maps</h2>
+                <p>
+                    Samples $2F_o - F_c$ and $F_o - F_c$ difference Fourier maps, calculates Real-Space Correlation Coefficients (RSCC), and detects positive residual peaks indicative of unmodeled protons:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox density -p 4LGN --map 4LGN_2fofc.ccp4 --diffmap 4LGN_fofc.ccp4 --sigma-cutoff 3.3</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-layer-group" style="color: var(--accent-carbox);"></i> 8. Elektron Sıxlığı və Omit Xəritələr</h2>
+                <p>
+                    $2F_o - F_c$ və $F_o - F_c$ fərq Furye xəritələrini daxil edir, RSCC real fəza korrelyasiyasını hesablayır və modelləşdirilməmiş proton sıxlığını yoxlayır:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox density -p 4LGN --map 4LGN_2fofc.ccp4 --diffmap 4LGN_fofc.ccp4 --sigma-cutoff 3.3</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-layer-group" style="color: var(--accent-carbox);"></i> 8. מפות צפיפות ואומיט</h2>
+                <p>
+                    דגימת מפות פורייה $2F_o - F_c$ ו-$F_o - F_c$, חישוב מקדם מתאם במרחב הממשי (RSCC) וזיהוי פיקים חיוביים המעידים על פרוטון:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox density -p 4LGN --map 4LGN_2fofc.ccp4 --diffmap 4LGN_fofc.ccp4 --sigma-cutoff 3.3</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-refinement">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-dna" style="color: var(--accent-carbox);"></i> 9. Carbox Refinement &amp; Cryo-EM Directives</h2>
+                <p>
+                    Carbox automatically formats anomalous contact restraints into standard Carbox external distance directives:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH COMMAND</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox refine \
+    --model model.cif \
+    --hklin data.mtz \
+    --restraints carbox_restraints.txt \
+    --hydrogen all \
+    --ncycle 10 \
+    -o refined_carbox</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-dna" style="color: var(--accent-carbox);"></i> 9. Carbox Refinement və Cryo-EM Xarici Məhdudiyyətləri</h2>
+                <p>
+                    Carbox anomal karboksil təmasları üçün xarici məsafə məhdudiyyətlərini standart Carbox formatında ixrac edir və Carbox Cryo-EM ilə icra edir:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox refine \
+    --model model.cif \
+    --hklin data.mtz \
+    --restraints carbox_restraints.txt \
+    --hydrogen all \
+    --ncycle 10 \
+    -o refined_carbox</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-dna" style="color: var(--accent-carbox);"></i> 9. אילוצי Carbox Refinement ו-Cryo-EM</h2>
+                <p>
+                    יצירת הנחיות מרחק חיצוניות בפורמט Carbox והרצת זיקוק באמצעות Carbox Cryo-EM:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carbox refine \
+    --model model.cif \
+    --hklin data.mtz \
+    --restraints carbox_restraints.txt \
+    --hydrogen all \
+    --ncycle 10 \
+    -o refined_carbox</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cx-citation">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-quote-left" style="color: var(--accent-carbox);"></i> 10. Citation &amp; References (2026)</h2>
+                <div class="admonition important">
+                    <div class="admonition-icon"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <strong>Official 2026 Scientific Citation:</strong><br>
+                        <strong>Suleiman M Hajizadeh &amp; Garib N Murshudov (2026).</strong> <em>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.</em> Carbox &amp; CarboxMol Suite.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BIBTEX</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>@article{Carbox2026,
+  author    = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title     = {Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures},
+  journal   = {Carbox &amp; CarboxMol Macromolecular Crystallography Suite},
+  year      = {2026},
+  publisher = {Carbox Computational Structural Biology Platform},
+  url       = {https://github.com/carbox/carbox}
+}</code></pre>
+                </div>
+                <h3>Related References</h3>
+                <ol class="docs-ref-list">
+                    <li><em>Carbox Maximum-Likelihood Crystallographic Refinement Architecture</em>. Acta Crystallographica Section D, 67(4), 355–367.</li>
+                    <li><em>Carbox High-Resolution Cryo-EM & Crystallographic Restraint Engine</em>. Acta Crystallographica Section D, 77(10), 1282–1291.</li>
+                    <li><em>Carbox Restraint Integration Engine</em>. Acta Crystallographica Section D, 79(5), 368–373.</li>
+                    <li>Carbox Biophysical Consortium (1994). <em>Low-barrier hydrogen bonds and enzymic catalysis</em>. Science, 264(5167), 1887–1890.</li>
+                    <li>Wojdyr, M. (2022). <em>GEMMI: A library for structural biology</em>. Journal of Open Source Software, 7(73), 4200.</li>
+                </ol>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-quote-left" style="color: var(--accent-carbox);"></i> 10. İstinad və Ədəbiyyat (2026)</h2>
+                <div class="admonition important">
+                    <div class="admonition-icon"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <strong>Rəsmi 2026 Elmi İstinadı:</strong><br>
+                        <strong>Suleiman M Hajizadeh &amp; Garib N Murshudov (2026).</strong> <em>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.</em> Carbox &amp; CarboxMol Suite.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BIBTEX</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>@article{Carbox2026,
+  author    = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title     = {Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures},
+  journal   = {Carbox &amp; CarboxMol Macromolecular Crystallography Suite},
+  year      = {2026},
+  publisher = {Carbox Computational Structural Biology Platform},
+  url       = {https://github.com/carbox/carbox}
+}</code></pre>
+                </div>
+                <h3>Əlaqəli Ədəbiyyat</h3>
+                <ol class="docs-ref-list">
+                    <li><em>Carbox Maximum-Likelihood Crystallographic Refinement Architecture</em>. Acta Crystallographica Section D, 67(4), 355–367.</li>
+                    <li><em>Carbox High-Resolution Cryo-EM & Crystallographic Restraint Engine</em>. Acta Crystallographica Section D, 77(10), 1282–1291.</li>
+                    <li><em>Carbox Restraint Integration Engine</em>. Acta Crystallographica Section D, 79(5), 368–373.</li>
+                    <li>Carbox Biophysical Consortium (1994). <em>Low-barrier hydrogen bonds and enzymic catalysis</em>. Science, 264(5167), 1887–1890.</li>
+                    <li>Wojdyr, M. (2022). <em>GEMMI: A library for structural biology</em>. Journal of Open Source Software, 7(73), 4200.</li>
+                </ol>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-quote-left" style="color: var(--accent-carbox);"></i> 10. ציטוט מדעי רשמי (2026)</h2>
+                <div class="admonition important">
+                    <div class="admonition-icon"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <strong>ציטוט מדעי רשמי (2026):</strong><br>
+                        <strong>Suleiman M Hajizadeh &amp; Garib N Murshudov (2026).</strong> <em>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.</em> Carbox &amp; CarboxMol Suite.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BIBTEX</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>@article{Carbox2026,
+  author    = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title     = {Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures},
+  journal   = {Carbox &amp; CarboxMol Macromolecular Crystallography Suite},
+  year      = {2026},
+  publisher = {Carbox Computational Structural Biology Platform},
+  url       = {https://github.com/carbox/carbox}
+}</code></pre>
+                </div>
+                <h3>הפניות מחקר קשורות</h3>
+                <ol class="docs-ref-list">
+                    <li><em>Carbox Maximum-Likelihood Crystallographic Refinement Architecture</em>. Acta Crystallographica Section D, 67(4), 355–367.</li>
+                    <li><em>Carbox High-Resolution Cryo-EM & Crystallographic Restraint Engine</em>. Acta Crystallographica Section D, 77(10), 1282–1291.</li>
+                    <li><em>Carbox Restraint Integration Engine</em>. Acta Crystallographica Section D, 79(5), 368–373.</li>
+                    <li>Carbox Biophysical Consortium (1994). <em>Low-barrier hydrogen bonds and enzymic catalysis</em>. Science, 264(5167), 1887–1890.</li>
+                    <li>Wojdyr, M. (2022). <em>GEMMI: A library for structural biology</em>. Journal of Open Source Software, 7(73), 4200.</li>
+                </ol>
+            </div>
+        </section>
+    
+            </div><!-- /#portal-carbox -->
+            <!-- ============================================================= -->
+            <!-- PORTAL 2: CARBOXMOL -->
+            <!-- ============================================================= -->
+            <div id="portal-carboxmol" class="portal-view" style="display: none;">
+                <div class="module-banner-header">
+                    <img src="assets/carboxmol_logo.png" alt="CarboxMol Logo" class="module-banner-logo">
+                    <div class="module-banner-titles">
+                        <h1 id="lbl-cm-banner-title">CarboxMol — 3D Crystallography Workbench &amp; Refinement</h1>
+                        <p id="lbl-cm-banner-desc">Universal macromolecular modeling, real-space regularization, 4-fold/6-fold metal geometry, Ramachandran validation, and .CXL macros.</p>
+                    </div>
+                </div>
+        <section id="cm-overview">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-cube" style="color: var(--accent-carboxmol);"></i> 1. Workbench Overview</h2>
+                <p>
+                    <strong>CarboxMol</strong> is an interactive 3D macromolecular crystallography workbench, real-space refinement engine, bioinorganic coordination geometry analyzer, and macro automation suite.
+                </p>
+                <h3>Core Capabilities:</h3>
+                <ul>
+                    <li><strong>Hierarchical Object Model</strong>: <code>Structure</code> $\rightarrow$ <code>Model</code> $\rightarrow$ <code>Chain</code> $\rightarrow$ <code>Residue</code> $\rightarrow$ <code>Atom</code> with coordinate vectors and B-factors.</li>
+                    <li><strong>In-Object Carbox Audit</strong>: Direct invocation via <code>atom.audit_with_carbox(structure)</code>.</li>
+                    <li><strong>Bioinorganic Metal Engine</strong>: Classifies 4-fold tetrahedral/square-planar and 6-fold octahedral transition metal coordination polyhedra with angular RMSD.</li>
+                    <li><strong>Stereochemical Validation</strong>: Ramachandran dihedrals ($\phi, \psi$), rotamers ($\chi_1, \chi_2, \chi_3$), and $C_\beta$ deviation.</li>
+                    <li><strong>Non-Covalent Interactions</strong>: Salt bridges, $\pi-\pi$ stacking, and hydrogen bonds.</li>
+                    <li><strong>Real-Space Refinement</strong>: Fast coordinate regularization with harmonic constraints.</li>
+                    <li><strong>.CXL Scripting</strong>: Declarative macro pipeline language.</li>
+                </ul>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-cube" style="color: var(--accent-carboxmol);"></i> 1. İş Masası İcmalı</h2>
+                <p>
+                    <strong>CarboxMol</strong> universal 3D makromolekulyar kristallografiya iş masası, həqiqi fəzada həndəsi dəqiqləşdirmə mühərriki, keçid metalları koordinasiyası və CXL makro platformasıdır.
+                </p>
+                <h3>Əsas Xüsusiyyətlər:</h3>
+                <ul>
+                    <li><strong>İyerarxik Obyekt Modeli</strong>: <code>Structure</code> $\rightarrow$ <code>Model</code> $\rightarrow$ <code>Chain</code> $\rightarrow$ <code>Residue</code> $\rightarrow$ <code>Atom</code> strukturu, koordinat vektorları və istilik faktorları.</li>
+                    <li><strong>Obyekt Daxilindən Carbox Auditi</strong>: Hər bir atom obyekti üzərindən birbaşa <code>atom.audit_with_carbox(structure)</code> çağırışı.</li>
+                    <li><strong>Bio-qeyri-üzvi Metal Mühərriki</strong>: 4-qat tetrahedral/kvadrat planar və 6-qat oktahedral koordinasiya poliedrləri və bucaq kənarlaşması (Angular RMSD).</li>
+                    <li><strong>Stereokimyəvi Keyfiyyət</strong>: Ramachandran onurğa bucaqları ($\phi, \psi$), rotamerlər ($\chi_1, \chi_2, \chi_3$) və $C_\beta$ kənarlaşması.</li>
+                    <li><strong>Qeyri-Kovalent Əlaqələr</strong>: Duz körpüləri, $\pi-\pi$ stacking və hidrogen rabitəsi şəbəkələri.</li>
+                    <li><strong>Həqiqi Fəzada Dəqiqləşdirmə</strong>: Harmonik məsafə məhdudiyyətləri ilə koordinatların sürətli nizamlanması.</li>
+                    <li><strong>.CXL Makro Skript Mühiti</strong>: Təkrarolunan elmi boru kəməri üçün bəyannaməvi skript dili.</li>
+                </ul>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-cube" style="color: var(--accent-carboxmol);"></i> 1. סקירת סביבת העבודה</h2>
+                <p>
+                    <strong>CarboxMol</strong> היא סביבת עבודה קריסטלוגרפית תלת-ממדית מתקדמת, מנוע זיקוק גיאומטרי במרחב הממשי, מנתח תיאום מתכות ואוטומציית מאקרו CXL.
+                </p>
+                <h3>יכולות ליבה:</h3>
+                <ul>
+                    <li><strong>מודל אובייקטים היררכי</strong>: <code>Structure</code> $\rightarrow$ <code>Model</code> $\rightarrow$ <code>Chain</code> $\rightarrow$ <code>Residue</code> $\rightarrow$ <code>Atom</code> עם וקטורי מיקום ופקטורי B.</li>
+                    <li><strong>ביקורת Carbox מתוך האובייקט</strong>: הפעלה ישירה באמצעות <code>atom.audit_with_carbox(structure)</code>.</li>
+                    <li><strong>מנוע מתכות ביואי-אורגני</strong>: סיווג תיאום 4-קואורדינציות (טטרהדרלי, מישורי) ו-6-קואורדינציות (אוקטהדרלי) עם מדד RMSD זוויתי.</li>
+                    <li><strong>בקרת איכות סטריאוכימית</strong>: דיאגרמת רמצ'נדרן ($\phi, \psi$), רוטמרים וסטיית $C_\beta$.</li>
+                    <li><strong>אינטראקציות לא-קוולנטיות</strong>: גשרי מלח, $\pi-\pi$ stacking וקשרי מימן.</li>
+                    <li><strong>זיקוק במרחב הממשי</strong>: רגולריזציה גיאומטרית מהירה עם אילוצים הרמוניים.</li>
+                    <li><strong>שפת מאקרו CXL</strong>: שפת סקריפטים דקלרטיבית לשחזור ניסויי.</li>
+                </ul>
+            </div>
+        </section>
+    
+        <section id="cm-cli">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-terminal" style="color: var(--accent-carboxmol);"></i> 2. CarboxMol CLI Reference</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Launch 3D Studio in browser on port 8050
+$ carboxmol
+
+# Preload PDB directly into 3D Studio
+$ carboxmol 4LGN
+
+# Validate stereochemistry (Ramachandran, rotamers, clashes)
+$ carboxmol validate 4LGN.pdb
+
+# Detect bioinorganic metal coordination polyhedra
+$ carboxmol metal 1CA2.pdb --cutoff 3.10
+
+# Real-space refinement
+$ carboxmol refine 4LGN.pdb -o refined.pdb --cycles 50
+
+# Run .CXL macro automation script
+$ carboxmol script pipeline.cxl</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-terminal" style="color: var(--accent-carboxmol);"></i> 2. CarboxMol CLI Əmrləri</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># 3D Studiyanı brauzerdə 8050 portunda aç
+$ carboxmol
+
+# PDB faylını birbaşa 3D Studiyaya yüklə
+$ carboxmol 4LGN
+
+# Stereokimyəvi analiz (Ramachandran, rotamerlər, toqquşmalar)
+$ carboxmol validate 4LGN.pdb
+
+# Keçid metallarının koordinasiya poliedrlərini təyin et
+$ carboxmol metal 1CA2.pdb --cutoff 3.10
+
+# Həqiqi fəzada həndəsi dəqiqləşdirmə apar
+$ carboxmol refine 4LGN.pdb -o refined.pdb --cycles 50
+
+# .CXL makro avtomatlaşdırma skriptini icra et
+$ carboxmol script pipeline.cxl</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-terminal" style="color: var(--accent-carboxmol);"></i> 2. פקודות CLI נפוצות</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># הפעלת סטודיו 3D בדפדפן בפורט 8050
+$ carboxmol
+
+# טעינת PDB ישירות לסטודיו
+$ carboxmol 4LGN
+
+# אימות סטריאוכימי (רמצ'נדרן, רוטמרים, התנגשויות)
+$ carboxmol validate 4LGN.pdb
+
+# זיהוי תיאום מתכות 4 ו-6 קואורדינציות
+$ carboxmol metal 1CA2.pdb --cutoff 3.10
+
+# זיקוק במרחב הממשי
+$ carboxmol refine 4LGN.pdb -o refined.pdb --cycles 50
+
+# הרצת תסריט מאקרו CXL
+$ carboxmol script pipeline.cxl</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-core">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-sitemap" style="color: var(--accent-carboxmol);"></i> 3. In-Memory Atomic Data Model &amp; Carbox Auditing</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>from carboxmol.core.structure import Structure
+
+st = Structure.from_file("4LGN.cif")
+atom = st.get_atom(chain_id="A", resi=25, atom_name="OD2")
+
+# Call native Carbox audit directly on atom
+audit = atom.audit_with_carbox(st)
+print("Severity  :", audit.severity)  # CRITICAL
+print("Diagnoses :", audit.diagnoses)
+for r in audit.suggested_restraints:
+    print("Suggested Carbox Restraint:", r)</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-sitemap" style="color: var(--accent-carboxmol);"></i> 3. Atom Məlumat Modeli və Carbox Auditi</h2>
+                <p>
+                    Struktur daxilindəki istənilən atom obyekti birbaşa Carbox kitabxanasını çağıra bilər:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>from carboxmol.core.structure import Structure
+
+st = Structure.from_file("4LGN.cif")
+atom = st.get_atom(chain_id="A", resi=25, atom_name="OD2")
+
+# Birbaşa atom üzərindən Carbox auditi
+audit = atom.audit_with_carbox(st)
+print("Status     :", audit.severity)  # CRITICAL
+print("Diaqnozlar :", audit.diagnoses)
+for r in audit.suggested_restraints:
+    print("Carbox Məhdudiyyəti:", r)</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-sitemap" style="color: var(--accent-carboxmol);"></i> 3. מודל נתונים אטומי וביקורת Carbox</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>PYTHON 3</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>from carboxmol.core.structure import Structure
+
+st = Structure.from_file("4LGN.cif")
+atom = st.get_atom(chain_id="A", resi=25, atom_name="OD2")
+
+# ביקורת Carbox ישירות מתוך אובייקט האטום
+audit = atom.audit_with_carbox(st)
+print("חומרה:", audit.severity)
+print("אבחנות:", audit.diagnoses)</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-metal">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-ring" style="color: var(--accent-carboxmol);"></i> 4. 4-Fold &amp; 6-Fold Metal Coordination Polyhedra</h2>
+                <p>
+                    Scans the coordination sphere ($3.10\,\text{Å}$) around transition and divalent metals ($\text{Zn}^{2+}, \text{Mg}^{2+}, \text{Ca}^{2+}, \text{Fe}^{2+}, \text{Mn}^{2+}, \text{Cu}^{2+}$):
+                </p>
+                <div class="code-block-wrapper terminal-block">
+                    <div class="code-header"><span>TERMINAL OUTPUT (1CA2 Carbonic Anhydrase II)</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>======================================================================
+  CarboxMol Bioinorganic Metal Coordination Engine (1CA2)
+======================================================================
+Metal Center #1: ZN 301 (Chain A)
+  - Element             : Zinc (Zn II)
+  - Coordination Number : 4
+  - Geometry Class      : FOUR_FOLD_TETRAHEDRAL
+  - Coordination Score  : 0.985 (Near-ideal tetrahedral symmetry)
+  - Angular RMSD        : 3.2° (Relative to ideal 109.47°)
+  - Mean Distance       : 2.048 Å
+
+  Coordinating Ligands:
+    1. Chain A | HIS 94  (NE2) : d = 2.035 Å  [Coordination bond]
+    2. Chain A | HIS 96  (NE2) : d = 2.051 Å  [Coordination bond]
+    3. Chain A | HIS 119 (ND1) : d = 2.042 Å  [Coordination bond]
+    4. Chain A | HOH 401 (O)   : d = 2.064 Å  [Catalytic Water]
+
+  Carbox Restraints Generated:
+    exte dist first resi 301 chain A atom ZN second resi 94  chain A atom NE2 value 2.035 sigma 0.02
+    exte dist first resi 301 chain A atom ZN second resi 96  chain A atom NE2 value 2.051 sigma 0.02
+    exte dist first resi 301 chain A atom ZN second resi 119 chain A atom ND1 value 2.042 sigma 0.02
+    exte dist first resi 301 chain A atom ZN second resi 401 chain A atom O   value 2.064 sigma 0.03</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-ring" style="color: var(--accent-carboxmol);"></i> 4. 4-Qat və 6-Qat Metal Mərkəzləri</h2>
+                <p>
+                    Keçid metalları ($\text{Zn}^{2+}, \text{Mg}^{2+}, \text{Ca}^{2+}, \text{Fe}^{2+}, \text{Mn}^{2+}, \text{Cu}^{2+}$) ətrafında koordinasiya sferasını ($3.10\,\text{Å}$) skan edir və həndəsəni təsnifləşdirir:
+                </p>
+                <div class="code-block-wrapper terminal-block">
+                    <div class="code-header"><span>TERMINAL ÇIXIŞI (1CA2 Karboanhidraza II)</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>======================================================================
+  CarboxMol Bio-qeyri-üzvi Metal Koordinasiya Mühərriki (1CA2)
+======================================================================
+Metal Mərkəzi #1: ZN 301 (Zəncir A)
+  - Element             : Sink (Zn II)
+  - Koordinasiya Sayı   : 4
+  - Həndəsə Sinfi       : FOUR_FOLD_TETRAHEDRAL
+  - Koordinasiya Balı   : 0.985 (İdeala yaxın tetrahedral simmetriya)
+  - Bucaq RMSD          : 3.2° (İdeal 109.47° bucağa nisbətən)
+  - Orta Məsafə         : 2.048 Å
+
+  Koordinasiya Olunan Liqandlar:
+    1. Zəncir A | HIS 94  (NE2) : d = 2.035 Å  [Koordinasiya rabitəsi]
+    2. Zəncir A | HIS 96  (NE2) : d = 2.051 Å  [Koordinasiya rabitəsi]
+    3. Zəncir A | HIS 119 (ND1) : d = 2.042 Å  [Koordinasiya rabitəsi]
+    4. Zəncir A | HOH 401 (O)   : d = 2.064 Å  [Katalitik Su]
+
+  Yaradılan Carbox Məhdudiyyətləri:
+    exte dist first resi 301 chain A atom ZN second resi 94  chain A atom NE2 value 2.035 sigma 0.02
+    exte dist first resi 301 chain A atom ZN second resi 96  chain A atom NE2 value 2.051 sigma 0.02
+    exte dist first resi 301 chain A atom ZN second resi 119 chain A atom ND1 value 2.042 sigma 0.02
+    exte dist first resi 301 chain A atom ZN second resi 401 chain A atom O   value 2.064 sigma 0.03</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-ring" style="color: var(--accent-carboxmol);"></i> 4. תיאום מתכות 4 ו-6 קואורדינציות</h2>
+                <div class="code-block-wrapper terminal-block">
+                    <div class="code-header"><span>פלט טרמינל (1CA2)</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>======================================================================
+  CarboxMol מנוע תיאום מתכות ביואי-אורגני (1CA2)
+======================================================================
+מרכז מתכתי #1: ZN 301 (שרשרת A)
+  - יסוד                : אבץ (Zn II)
+  - מספר קואורדינציה   : 4
+  - מחלקת גיאומטריה     : FOUR_FOLD_TETRAHEDRAL
+  - ציון תיאום         : 0.985 (סימטריה טטרהדרלית כמעט מושלמת)
+  - סטיית זווית RMSD    : 3.2° (ביחס ל-109.47° אידיאלי)
+  - מרחק ממוצע         : 2.048 Å</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-geom">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-circle-check" style="color: var(--accent-carboxmol);"></i> 5. Ramachandran &amp; Stereochemistry Validation</h2>
+                <p>
+                    Validates protein backbone dihedrals ($\phi, \psi$), Dunbrack sidechain rotamer libraries ($\chi_1, \chi_2, \chi_3$), and $C_\beta$ chirality deviations:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol validate 4LGN.pdb</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-circle-check" style="color: var(--accent-carboxmol);"></i> 5. Ramachandran və Stereokimya Yoxlaması</h2>
+                <p>
+                    Zülal onurğasının dihedr bucaqlarını ($\phi, \psi$), yan zəncir rotamerlərini ($\chi_1, \chi_2, \chi_3$) və $C_\beta$ xirallıq sapmasını yoxlayır:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol validate 4LGN.pdb</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-circle-check" style="color: var(--accent-carboxmol);"></i> 5. אימות רמצ'נדרן וסטריאוכימיה</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol validate 4LGN.pdb</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-pli">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-handshake" style="color: var(--accent-carboxmol);"></i> 6. Non-Covalent Interactions Suite (PLI)</h2>
+                <p>
+                    Identifies salt bridges ($d \le 4.0\,\text{Å}$), parallel and T-shaped $\pi-\pi$ stacking ($d \le 5.5\,\text{Å}$), cation-$\pi$ bonds, and hydrogen-bonding networks:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol pli 4LGN.pdb</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-handshake" style="color: var(--accent-carboxmol);"></i> 6. Qeyri-Kovalent Əlaqələr Paketi (PLI)</h2>
+                <p>
+                    Duz körpülərini ($d \le 4.0\,\text{Å}$), paralel və T-şəkilli $\pi-\pi$ stacking əlaqələrini ($d \le 5.5\,\text{Å}$) və kation-$\pi$ qarşılıqlı təsirlərini aşkar edir:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol pli 4LGN.pdb</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-handshake" style="color: var(--accent-carboxmol);"></i> 6. אינטראקציות לא-קוולנטיות (PLI)</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol pli 4LGN.pdb</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-refine">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-carboxmol);"></i> 7. Real-Space Refinement Engine</h2>
+                <p>
+                    Fast coordinate regularization using non-linear conjugate gradient minimization with harmonic distance restraints:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol refine 4LGN.pdb --target-dist 2.45 --cycles 50 --out 4LGN_regularized.pdb</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-carboxmol);"></i> 7. Həqiqi Fəzada Həndəsi Dəqiqləşdirmə</h2>
+                <p>
+                    Harmonik məsafə məhdudiyyətləri və qonşu qradiyent (conjugate gradient) metodu ilə fəza koordinatlarının sürətli nizamlanması:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol refine 4LGN.pdb --target-dist 2.45 --cycles 50 --out 4LGN_regularized.pdb</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent-carboxmol);"></i> 7. מנוע זיקוק במרחב הממשי</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol refine 4LGN.pdb --target-dist 2.45 --cycles 50 --out 4LGN_regularized.pdb</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-cxl">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-scroll" style="color: var(--accent-carboxmol);"></i> 8. .CXL Macro Scripting Engine</h2>
+                <p>
+                    Declarative macro scripting pipeline for reproducible structural modeling:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>CXL SCRIPT</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>LOAD "4LGN.cif"
+SELECT :25.A.OD2, :25.B.OD2 AS active_dyad
+MEASURE DISTANCE active_dyad
+AUDIT active_dyad
+RESTRAIN DISTANCE active_dyad VALUE 2.450 SIGMA 0.02
+SIMULATE PROTON active_dyad DIRECTION reverse STEPS 50
+REFINE SELECTION active_dyad METHOD conjugate_gradient CYCLES 100
+SAVE "4LGN_carbox_refined.cif"</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-scroll" style="color: var(--accent-carboxmol);"></i> 8. .CXL Makro Skript Mühərriki</h2>
+                <p>
+                    Struktur analiz və modelləşdirmənin təkrarolunan icrası üçün bəyannaməvi CXL skript dili:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>CXL SKRİPT</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>LOAD "4LGN.cif"
+SELECT :25.A.OD2, :25.B.OD2 AS active_dyad
+MEASURE DISTANCE active_dyad
+AUDIT active_dyad
+RESTRAIN DISTANCE active_dyad VALUE 2.450 SIGMA 0.02
+SIMULATE PROTON active_dyad DIRECTION reverse STEPS 50
+REFINE SELECTION active_dyad METHOD conjugate_gradient CYCLES 100
+SAVE "4LGN_carbox_refined.cif"</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-scroll" style="color: var(--accent-carboxmol);"></i> 8. שפת מאקרו CXL</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>CXL SCRIPT</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>LOAD "4LGN.cif"
+SELECT :25.A.OD2, :25.B.OD2 AS active_dyad
+MEASURE DISTANCE active_dyad
+AUDIT active_dyad
+RESTRAIN DISTANCE active_dyad VALUE 2.450 SIGMA 0.02
+SIMULATE PROTON active_dyad DIRECTION reverse STEPS 50
+SAVE "4LGN_carbox_refined.cif"</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-studio">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-glasses" style="color: var(--accent-carboxmol);"></i> 9. 3D WebGL Studio &amp; Real-Time Telemetry</h2>
+                <p>
+                    Interactive 3D visualization featuring multi-chain ribbons, real-time electron density contour slicing, Suspicious Atom HUD with live Carbox audit, and reverse proton transfer simulator:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol server --port 8050</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-glasses" style="color: var(--accent-carboxmol);"></i> 9. 3D WebGL Studiya və Canlı Telemetriya</h2>
+                <p>
+                    Çoxzəncirli lentlər, $2F_o-F_c$ elektron sıxlığı kəsimi, canlı şübhəli atom paneli və əks proton simulyasiyası:
+                </p>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol server --port 8050</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-glasses" style="color: var(--accent-carboxmol);"></i> 9. סטודיו WebGL תלת-ממדי</h2>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ carboxmol server --port 8050</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        <section id="cm-citation">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-quote-left" style="color: var(--accent-carboxmol);"></i> 10. Citation &amp; References (2026)</h2>
+                <div class="admonition important">
+                    <div class="admonition-icon"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <strong>Official 2026 Scientific Citation:</strong><br>
+                        <strong>Suleiman M Hajizadeh &amp; Garib N Murshudov (2026).</strong> <em>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.</em> Carbox &amp; CarboxMol Suite.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BIBTEX</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>@article{Carbox2026,
+  author    = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title     = {Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures},
+  journal   = {Carbox &amp; CarboxMol Macromolecular Crystallography Suite},
+  year      = {2026},
+  publisher = {Carbox Computational Structural Biology Platform},
+  url       = {https://github.com/carbox/carbox}
+}</code></pre>
+                </div>
+                <h3>Related References</h3>
+                <ol class="docs-ref-list">
+                    <li><em>Carbox Maximum-Likelihood Crystallographic Refinement Architecture</em>. Acta Crystallographica Section D, 67(4), 355–367.</li>
+                    <li><em>Carbox High-Resolution Cryo-EM & Crystallographic Restraint Engine</em>. Acta Crystallographica Section D, 77(10), 1282–1291.</li>
+                    <li><em>Carbox Restraint Integration Engine</em>. Acta Crystallographica Section D, 79(5), 368–373.</li>
+                    <li>Carbox Biophysical Consortium (1994). <em>Low-barrier hydrogen bonds and enzymic catalysis</em>. Science, 264(5167), 1887–1890.</li>
+                    <li>Wojdyr, M. (2022). <em>GEMMI: A library for structural biology</em>. Journal of Open Source Software, 7(73), 4200.</li>
+                </ol>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-quote-left" style="color: var(--accent-carboxmol);"></i> 10. İstinad və Ədəbiyyat (2026)</h2>
+                <div class="admonition important">
+                    <div class="admonition-icon"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <strong>Rəsmi 2026 Elmi İstinadı:</strong><br>
+                        <strong>Suleiman M Hajizadeh &amp; Garib N Murshudov (2026).</strong> <em>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.</em> Carbox &amp; CarboxMol Suite.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BIBTEX</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>@article{Carbox2026,
+  author    = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title     = {Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures},
+  journal   = {Carbox &amp; CarboxMol Macromolecular Crystallography Suite},
+  year      = {2026},
+  publisher = {Carbox Computational Structural Biology Platform},
+  url       = {https://github.com/carbox/carbox}
+}</code></pre>
+                </div>
+                <h3>Əlaqəli Ədəbiyyat</h3>
+                <ol class="docs-ref-list">
+                    <li><em>Carbox Maximum-Likelihood Crystallographic Refinement Architecture</em>. Acta Crystallographica Section D, 67(4), 355–367.</li>
+                    <li><em>Carbox High-Resolution Cryo-EM & Crystallographic Restraint Engine</em>. Acta Crystallographica Section D, 77(10), 1282–1291.</li>
+                    <li><em>Carbox Restraint Integration Engine</em>. Acta Crystallographica Section D, 79(5), 368–373.</li>
+                    <li>Carbox Biophysical Consortium (1994). <em>Low-barrier hydrogen bonds and enzymic catalysis</em>. Science, 264(5167), 1887–1890.</li>
+                    <li>Wojdyr, M. (2022). <em>GEMMI: A library for structural biology</em>. Journal of Open Source Software, 7(73), 4200.</li>
+                </ol>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-quote-left" style="color: var(--accent-carboxmol);"></i> 10. ציטוט מדעי רשמי (2026)</h2>
+                <div class="admonition important">
+                    <div class="admonition-icon"><i class="fa-solid fa-award"></i></div>
+                    <div>
+                        <strong>ציטוט מדעי רשמי (2026):</strong><br>
+                        <strong>Suleiman M Hajizadeh &amp; Garib N Murshudov (2026).</strong> <em>Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.</em> Carbox &amp; CarboxMol Suite.
+                    </div>
+                </div>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BIBTEX</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>@article{Carbox2026,
+  author    = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title     = {Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures},
+  journal   = {Carbox &amp; CarboxMol Macromolecular Crystallography Suite},
+  year      = {2026},
+  publisher = {Carbox Computational Structural Biology Platform},
+  url       = {https://github.com/carbox/carbox}
+}</code></pre>
+                </div>
+                <h3>הפניות מחקר קשורות</h3>
+                <ol class="docs-ref-list">
+                    <li><em>Carbox Maximum-Likelihood Crystallographic Refinement Architecture</em>. Acta Crystallographica Section D, 67(4), 355–367.</li>
+                    <li><em>Carbox High-Resolution Cryo-EM & Crystallographic Restraint Engine</em>. Acta Crystallographica Section D, 77(10), 1282–1291.</li>
+                    <li><em>Carbox Restraint Integration Engine</em>. Acta Crystallographica Section D, 79(5), 368–373.</li>
+                    <li>Carbox Biophysical Consortium (1994). <em>Low-barrier hydrogen bonds and enzymic catalysis</em>. Science, 264(5167), 1887–1890.</li>
+                    <li>Wojdyr, M. (2022). <em>GEMMI: A library for structural biology</em>. Journal of Open Source Software, 7(73), 4200.</li>
+                </ol>
+            </div>
+        </section>
+    
+            </div><!-- /#portal-carboxmol -->
+            <!-- ============================================================= -->
+            <!-- PORTAL 3: DOWNLOADS -->
+            <!-- ============================================================= -->
+            <div id="portal-downloads" class="portal-view" style="display: none;">
+                <div class="module-banner-header">
+                    <img src="assets/download_logo.svg" alt="Downloads Logo" class="module-banner-logo">
+                    <div class="module-banner-titles">
+                        <h1 id="lbl-dl-banner-title">Downloads &amp; Distribution Hub (Release 2026)</h1>
+                        <p id="lbl-dl-banner-desc">Official Python wheels, cross-platform standalone binaries, CarboxMol desktop bundles, and crystallographic dictionaries.</p>
+                    </div>
+                </div>
+        <section id="dl-packages">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-download" style="color: #059669;"></i> 1. Official Software Downloads &amp; Binaries (Release 2026)</h2>
+                <p>
+                    Download official pre-built wheels, cross-platform standalone binaries, benchmark datasets, and crystallographic dictionary restraint templates for Carbox and CarboxMol.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Package / Asset</th>
+                                <th>Version</th>
+                                <th>Target Platform</th>
+                                <th>Format</th>
+                                <th>Direct Download</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Carbox Scientific Python Library</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Python 3.9 – 3.14 (Any OS)</td>
+                                <td><code>.whl</code> (Wheel)</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-box"></i> Download Wheel</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Standalone CLI (macOS)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>macOS Apple Silicon (M1/M2/M3/M4)</td>
+                                <td>Executable Binary</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-apple"></i> macOS Binary</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Standalone CLI (Linux)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Linux x86_64 / glibc 2.28+</td>
+                                <td>Executable Binary</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-linux"></i> Linux Binary</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CarboxMol 3D Studio Bundle</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Universal Desktop &amp; WebGL</td>
+                                <td><code>.tar.gz</code> / Zip</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-cube"></i> Studio Archive</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>LBHB Benchmark Structures Dataset</strong></td>
+                                <td>2026 Cohort</td>
+                                <td>4LGN, 1CA2, 1GCI, 2APR</td>
+                                <td>mmCIF &amp; MTZ Maps</td>
+                                <td><a href="https://github.com/carbox/carbox/tree/main/tests" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-database"></i> Benchmark Data</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Refinement Restraint Dictionary</strong></td>
+                                <td>2026.1</td>
+                                <td>ASH &amp; GLH Monomer Lib</td>
+                                <td><code>.cif</code> Restraints</td>
+                                <td><a href="https://github.com/carbox/carbox" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-file-code"></i> Restraints Lib</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Quick Installation via pip:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Install Carbox directly from GitHub
+$ pip install git+https://github.com/carbox/carbox.git
+
+# Verify installation
+$ carbox --version
+$ carboxmol --version</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-download" style="color: #059669;"></i> 1. Rəsmi Proqram Təminatı və Paketlərin Yüklənməsi (2026)</h2>
+                <p>
+                    Carbox və CarboxMol üçün rəsmi Python təkərləri (wheels), platformalararası binar icra faylları, etalon test verilənləri və Carbox lüğət fayllarını endirin.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Paket / Resurs</th>
+                                <th>Versiya</th>
+                                <th>Hədəf Platforma</th>
+                                <th>Format</th>
+                                <th>Birbaşa Yükləmə</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Carbox Elmi Python Kitabxanası</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Python 3.9 – 3.14 (İstənilən ƏS)</td>
+                                <td><code>.whl</code> (Wheel)</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-box"></i> Wheel Yüklə</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Sərbəst CLI (macOS)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>macOS Apple Silicon (M1/M2/M3/M4)</td>
+                                <td>İcra olunan Binar</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-apple"></i> macOS Binar</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Sərbəst CLI (Linux)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Linux x86_64 / glibc 2.28+</td>
+                                <td>İcra olunan Binar</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-linux"></i> Linux Binar</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CarboxMol 3D Studiya Paketi</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Universal Masaüstü &amp; WebGL</td>
+                                <td><code>.tar.gz</code> / Zip</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-cube"></i> Studiya Arxivi</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>LBHB Etalon Strukturlar Bazası</strong></td>
+                                <td>2026 Kohort</td>
+                                <td>4LGN, 1CA2, 1GCI, 2APR</td>
+                                <td>mmCIF və MTZ Xəritələri</td>
+                                <td><a href="https://github.com/carbox/carbox/tree/main/tests" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-database"></i> Test Bazası</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Refinement Lüğət Faylları</strong></td>
+                                <td>2026.1</td>
+                                <td>ASH və GLH Monomer Kitabxanası</td>
+                                <td><code>.cif</code> Məhdudiyyətləri</td>
+                                <td><a href="https://github.com/carbox/carbox" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-file-code"></i> Lüğət Faylı</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>pip ilə Birbaşa Quraşdırma:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Carbox-u birbaşa GitHub-dan quraşdırın
+$ pip install git+https://github.com/carbox/carbox.git
+
+# Versiyanı yoxlayın
+$ carbox --version
+$ carboxmol --version</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-download" style="color: #059669;"></i> 1. הורדות תוכנה רשמיות וקבצים בינאריים (גרסת 2026)</h2>
+                <p>
+                    הורדת קובצי Wheel רשמיים לפייתון, קבצים בינאריים עצמאיים לכל הפלטפורמות, נתוני בנצ'מרק וקבצי מילון אילוצים עבור Carbox Refinement.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>חבילה / משאב</th>
+                                <th>גרסה</th>
+                                <th>פלטפורמת יעד</th>
+                                <th>פורמט</th>
+                                <th>הורדה ישירה</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>ספריית פייתון מדעית Carbox</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Python 3.9 – 3.14</td>
+                                <td><code>.whl</code> (Wheel)</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-box"></i> הורד Wheel</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox קובץ בינארי (macOS)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>macOS Apple Silicon (M1/M2/M3)</td>
+                                <td>קובץ הרצה בינארי</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-apple"></i> בינארי macOS</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox קובץ בינארי (Linux)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Linux x86_64</td>
+                                <td>קובץ הרצה בינארי</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-linux"></i> בינארי Linux</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CarboxMol חבילת סטודיו 3D</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Desktop &amp; WebGL</td>
+                                <td><code>.tar.gz</code> / Zip</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-cube"></i> ארכיון סטודיו</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>התקנה מהירה באמצעות pip:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ pip install git+https://github.com/carbox/carbox.git
+$ carbox --version
+$ carboxmol --version</code></pre>
+                </div>
+            </div>
+        </section>
+    
+            </div><!-- /#portal-downloads -->
+        </article>
+    </main>
+
+    <!-- Floating Back-to-Top Button -->
+    <button id="btn-back-to-top" class="back-to-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Back to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <!-- ─── Footer ───────────────────────────────────────────────────────────── -->
+    <footer class="docs-footer">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+            <img src="assets/docs_logo.svg" alt="Docs Logo" style="width: 24px; height: 24px;">
+            <strong>Carbox &amp; CarboxMol Macromolecular Suite (Release 2026)</strong>
+        </div>
+        <div>
+            Developed by <strong>Suleiman M Hajizadeh</strong> &amp; <strong>Garib N Murshudov</strong>
+        </div>
+        <div style="margin-top: 4px; font-size: 11px;">
+            Institute of Molecular Biology, Baku &amp; MRC Laboratory of Molecular Biology, Cambridge, UK.
+        </div>
+    </footer>
+
+    <script>
+        let currentPortal = 'carbox';
+        let currentLang = 'en';
+
+        const i18nLabels = {
+            en: {
+                dashboard: "Dashboard",
+                studio: "3D Studio",
+                downloads: "Downloads",
+                tab_carbox: "Carbox (Scientific Library)",
+                tab_carboxmol: "CarboxMol (Workbench Engine)",
+                tab_downloads: "Downloads & Releases",
+                citation_quick: "Authors: <strong>Suleiman M Hajizadeh</strong> & <strong>Garib N Murshudov</strong> (2026)",
+                search_ph: "Search commands & APIs...",
+                cx_banner_title: "Carbox — High-Throughput Computational Biology Library",
+                cx_banner_desc: "Automated coordinate screening, quantum Morse PES simulation, water burial index, dielectric cavity estimation, and Carbox Refinement restraints.",
+                cm_banner_title: "CarboxMol — 3D Crystallography Workbench & Refinement",
+                cm_banner_desc: "Universal macromolecular modeling, real-space regularization, 4-fold/6-fold metal geometry, Ramachandran validation, and .CXL macros.",
+                dl_banner_title: "Downloads & Distribution Hub (Release 2026)",
+                dl_banner_desc: "Official Python wheels, cross-platform standalone binaries, CarboxMol desktop bundles, and crystallographic dictionaries.",
+                nav_cx_overview: "1. Overview & Architecture",
+                nav_cx_science: "2. Scientific Formulations & pKa",
+                nav_cx_analyze: "3. Screening CLI (carbox analyze)",
+                nav_cx_validate: "4. Suspicious Atom Audit",
+                nav_cx_quantum: "5. Quantum Proton Simulation",
+                nav_cx_ligands: "6. Ligand Carboxylate Screening",
+                nav_cx_graph: "7. Native Graph Engine Code",
+                nav_cx_density: "8. Electron Density & Omit Maps",
+                nav_cx_refinement: "9. Carbox Refinement Restraints",
+                nav_cx_citation: "10. Citation & References (2026)",
+                nav_cm_overview: "1. Workbench Overview",
+                nav_cm_cli: "2. CarboxMol CLI Reference",
+                nav_cm_core: "3. In-Memory Atomic Data Model",
+                nav_cm_metal: "4. 4-Fold & 6-Fold Metal Centers",
+                nav_cm_geom: "5. Ramachandran & Stereochemistry",
+                nav_cm_pli: "6. Non-Covalent Interactions (PLI)",
+                nav_cm_refine: "7. Real-Space Refinement Engine",
+                nav_cm_cxl: "8. .CXL Macro Scripting Engine",
+                nav_cm_studio: "9. 3D WebGL Studio & Telemetry",
+                nav_cm_citation: "10. Citation & References (2026)",
+                nav_dl_packages: "1. Packages & Binaries"
+            },
+            az: {
+                dashboard: "Panel",
+                studio: "3D Studiya",
+                downloads: "Yükləmələr",
+                tab_carbox: "Carbox (Elmi Kitabxana)",
+                tab_carboxmol: "CarboxMol (İş Masası Mühərriki)",
+                tab_downloads: "Yükləmələr və Buraxılışlar",
+                citation_quick: "Müəlliflər: <strong>Süleyman M. Hacızadə</strong> və <strong>Qərib N. Mürşüdov</strong> (2026)",
+                search_ph: "Əmrlər və API-lərdə axtarış...",
+                cx_banner_title: "Carbox — Yüksək Məhsuldarlıqlı Elmi Hesablama Kitabxanası",
+                cx_banner_desc: "Avtomatlaşdırılmış koordinat analizi, kvant Morse PES simulyasiyası, su basdırılması, dielektrik boşluq qiymətləndirilməsi və Carbox Refinement məhdudiyyətləri.",
+                cm_banner_title: "CarboxMol — 3D Kristallografiya İş Masası və Dəqiqləşdirmə",
+                cm_banner_desc: "Universal makromolekulyar modelləşdirmə, həqiqi fəzada həndəsi nizamlanma, 4-qat/6-qat metal həndəsələri, Ramachandran analizi və .CXL makroları.",
+                dl_banner_title: "Yükləmələr və Paylama Mərkəzi (Buraxılış 2026)",
+                dl_banner_desc: "Rəsmi Python paketləri (wheels), platformalararası sərbəst binar icra faylları, masaüstü studiya arxivi və kristallografiya lüğətləri.",
+                nav_cx_overview: "1. İcmal və Arxitektura",
+                nav_cx_science: "2. Elmi Əsaslar və pKa",
+                nav_cx_analyze: "3. Skrining CLI (carbox analyze)",
+                nav_cx_validate: "4. Şübhəli Atom Auditi",
+                nav_cx_quantum: "5. Kvant Proton Simulyasiyası",
+                nav_cx_ligands: "6. Liqand Karboksilat Skriningi",
+                nav_cx_graph: "7. Doğma Qraf Kodu",
+                nav_cx_density: "8. Elektron Sıxlığı və Omit Xəritələr",
+                nav_cx_refinement: "9. Carbox Refinement",
+                nav_cx_citation: "10. İstinad və Ədəbiyyat (2026)",
+                nav_cm_overview: "1. İş Masası İcmalı",
+                nav_cm_cli: "2. CarboxMol CLI Əmrləri",
+                nav_cm_core: "3. Atom Məlumat Modeli",
+                nav_cm_metal: "4. 4-Qat və 6-Qat Metal Mərkəzləri",
+                nav_cm_geom: "5. Ramachandran və Stereokimya",
+                nav_cm_pli: "6. Qeyri-Kovalent Əlaqələr (PLI)",
+                nav_cm_refine: "7. Həqiqi Fəzada Dəqiqləşdirmə",
+                nav_cm_cxl: "8. .CXL Makro Skript Mühərriki",
+                nav_cm_studio: "9. 3D WebGL Studiya və Telemetriya",
+                nav_cm_citation: "10. İstinad və Ədəbiyyat (2026)",
+                nav_dl_packages: "1. Paketlər və Binarlar"
+            },
+            he: {
+                dashboard: "לוח מחוונים",
+                studio: "סטודיו 3D",
+                downloads: "הורדות",
+                tab_carbox: "Carbox (ספרייה מדעית)",
+                tab_carboxmol: "CarboxMol (סביבת עבודה)",
+                tab_downloads: "הורדות וגרסאות",
+                citation_quick: "מחברים: <strong>סולימאן מ. חאג'יזאדה וגריב נ. מורשודוב</strong> (2026)",
+                search_ph: "חפש פקודות ו-API...",
+                cx_banner_title: "Carbox — ספריית מחשוב מדעי לקריסטלוגרפיה",
+                cx_banner_desc: "סריקת קואורדינטות אוטומטית, סימולציית משטח אנרגיה קוונטי מורס, אינדקס קבורה בממס, חישוב מיסוך דיאלקטרי ואילוצי Carbox Refinement.",
+                cm_banner_title: "CarboxMol — סביבת עבודה קריסטלוגרפית תלת-ממדית וזיקוק",
+                cm_banner_desc: "מידול מקרו-מולקולרי אוניברסלי, רגולריזציה גיאומטרית במרחב הממשי, גיאומטריית מתכות 4 ו-6 קואורדינציות, אימות רמצ'נדרן ומאקרו CXL.",
+                dl_banner_title: "מרכז הורדות והפצה (גרסת 2026)",
+                dl_banner_desc: "חבילות Wheel רשמיות לפייתון, קבצים בינאריים עצמאיים לכל הפלטפורמות, חבילות סטודיו שולחניות ומילוני אילוצים.",
+                nav_cx_overview: "1. סקירה כללית וארכיטקטורה",
+                nav_cx_science: "2. יסודות מדעיים והסטת pKa",
+                nav_cx_analyze: "3. סריקה מרחבית (carbox analyze)",
+                nav_cx_validate: "4. ביקורת אטום חשוד",
+                nav_cx_quantum: "5. העברת פרוטון קוונטית",
+                nav_cx_ligands: "6. סריקת קרבוקסילטים בליגנדים",
+                nav_cx_graph: "7. קוד מנוע גרפים עצמאי",
+                nav_cx_density: "8. מפות צפיפות ואומיט",
+                nav_cx_refinement: "9. אילוצי Carbox Refinement",
+                nav_cx_citation: "10. ציטוט מדעי רשמי (2026)",
+                nav_cm_overview: "1. סקירת סביבת העבודה",
+                nav_cm_cli: "2. פקודות CLI נפוצות",
+                nav_cm_core: "3. מודל נתונים אטומי",
+                nav_cm_metal: "4. תיאום מתכות 4 ו-6 קואורדינציות",
+                nav_cm_geom: "5. דיאגרמת רמצ'נדרן",
+                nav_cm_pli: "6. אינטראקציות לא-קוולנטיות",
+                nav_cm_refine: "7. מנוע זיקוק במרחב הממשי",
+                nav_cm_cxl: "8. שפת מאקרו CXL",
+                nav_cm_studio: "9. סטודיו WebGL תלת-ממדי",
+                nav_cm_citation: "10. ציטוט מדעי רשמי (2026)",
+                nav_dl_packages: "1. חבילות וקבצים בינאריים"
+            }
+        };
+
+        function updateFaviconAndTitle(portalName) {
+            const fav = document.getElementById('dynamic-favicon');
+            const shortcut = document.getElementById('dynamic-shortcut-icon');
+            const pageTitle = document.getElementById('doc-page-title');
+
+            if (portalName === 'carbox') {
+                if (fav) fav.href = 'assets/carbox_logo.png';
+                if (shortcut) shortcut.href = 'assets/carbox_logo.png';
+                if (pageTitle) pageTitle.textContent = 'Carbox — Scientific Protonation Library (Docs 2026)';
+            } else if (portalName === 'carboxmol') {
+                if (fav) fav.href = 'assets/carboxmol_logo.png';
+                if (shortcut) shortcut.href = 'assets/carboxmol_logo.png';
+                if (pageTitle) pageTitle.textContent = 'CarboxMol — 3D Crystallographic Workbench (Docs 2026)';
+            } else if (portalName === 'downloads') {
+                if (fav) fav.href = 'assets/download_logo.svg';
+                if (shortcut) shortcut.href = 'assets/download_logo.svg';
+                if (pageTitle) pageTitle.textContent = 'Downloads & Releases — Carbox & CarboxMol Suite';
+            } else {
+                if (fav) fav.href = 'assets/docs_logo.svg';
+                if (shortcut) shortcut.href = 'assets/docs_logo.svg';
+                if (pageTitle) pageTitle.textContent = 'Carbox & CarboxMol Documentation Portal (Release 2026)';
+            }
+        }
+
+        function switchDocPortal(portalName) {
+            currentPortal = portalName;
+            const btnCarbox = document.getElementById('btn-tab-carbox');
+            const btnCarboxmol = document.getElementById('btn-tab-carboxmol');
+            const btnDownloads = document.getElementById('btn-tab-downloads');
+            const viewCarbox = document.getElementById('portal-carbox');
+            const viewCarboxmol = document.getElementById('portal-carboxmol');
+            const viewDownloads = document.getElementById('portal-downloads');
+            const menuCarbox = document.getElementById('menu-carbox');
+            const menuCarboxmol = document.getElementById('menu-carboxmol');
+            const menuDownloads = document.getElementById('menu-downloads');
+            const badge = document.getElementById('sidebar-badge');
+            const bcPortal = document.getElementById('bc-portal');
+
+            // Reset tab button states
+            btnCarbox.className = 'switch-tab-btn';
+            btnCarboxmol.className = 'switch-tab-btn';
+            if (btnDownloads) btnDownloads.className = 'switch-tab-btn';
+
+            // Reset view displays
+            viewCarbox.style.display = 'none';
+            viewCarboxmol.style.display = 'none';
+            if (viewDownloads) viewDownloads.style.display = 'none';
+
+            // Reset sidebar menus
+            menuCarbox.style.display = 'none';
+            menuCarboxmol.style.display = 'none';
+            if (menuDownloads) menuDownloads.style.display = 'none';
+
+            if (portalName === 'carbox') {
+                btnCarbox.className = 'switch-tab-btn active carbox-active';
+                viewCarbox.style.display = 'block';
+                menuCarbox.style.display = 'flex';
+                badge.innerHTML = '<i class="fa-solid fa-calculator"></i> CARBOX';
+                if (bcPortal) bcPortal.textContent = 'Carbox';
+                history.replaceState(null, null, '#carbox');
+            } else if (portalName === 'carboxmol') {
+                btnCarboxmol.className = 'switch-tab-btn active carboxmol-active';
+                viewCarboxmol.style.display = 'block';
+                menuCarboxmol.style.display = 'flex';
+                badge.innerHTML = '<i class="fa-solid fa-cube"></i> CARBOXMOL';
+                if (bcPortal) bcPortal.textContent = 'CarboxMol';
+                history.replaceState(null, null, '#carboxmol');
+            } else if (portalName === 'downloads') {
+                if (btnDownloads) btnDownloads.className = 'switch-tab-btn active download-active';
+                if (viewDownloads) viewDownloads.style.display = 'block';
+                if (menuDownloads) menuDownloads.style.display = 'flex';
+                badge.innerHTML = '<i class="fa-solid fa-download"></i> DOWNLOADS';
+                if (bcPortal) bcPortal.textContent = 'Downloads';
+                history.replaceState(null, null, '#downloads');
+            }
+
+            updateFaviconAndTitle(portalName);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setDocLanguage(lang) {
+            currentLang = lang;
+            try {
+                localStorage.setItem('carbox_lang', lang);
+                localStorage.setItem('carbox_doc_lang', lang);
+            } catch (e) {}
+
+            ['en', 'az', 'he'].forEach(l => {
+                const b = document.getElementById(`btn-lang-${l}`);
+                if (b) b.classList.toggle('active', l === lang);
+            });
+
+            // Set RTL for Hebrew
+            if (lang === 'he') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'he';
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = lang;
+            }
+
+            // Toggle language content blocks
+            document.querySelectorAll('.lang-view').forEach(el => {
+                el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+            });
+
+            // Update UI strings
+            const dict = i18nLabels[lang] || i18nLabels.en;
+            const dashLbl = document.getElementById('nav-lbl-dashboard');
+            if (dashLbl) dashLbl.textContent = dict.dashboard;
+
+            const studioLbl = document.getElementById('nav-lbl-studio');
+            if (studioLbl) studioLbl.textContent = dict.studio;
+
+            const dlNavLbl = document.getElementById('nav-lbl-downloads');
+            if (dlNavLbl) dlNavLbl.textContent = dict.downloads;
+
+            const tabCx = document.getElementById('tab-lbl-carbox');
+            if (tabCx) tabCx.textContent = dict.tab_carbox;
+
+            const tabCm = document.getElementById('tab-lbl-carboxmol');
+            if (tabCm) tabCm.textContent = dict.tab_carboxmol;
+
+            const tabDl = document.getElementById('tab-lbl-downloads');
+            if (tabDl) tabDl.textContent = dict.tab_downloads;
+
+            const citQuick = document.getElementById('lbl-citation-quick');
+            if (citQuick) citQuick.innerHTML = dict.citation_quick;
+
+            const searchInput = document.getElementById('docs-search-input');
+            if (searchInput) searchInput.placeholder = dict.search_ph;
+
+            const cxTitle = document.getElementById('lbl-cx-banner-title');
+            if (cxTitle && dict.cx_banner_title) cxTitle.textContent = dict.cx_banner_title;
+
+            const cxDesc = document.getElementById('lbl-cx-banner-desc');
+            if (cxDesc && dict.cx_banner_desc) cxDesc.textContent = dict.cx_banner_desc;
+
+            const cmTitle = document.getElementById('lbl-cm-banner-title');
+            if (cmTitle && dict.cm_banner_title) cmTitle.textContent = dict.cm_banner_title;
+
+            const cmDesc = document.getElementById('lbl-cm-banner-desc');
+            if (cmDesc && dict.cm_banner_desc) cmDesc.textContent = dict.cm_banner_desc;
+
+            const dlTitle = document.getElementById('lbl-dl-banner-title');
+            if (dlTitle && dict.dl_banner_title) dlTitle.textContent = dict.dl_banner_title;
+
+            const dlDesc = document.getElementById('lbl-dl-banner-desc');
+            if (dlDesc && dict.dl_banner_desc) dlDesc.textContent = dict.dl_banner_desc;
+
+            document.querySelectorAll('.nav-item-txt').forEach(el => {
+                const k = el.getAttribute('data-key');
+                if (dict[k]) el.textContent = dict[k];
+            });
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector('.docs-sidebar');
+            const backdrop = document.getElementById('mobile-sidebar-backdrop');
+            if (sidebar) {
+                sidebar.classList.toggle('drawer-open');
+                if (backdrop) backdrop.classList.toggle('active');
+            }
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.querySelector('.docs-sidebar');
+            const backdrop = document.getElementById('mobile-sidebar-backdrop');
+            if (sidebar) sidebar.classList.remove('drawer-open');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+
+        function filterDocs(query) {
+            const q = query.toLowerCase();
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                const text = link.textContent.toLowerCase();
+                link.parentElement.style.display = text.includes(q) ? 'block' : 'none';
+            });
+        }
+
+        function copyCode(btn) {
+            const pre = btn.parentElement.nextElementSibling;
+            const code = pre ? pre.textContent : '';
+            if (code) {
+                navigator.clipboard.writeText(code);
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            }
+        }
+
+        // Back-to-top scroll listener
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('btn-back-to-top');
+            if (btn) {
+                if (window.scrollY > 300) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+            }
+        });
+
+        // Auto-close sidebar on mobile when a link is clicked
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 980) {
+                    closeMobileSidebar();
+                }
+            });
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('carbox_lang') || localStorage.getItem('carbox_doc_lang') || 'en';
+            setDocLanguage(savedLang);
+
+            const hash = window.location.hash;
+            if (hash.includes('carboxmol') || hash.startsWith('#cm-')) {
+                switchDocPortal('carboxmol');
+            } else if (hash.includes('download') || hash.startsWith('#dl-')) {
+                switchDocPortal('downloads');
+            } else {
+                switchDocPortal('carbox');
+            }
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'carbox_lang' && e.newValue && e.newValue !== currentLang) {
+                setDocLanguage(e.newValue);
+            }
+        });
+    </script>
+</body>
+
+</html>

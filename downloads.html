@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="dl-page-title">Downloads &amp; Releases — Carbox &amp; CarboxMol Suite (2026)</title>
+    <meta name="description"
+        content="Official distribution hub for Carbox and CarboxMol: Python packages, standalone cross-platform binaries, desktop studio bundles, and crystallographic restraint libraries.">
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Heebo:wght@300;400;500;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Downloads Hub Favicons & App Icons -->
+    <link rel="icon" type="image/svg+xml" href="assets/download_logo.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/download_favicon32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/download_favicon64.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/download_pwa_icon_192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/download_pwa_icon_512.png">
+    <link rel="shortcut icon" href="assets/download_favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/download_apple_touch_icon.png">
+    <link rel="manifest" href="manifest-carboxmol.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Carbox Downloads">
+    <meta name="theme-color" content="#090d16">
+    <script defer src="pwa-sync.js?v=0.4.5"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --bg-code: #0f172a;
+            --border-subtle: #e2e8f0;
+            --border-focus: #059669;
+            --text-main: #1e293b;
+            --text-heading: #0f172a;
+            --text-muted: #64748b;
+            --accent-download: #059669;
+            --accent-download-bg: rgba(5, 150, 105, 0.08);
+            --accent-carbox: #0284c7;
+            --accent-carboxmol: #7c3aed;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-subtle: 0 4px 20px rgba(15, 23, 42, 0.05);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.68;
+            font-size: 14.5px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        html[dir="rtl"] body {
+            font-family: 'Heebo', 'Inter', sans-serif;
+        }
+
+        .downloads-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo-img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .brand-title-group h1 {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-badge-version {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            background: var(--accent-download-bg);
+            border: 1px solid rgba(5, 150, 105, 0.3);
+            border-radius: 12px;
+            color: var(--accent-download);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-switcher-group {
+            display: flex;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 2px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn.active {
+            background: var(--accent-download);
+            color: #ffffff;
+        }
+
+        .nav-link-btn {
+            font-size: 12.5px;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-link-btn:hover {
+            border-color: var(--accent-download);
+            color: var(--accent-download);
+            background: var(--accent-download-bg);
+        }
+
+        .downloads-container {
+            max-width: 1200px;
+            width: 92%;
+            margin: 32px auto 60px auto;
+            flex: 1;
+        }
+
+        .downloads-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 44px 52px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .module-banner-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 36px;
+        }
+
+        .module-banner-logo {
+            width: 68px;
+            height: 68px;
+            object-fit: contain;
+        }
+
+        .module-banner-titles h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin: 0 0 6px 0;
+        }
+
+        .module-banner-titles p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .downloads-card h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-heading);
+            margin-top: 40px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .downloads-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-heading);
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        .docs-table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+        }
+
+        .docs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            text-align: left;
+        }
+
+        html[dir="rtl"] .docs-table {
+            text-align: right;
+        }
+
+        .docs-table th {
+            background: var(--bg-subtle);
+            color: var(--text-heading);
+            padding: 10px 14px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .docs-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-main);
+        }
+
+        .docs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .docs-table tr:nth-child(even) td {
+            background: #fafafa;
+        }
+
+        .code-block-wrapper {
+            position: relative;
+            margin: 18px 0;
+            border-radius: var(--radius-md);
+            background: var(--bg-code);
+            border: 1px solid #1e293b;
+            overflow: hidden;
+            direction: ltr !important;
+            text-align: left !important;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            padding: 8px 14px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #94a3b8;
+        }
+
+        pre code {
+            display: block;
+            padding: 16px;
+            overflow-x: auto;
+            color: #f1f5f9;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.6;
+        }
+
+        .btn-download-direct {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-download);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .btn-download-direct:hover {
+            background: #047857;
+            color: #ffffff;
+        }
+
+        .code-copy-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid #475569;
+            color: #cbd5e1;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .code-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .downloads-footer {
+            margin-top: auto;
+            background: #ffffff;
+            border-top: 1px solid var(--border-subtle);
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            .downloads-card {
+                padding: 24px 16px;
+            }
+            .module-banner-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="downloads-navbar">
+        <a href="dashboard.html" class="brand-container">
+            <img src="assets/download_logo.svg" alt="Downloads Logo" class="brand-logo-img">
+            <div class="brand-title-group">
+                <h1>Carbox &amp; CarboxMol Downloads <span class="brand-badge-version">Release 2026</span></h1>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <div class="lang-switcher-group">
+                <button class="lang-btn active" id="btn-lang-en" onclick="setDlLanguage('en')">🇬🇧 EN</button>
+                <button class="lang-btn" id="btn-lang-az" onclick="setDlLanguage('az')">🇦🇿 AZ</button>
+                <button class="lang-btn" id="btn-lang-he" onclick="setDlLanguage('he')">🇮🇱 עב</button>
+            </div>
+
+            <a href="dashboard.html" class="nav-link-btn" title="Open Carbox Survey Dashboard">
+                <img src="assets/carbox_logo.png" alt="Carbox" style="width: 16px; height: 16px; object-fit: contain;"> <span id="nav-lbl-dashboard">Carbox</span>
+            </a>
+            <a href="studio.html" class="nav-link-btn" title="Open 3D Studio">
+                <img src="assets/carboxmol_logo.png" alt="CarboxMol" style="width: 16px; height: 16px; object-fit: contain;"> <span id="nav-lbl-studio">CarboxMol</span>
+            </a>
+            <a href="docs.html" class="nav-link-btn" title="Open Documentation Portal">
+                <img src="assets/docs_logo.svg" alt="Docs" style="width: 16px; height: 16px; object-fit: contain;"> <span id="nav-lbl-docs">Docs</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="downloads-container">
+        <div class="downloads-card">
+            <div class="module-banner-header">
+                <img src="assets/download_logo.svg" alt="Downloads Logo" class="module-banner-logo">
+                <div class="module-banner-titles">
+                    <h1 id="dl-header-title">Downloads &amp; Distribution Hub (Release 2026)</h1>
+                    <p id="dl-header-desc">Official Python wheels, cross-platform standalone binaries, CarboxMol desktop bundles, and crystallographic dictionaries.</p>
+                </div>
+            </div>
+
+        <section id="dl-packages">
+            <!-- English -->
+            <div class="lang-view lang-en">
+                <h2><i class="fa-solid fa-download" style="color: #059669;"></i> 1. Official Software Downloads &amp; Binaries (Release 2026)</h2>
+                <div style="background: rgba(5, 150, 105, 0.08); border: 1px solid rgba(5, 150, 105, 0.25); border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="background: #059669; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.5px;">NEW v0.4.5</span>
+                        <span style="font-size: 13.5px; font-weight: 600; color: #065f46;">Official Release v0.4.5: Trilingual Localization (EN/AZ/HE), Carbox Validation Criteria &amp; Empirical pKa Engine</span>
+                    </div>
+                    <a href="https://github.com/carbox/carbox/releases/tag/v0.4.5" target="_blank" class="nav-link-btn" style="background: #059669; color: #fff; border-color: #059669; font-size: 12px; padding: 5px 12px;">
+                        <i class="fa-solid fa-file-lines"></i> View Release Notes (v0.4.5)
+                    </a>
+                </div>
+                <p>
+                    Download official pre-built wheels, cross-platform standalone binaries, benchmark datasets, and crystallographic dictionary restraint templates for Carbox and CarboxMol.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Package / Asset</th>
+                                <th>Version</th>
+                                <th>Target Platform</th>
+                                <th>Format</th>
+                                <th>Direct Download</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(2, 132, 199, 0.06);">
+                                <td><strong><i class="fa-solid fa-book-bookmark" style="color: #0284c7;"></i> Carbox Definitive Master Manual (104-Page Monograph)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Universal / PDF Readers &amp; Markdown</td>
+                                <td><code>.pdf</code> (104 Pages) / <code>.md</code></td>
+                                <td>
+                                    <a href="CARBOX_MASTER_MANUAL.pdf" download="CARBOX_MASTER_MANUAL.pdf" target="_blank" class="nav-link-btn" style="display:inline-flex; background: #b91c1c; color: #fff; border-color: #b91c1c; margin-right: 6px;"><i class="fa-solid fa-file-pdf"></i> Download PDF (104 pp)</a>
+                                    <a href="https://raw.githubusercontent.com/carbox/carbox/main/CARBOX_MASTER_MANUAL.md" download="CARBOX_MASTER_MANUAL.md" target="_blank" class="nav-link-btn" style="display:inline-flex; background: #0284c7; color: #fff; border-color: #0284c7;"><i class="fa-solid fa-file-code"></i> Markdown</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Scientific Python Library</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Python 3.9 – 3.14 (Any OS)</td>
+                                <td><code>.whl</code> (Wheel)</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-box"></i> Download Wheel</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Standalone CLI (macOS)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>macOS Apple Silicon (M1/M2/M3/M4)</td>
+                                <td>Executable Binary</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-apple"></i> macOS Binary</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Standalone CLI (Linux)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Linux x86_64 / glibc 2.28+</td>
+                                <td>Executable Binary</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-linux"></i> Linux Binary</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CarboxMol 3D Studio Bundle</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Universal Desktop &amp; WebGL</td>
+                                <td><code>.tar.gz</code> / Zip</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-cube"></i> Studio Archive</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>LBHB Benchmark Structures Dataset</strong></td>
+                                <td>2026 Cohort</td>
+                                <td>4LGN, 1CA2, 1GCI, 2APR</td>
+                                <td>mmCIF &amp; MTZ Maps</td>
+                                <td><a href="https://github.com/carbox/carbox/tree/main/tests" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-database"></i> Benchmark Data</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Refinement Restraint Dictionary</strong></td>
+                                <td>2026.1</td>
+                                <td>ASH &amp; GLH Monomer Lib</td>
+                                <td><code>.cif</code> Restraints</td>
+                                <td><a href="https://github.com/carbox/carbox" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-file-code"></i> Restraints Lib</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Quick Installation via pip:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Install Carbox directly from GitHub
+$ pip install git+https://github.com/carbox/carbox.git
+
+# Verify installation
+$ carbox --version
+$ carboxmol --version</code></pre>
+                </div>
+            </div>
+
+            <!-- Azerbaijani -->
+            <div class="lang-view lang-az" style="display: none;">
+                <h2><i class="fa-solid fa-download" style="color: #059669;"></i> 1. Rəsmi Proqram Təminatı və Paketlərin Yüklənməsi (2026)</h2>
+                <div style="background: rgba(5, 150, 105, 0.08); border: 1px solid rgba(5, 150, 105, 0.25); border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="background: #059669; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.5px;">YENİ v0.4.5</span>
+                        <span style="font-size: 13.5px; font-weight: 600; color: #065f46;">Rəsmi Buraxılış v0.4.5: 3 Dilli Sinxron Lokallaşdırma (EN/AZ/HE), Carbox Validasiya Meyarları və Empirik pKa Mühərriki</span>
+                    </div>
+                    <a href="https://github.com/carbox/carbox/releases/tag/v0.4.5" target="_blank" class="nav-link-btn" style="background: #059669; color: #fff; border-color: #059669; font-size: 12px; padding: 5px 12px;">
+                        <i class="fa-solid fa-file-lines"></i> Buraxılış Qeydləri (v0.4.5)
+                    </a>
+                </div>
+                <p>
+                    Carbox və CarboxMol üçün rəsmi Python təkərləri (wheels), platformalararası binar icra faylları, etalon test verilənləri və Carbox zərifləşdirmə lüğət fayllarını endirin.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>Paket / Resurs</th>
+                                <th>Versiya</th>
+                                <th>Hədəf Platforma</th>
+                                <th>Format</th>
+                                <th>Birbaşa Yükləmə</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(2, 132, 199, 0.06);">
+                                <td><strong><i class="fa-solid fa-book-bookmark" style="color: #0284c7;"></i> Carbox Fundamental Baş İstinad Dərslik Vəsaiti (104 Səhifəlik Monoqrafiya)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Universal / PDF Oxuyucular və Bütün Qurğular</td>
+                                <td><code>.pdf</code> (104 Səhifə) / <code>.md</code></td>
+                                <td>
+                                    <a href="CARBOX_MASTER_MANUAL.pdf" download="CARBOX_MASTER_MANUAL.pdf" target="_blank" class="nav-link-btn" style="display:inline-flex; background: #b91c1c; color: #fff; border-color: #b91c1c; margin-right: 6px;"><i class="fa-solid fa-file-pdf"></i> PDF Kitabı Endir (104 səh)</a>
+                                    <a href="https://raw.githubusercontent.com/carbox/carbox/main/CARBOX_MASTER_MANUAL.md" download="CARBOX_MASTER_MANUAL.md" target="_blank" class="nav-link-btn" style="display:inline-flex; background: #0284c7; color: #fff; border-color: #0284c7;"><i class="fa-solid fa-file-code"></i> Markdown</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Elmi Python Kitabxanası</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Python 3.9 – 3.14 (İstənilən ƏS)</td>
+                                <td><code>.whl</code> (Wheel)</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-box"></i> Wheel Yüklə</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Sərbəst CLI (macOS)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>macOS Apple Silicon (M1/M2/M3/M4)</td>
+                                <td>İcra olunan Binar</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-apple"></i> macOS Binar</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Sərbəst CLI (Linux)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Linux x86_64 / glibc 2.28+</td>
+                                <td>İcra olunan Binar</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-linux"></i> Linux Binar</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CarboxMol 3D Studiya Paketi</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Universal Masaüstü &amp; WebGL</td>
+                                <td><code>.tar.gz</code> / Zip</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-cube"></i> Studiya Arxivi</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>LBHB Etalon Strukturlar Bazası</strong></td>
+                                <td>2026 Kohort</td>
+                                <td>4LGN, 1CA2, 1GCI, 2APR</td>
+                                <td>mmCIF və MTZ Xəritələri</td>
+                                <td><a href="https://github.com/carbox/carbox/tree/main/tests" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-database"></i> Test Bazası</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox Zərifləşdirmə Lüğət Faylları</strong></td>
+                                <td>2026.1</td>
+                                <td>ASH və GLH Monomer Kitabxanası</td>
+                                <td><code>.cif</code> Məhdudiyyətləri</td>
+                                <td><a href="https://github.com/carbox/carbox" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-file-code"></i> Lüğət Faylı</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>pip ilə Birbaşa Quraşdırma:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code># Carbox-u birbaşa GitHub-dan quraşdırın
+$ pip install git+https://github.com/carbox/carbox.git
+
+# Versiyanı yoxlayın
+$ carbox --version
+$ carboxmol --version</code></pre>
+                </div>
+            </div>
+
+            <!-- Hebrew -->
+            <div class="lang-view lang-he" style="display: none;">
+                <h2><i class="fa-solid fa-download" style="color: #059669;"></i> 1. הורדות תוכנה רשמיות וקבצים בינאריים (גרסת 2026)</h2>
+                <div style="background: rgba(5, 150, 105, 0.08); border: 1px solid rgba(5, 150, 105, 0.25); border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="background: #059669; color: #fff; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; letter-spacing: 0.5px;">חדש v0.4.5</span>
+                        <span style="font-size: 13.5px; font-weight: 600; color: #065f46;">גרסה רשמית v0.4.5: לוקליזציה תלת-לשונית מסונכרנת (EN/AZ/HE), קריטריוני אימות של Carbox ומנוע pKa אמפירי</span>
+                    </div>
+                    <a href="https://github.com/carbox/carbox/releases/tag/v0.4.5" target="_blank" class="nav-link-btn" style="background: #059669; color: #fff; border-color: #059669; font-size: 12px; padding: 5px 12px;">
+                        <i class="fa-solid fa-file-lines"></i> הערות גרסה (v0.4.5)
+                    </a>
+                </div>
+                <p>
+                    הורדת קובצי Wheel רשמיים לפייתון, קבצים בינאריים עצמאיים לכל הפלטפורמות, נתוני בנצ'מרק וקבצי מילון אילוצים של Carbox.
+                </p>
+                <div class="docs-table-wrap">
+                    <table class="docs-table">
+                        <thead>
+                            <tr>
+                                <th>חבילה / משאב</th>
+                                <th>גרסה</th>
+                                <th>פלטפורמת יעד</th>
+                                <th>פורמט</th>
+                                <th>הורדה ישירה</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(2, 132, 199, 0.06);">
+                                <td><strong><i class="fa-solid fa-book-bookmark" style="color: #0284c7;"></i> מדריך המקורות המקיף של Carbox (מונוגרפיה של 104 עמודים)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>אוניברסלי / קוראי PDF וכל המכשירים</td>
+                                <td><code>.pdf</code> (104 עמודים) / <code>.md</code></td>
+                                <td>
+                                    <a href="CARBOX_MASTER_MANUAL.pdf" download="CARBOX_MASTER_MANUAL.pdf" target="_blank" class="nav-link-btn" style="display:inline-flex; background: #b91c1c; color: #fff; border-color: #b91c1c; margin-left: 6px;"><i class="fa-solid fa-file-pdf"></i> הורד PDF (104 עמודים)</a>
+                                    <a href="https://raw.githubusercontent.com/carbox/carbox/main/CARBOX_MASTER_MANUAL.md" download="CARBOX_MASTER_MANUAL.md" target="_blank" class="nav-link-btn" style="display:inline-flex; background: #0284c7; color: #fff; border-color: #0284c7;"><i class="fa-solid fa-file-code"></i> Markdown</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>ספריית פייתון מדעית Carbox</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Python 3.9 – 3.14</td>
+                                <td><code>.whl</code> (Wheel)</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-box"></i> הורד Wheel</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox קובץ בינארי (macOS)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>macOS Apple Silicon (M1/M2/M3)</td>
+                                <td>קובץ הרצה בינארי</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-apple"></i> בינארי macOS</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbox קובץ בינארי (Linux)</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Linux x86_64</td>
+                                <td>קובץ הרצה בינארי</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-brands fa-linux"></i> בינארי Linux</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CarboxMol חבילת סטודיו 3D</strong></td>
+                                <td>v0.4.5 (2026)</td>
+                                <td>Desktop &amp; WebGL</td>
+                                <td><code>.tar.gz</code> / Zip</td>
+                                <td><a href="https://github.com/carbox/carbox/releases" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-cube"></i> ארכיון סטודיו</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>מאגר מבני בנצ'מרק LBHB</strong></td>
+                                <td>מחזור 2026</td>
+                                <td>4LGN, 1CA2, 1GCI, 2APR</td>
+                                <td>מפות mmCIF ו-MTZ</td>
+                                <td><a href="https://github.com/carbox/carbox/tree/main/tests" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-database"></i> מאגר מבחן</a></td>
+                            </tr>
+                            <tr>
+                                <td><strong>מילוני אילוצים של Carbox</strong></td>
+                                <td>2026.1</td>
+                                <td>ספריית מונומרים ASH ו-GLH</td>
+                                <td>אילוצי <code>.cif</code></td>
+                                <td><a href="https://github.com/carbox/carbox" target="_blank" class="nav-link-btn" style="display:inline-flex;"><i class="fa-solid fa-file-code"></i> מילון אילוצים</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>התקנה מהירה באמצעות pip:</h3>
+                <div class="code-block-wrapper">
+                    <div class="code-header"><span>BASH</span><button class="code-copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><code>$ pip install git+https://github.com/carbox/carbox.git
+$ carbox --version
+$ carboxmol --version</code></pre>
+                </div>
+            </div>
+        </section>
+    
+        </div>
+    </main>
+
+    <footer class="downloads-footer">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+            <img src="assets/download_logo.svg" alt="Download Logo" style="width: 22px; height: 22px;">
+            <strong id="dl-footer-title">Carbox &amp; CarboxMol Distribution Hub (Release 2026)</strong>
+        </div>
+        <div>
+            <span id="dl-footer-authors-prefix">Authors:</span> <strong>Carbox Architecture Team</strong> &amp; <strong>Carbox Platform</strong>
+        </div>
+        <div style="margin-top: 4px; font-size: 11px;" id="dl-footer-affil">
+            Institute of Molecular Biology, Baku &amp; MRC Laboratory of Molecular Biology, Cambridge, UK.
+        </div>
+    </footer>
+
+    <script>
+        const dlTranslations = {
+            en: {
+                pageTitle: "Downloads & Releases — Carbox & CarboxMol Suite (2026)",
+                title: "Downloads & Distribution Hub (Release 2026)",
+                desc: "Official Python wheels, cross-platform standalone binaries, CarboxMol desktop bundles, and crystallographic dictionaries.",
+                dashboard: "Carbox",
+                studio: "CarboxMol",
+                docs: "Docs",
+                footerTitle: "Carbox & CarboxMol Distribution Hub (Release 2026)",
+                authorsPrefix: "Authors:",
+                affil: "Institute of Molecular Biology, Baku & MRC Laboratory of Molecular Biology, Cambridge, UK."
+            },
+            az: {
+                pageTitle: "Yükləmələr və Buraxılışlar — Carbox & CarboxMol Paketi (2026)",
+                title: "Yükləmələr və Paylama Mərkəzi (Buraxılış 2026)",
+                desc: "Rəsmi Python paketləri (wheels), platformalararası sərbəst binar icra faylları, masaüstü studiya arxivi və kristallografiya lüğətləri.",
+                dashboard: "Carbox",
+                studio: "CarboxMol",
+                docs: "Sənədlər",
+                footerTitle: "Carbox & CarboxMol Paylama Mərkəzi (Buraxılış 2026)",
+                authorsPrefix: "Müəlliflər:",
+                affil: "Molekulyar Biologiya İnstitutu, Bakı və MRC Molekulyar Biologiya Laboratoriyası, Kembric, Böyük Britaniya."
+            },
+            he: {
+                pageTitle: "הורדות וגרסאות — חבילת Carbox & CarboxMol (2026)",
+                title: "מרכז הורדות והפצה (גרסת 2026)",
+                desc: "חבילות Wheel רשמיות לפייתון, קבצים בינאריים עצמאיים לכל הפלטפורמות, חבילות סטודיו שולחניות ומילוני אילוצים.",
+                dashboard: "Carbox",
+                studio: "CarboxMol",
+                docs: "תיעוד",
+                footerTitle: "מרכז ההפצה וההורדות Carbox & CarboxMol (גרסת 2026)",
+                authorsPrefix: "מחברים:",
+                affil: "המכון לביולוגיה מולקולרית, באקו ומעבדת MRC לביולוגיה מולקולרית, קיימברידג', בריטניה."
+            }
+        };
+
+        function setDlLanguage(lang) {
+            if (!dlTranslations[lang]) lang = 'en';
+            try {
+                localStorage.setItem('carbox_lang', lang);
+                localStorage.setItem('carbox_doc_lang', lang);
+            } catch (e) {}
+
+            ['en', 'az', 'he'].forEach(l => {
+                const b = document.getElementById(`btn-lang-${l}`);
+                if (b) b.classList.toggle('active', l === lang);
+            });
+
+            if (lang === 'he') {
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = 'he';
+            } else {
+                document.documentElement.dir = 'ltr';
+                document.documentElement.lang = lang;
+            }
+
+            document.querySelectorAll('.lang-view').forEach(el => {
+                el.style.display = el.classList.contains(`lang-${lang}`) ? 'block' : 'none';
+            });
+
+            const t = dlTranslations[lang] || dlTranslations.en;
+            if (t.pageTitle) document.title = t.pageTitle;
+
+            const hTitle = document.getElementById('dl-header-title');
+            if (hTitle) hTitle.textContent = t.title;
+
+            const hDesc = document.getElementById('dl-header-desc');
+            if (hDesc) hDesc.textContent = t.desc;
+
+            const dNav = document.getElementById('nav-lbl-dashboard');
+            if (dNav) dNav.textContent = t.dashboard;
+
+            const sNav = document.getElementById('nav-lbl-studio');
+            if (sNav) sNav.textContent = t.studio;
+
+            const docNav = document.getElementById('nav-lbl-docs');
+            if (docNav) docNav.textContent = t.docs;
+
+            const fTitle = document.getElementById('dl-footer-title');
+            if (fTitle) fTitle.textContent = t.footerTitle;
+
+            const fAuthPrefix = document.getElementById('dl-footer-authors-prefix');
+            if (fAuthPrefix) fAuthPrefix.textContent = t.authorsPrefix;
+
+            const fAffil = document.getElementById('dl-footer-affil');
+            if (fAffil) fAffil.textContent = t.affil;
+        }
+
+        function copyCode(btn) {
+            const pre = btn.parentElement.nextElementSibling;
+            const code = pre ? pre.textContent : '';
+            if (code) {
+                navigator.clipboard.writeText(code);
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => { btn.innerHTML = original; }, 2000);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('carbox_lang') || localStorage.getItem('carbox_doc_lang') || 'en';
+            setDlLanguage(savedLang);
+        });
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'carbox_lang' && e.newValue) {
+                setDlLanguage(e.newValue);
+            }
+        });
+    </script>
+</body>
+
+</html>
