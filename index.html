@@ -1,364 +1,1905 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarboxMol | System Maintenance &amp; Upgrades</title>
-    <!-- Google Fonts -->
+    <title>CarboxMol · Macromolecular Crystallographic Workbench</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <meta name="description"
+        content="Enterprise Macromolecular Crystallographic Workbench for Carboxyl Protonation States, Low-Barrier Hydrogen Bonds & Microenvironments.">
+    <meta name="theme-color" content="#090d16">
+    <meta name="author" content="Carbox & CarboxMol Engineering Group">
+
+    <!-- Open Graph / Facebook / LinkedIn / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://carboxmol.github.io/">
+    <meta property="og:title" content="CarboxMol · Macromolecular Crystallographic Workbench">
+    <meta property="og:description"
+        content="Enterprise Macromolecular Crystallographic Workbench for Carboxyl Protonation States, Low-Barrier Hydrogen Bonds & Microenvironments.">
+    <meta property="og:image" content="https://carboxmol.github.io/assets/carboxmol_logo.png">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CarboxMol · Macromolecular Crystallographic Workbench">
+    <meta name="twitter:description"
+        content="Enterprise Macromolecular Crystallographic Workbench for Carboxyl Protonation States, Low-Barrier Hydrogen Bonds & Microenvironments.">
+    <meta name="twitter:image" content="https://carboxmol.github.io/assets/carboxmol_logo.png">
+
+
+    <!-- Progressive Web App (Silent / Add to Home Screen) -->
+    <link rel="manifest" href="manifest-carboxmol.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CarboxMol">
+    <meta name="application-name" content="CarboxMol">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/carboxmol_favicon32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/carboxmol_favicon64.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/carboxmol_pwa_icon_192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/carboxmol_pwa_icon_512.png">
+    <link rel="shortcut icon" href="assets/carboxmol_favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/carboxmol_apple_touch_icon.png">
+
+    <link rel="stylesheet" href="studio.css?v=0.4.5">
+    <script defer src="pwa-sync.js?v=0.4.5"></script>
+
+    <!-- 3Dmol.js Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.4/3Dmol-min.js"></script>
     <script>
-        if (window.location.hostname.includes("carboxmol.vercel.app")) {
-            window.location.replace("https://carboxmol.github.io" + window.location.pathname + window.location.search);
+        if (typeof $3Dmol === 'undefined' && typeof window['3Dmol'] !== 'undefined') {
+            window.$3Dmol = window['3Dmol'];
+        }
+        if (typeof $3Dmol === 'undefined' || typeof $3Dmol.createViewer !== 'function') {
+            document.write('<script src="libs/3Dmol-min.js"><\/script>');
         }
     </script>
-
-    <style>
-        :root {
-            --bg-page: #f8fafc;
-            --bg-card: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --accent-blue: #0284c7;
-            --accent-blue-bg: #f0f9ff;
-            --accent-blue-border: #bae6fd;
-            --accent-purple: #9333ea;
-            --accent-purple-bg: #f3e8ff;
+    <script>
+        if (typeof $3Dmol === 'undefined' && typeof window['3Dmol'] !== 'undefined') {
+            window.$3Dmol = window['3Dmol'];
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-page);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 16px;
-        }
-
-        .card {
-            max-width: 780px;
-            width: 100%;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            padding: 48px 44px;
-            text-align: center;
-        }
-
-        @media (max-width: 640px) {
-            body {
-                padding: 20px 12px;
-            }
-            .card {
-                padding: 28px 18px;
-                border-radius: 18px;
-            }
-        }
-
-        .logo-box {
-            width: 82px;
-            height: 82px;
-            background: #090d16;
-            border-radius: 20px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 20px -3px rgba(11, 15, 25, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .logo-img {
-            width: 54px;
-            height: 54px;
-            object-fit: contain;
-        }
-
-        .badge-maintenance {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px 14px;
-            border-radius: 9999px;
-            background: var(--accent-blue-bg);
-            border: 1px solid var(--accent-blue-border);
-            color: var(--accent-blue);
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 18px;
-        }
-
-        .badge-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-        }
-
-        .title {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--text-main);
-            margin: 0 0 6px;
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            font-size: 14.5px;
-            color: var(--text-muted);
-            font-weight: 500;
-            margin: 0 0 32px;
-        }
-
-        .lang-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 34px;
-        }
-
-        .lang-card {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 18px 22px;
-            text-align: left;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .lang-card:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-        }
-
-        .lang-card.rtl {
-            text-align: right;
-            direction: rtl;
-            font-family: 'Heebo', 'Inter', system-ui, sans-serif;
-        }
-
-        .lang-header {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            color: #475569;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 7px;
-        }
-
-        .lang-card.rtl .lang-header {
-            justify-content: flex-start;
-        }
-
-        .lang-card-title {
-            font-size: 15.5px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 4px;
-        }
-
-        .lang-card-desc {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.55;
-        }
-
-        .authors-divider {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .authors-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 28px;
-        }
-
-        @media (max-width: 640px) {
-            .authors-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .author-card {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            text-align: left;
-        }
-
-        .author-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            flex-shrink: 0;
-        }
-
-        .author-icon.scholar {
-            background: var(--accent-blue-bg);
-            color: var(--accent-blue);
-        }
-
-        .author-icon.mrc {
-            background: var(--accent-purple-bg);
-            color: var(--accent-purple);
-        }
-
-        .author-info strong {
-            display: block;
-            font-size: 13.5px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 2px;
-        }
-
-        .author-info span {
-            display: block;
-            font-size: 11px;
-            color: var(--text-muted);
-            line-height: 1.45;
-        }
-
-        .footer {
-            font-size: 11.5px;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-    </style>
+    </script>
 </head>
+
 <body>
+    <!-- ─── Top Studio Navbar ────────────────────────────────────────────────── -->
+    <header class="studio-header">
+        <!-- 1. Left Group: Brand, Portal Links & Structure Fetch -->
+        <div class="studio-header-group studio-header-left">
+            <a href="studio.html" class="studio-brand" title="CarboxMol 3D Crystallographic Workbench">
+                <div class="studio-brand-logo-wrap">
+                    <img src="assets/carboxmol_logo.png?v=0.4.5" alt="CarboxMol Logo" class="brand-logo-img"
+                        onerror="this.onerror=null; this.src='assets/carboxmol_logo.png?v=0.4.5';">
+                </div>
+                <span class="brand-title">CarboxMol</span>
+                <span class="brand-badge" id="studio-version-badge" data-i18n="brand_badge">v0.4.5</span>
+            </a>
 
-    <main class="card">
-        
-        <!-- Logo -->
-        <div class="logo-box">
-            <img src="assets/carboxmol_logo.png" alt="CarboxMol Logo" class="logo-img"
-                 onerror="this.onerror=null; this.src='assets/carboxmol_logo.png';">
-        </div>
+            <div class="studio-pill-group studio-nav-cross-links">
+                <a href="dashboard.html" class="btn-studio" title="Carbox Dashboard">
+                    <img src="assets/carbox_logo.png" alt="Carbox" class="nav-cross-icon"> <span data-i18n="btn_nav_dashboard">Carbox</span>
+                </a>
+                <button type="button" class="btn-studio" id="btn-studio-download-hub" title="Open Carbox Downloads &amp; OS Installation Hub (macOS, Linux, Windows, PWA)">
+                    <img src="assets/download_favicon32.png" alt="Downloads" class="nav-cross-icon"> <span data-i18n="btn_nav_downloads">Downloads</span>
+                </button>
+                <a href="docs.html" class="btn-studio" title="Open Documentation Portal">
+                    <img src="assets/docs_favicon32.png" alt="Docs" class="nav-cross-icon"> <span data-i18n="btn_nav_docs">Docs</span>
+                </a>
+            </div>
 
-        <!-- Badge -->
-        <div>
-            <div class="badge-maintenance">
-                <span class="badge-dot"></span>
-                <span>System Maintenance &amp; Upgrades</span>
+            <div class="studio-loader-bar">
+                <div class="loader-input-wrap">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="studio-pdb-input" placeholder="PDB ID..." maxlength="25"
+                        data-i18n-ph="fetch_input_ph">
+                </div>
+                <button type="button" class="btn-studio primary" id="btn-studio-load">
+                    <i class="fa-solid fa-bolt"></i> <span data-i18n="btn_fetch">Fetch</span>
+                </button>
+                <button type="button" class="btn-studio icon-only" id="btn-studio-clear" title="Clear structure and return to welcome screen" style="display: none;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
         </div>
 
-        <!-- Title & Subtitle -->
-        <h1 class="title">CarboxMol</h1>
-        <p class="subtitle">Macromolecular Crystallography &amp; Structural Bioinformatics Workbench</p>
-
-        <!-- Trilingual Language Stack (AZ, EN, HE) -->
-        <section class="lang-stack" aria-label="Development &amp; Maintenance Notices">
-            
-            <!-- Azerbaijani -->
-            <article class="lang-card">
-                <div class="lang-header">
-                    <span>🇦🇿</span>
-                    <span>AZƏRBAYCAN</span>
-                </div>
-                <h2 class="lang-card-title">Layihə inkişaf etdirilməkdədir</h2>
-                <p class="lang-card-desc">CarboxMol platforması hazırda aktiv inkişaf mərhələsindədir və tezliklə yenilənmiş versiya ilə yenidən deploy olunacaqdır.</p>
-            </article>
-
-            <!-- English -->
-            <article class="lang-card">
-                <div class="lang-header">
-                    <span>🇬🇧</span>
-                    <span>ENGLISH</span>
-                </div>
-                <h2 class="lang-card-title">Project Under Active Development</h2>
-                <p class="lang-card-desc">CarboxMol is currently undergoing comprehensive engineering upgrades and will be redeployed shortly.</p>
-            </article>
-
-            <!-- Hebrew (RTL) -->
-            <article class="lang-card rtl" dir="rtl" lang="he">
-                <div class="lang-header">
-                    <span>🇮🇱</span>
-                    <span>עברית</span>
-                </div>
-                <h2 class="lang-card-title">הפרויקט נמצא כעת בפיתוח פעיל</h2>
-                <p class="lang-card-desc">פלטפורמת CarboxMol עוברת כעת שדרוגים מקיפים ותועלה מחדש בקרוב בגרסה מעודכנת.</p>
-            </article>
-
-        </section>
-
-        <!-- Scientific Authors & Reference -->
-        <section class="authors-section" aria-label="Scientific Authors">
-            <div class="authors-divider">
-                <i class="fa-solid fa-graduation-cap"></i>
-                <span>SCIENTIFIC AUTHORS &amp; REFERENCE</span>
+        <!-- 2. Center Group: Panels Dock Controller & Workbench Modules (Icons Only) -->
+        <div class="studio-header-group studio-header-center">
+            <!-- Segmented Layout Dock Controller (Left / Split Arrow / Right) -->
+            <div class="studio-pill-group studio-dock-controller" title="Workbench Panel Layout">
+                <button type="button" class="btn-studio dock-ctrl-btn" id="btn-top-toggle-left" title="Toggle Left Inspector Panel (L or [)" aria-label="Toggle Left Panel">
+                    <i class="fa-solid fa-table-columns" style="color: #38bdf8;"></i> <span data-i18n="btn_panel_left">Left</span>
+                </button>
+                <button type="button" class="btn-studio dock-ctrl-btn" id="btn-top-toggle-split" title="Toggle Both Panels (Split Workstation)" aria-pressed="false" aria-label="Toggle Split Workstation">
+                    <i class="fa-solid fa-arrows-split-up-and-left"></i>
+                </button>
+                <button type="button" class="btn-studio dock-ctrl-btn" id="btn-top-toggle-right" title="Toggle Right Telemetry Panel (R or ])" aria-label="Toggle Right Panel">
+                    <i class="fa-solid fa-table-columns fa-flip-horizontal" style="color: #f59e0b;"></i> <span data-i18n="btn_panel_right">Right</span>
+                </button>
             </div>
 
-            <div class="authors-grid">
-                <div class="author-card">
-                    <div class="author-icon scholar">
-                        <i class="fa-solid fa-user-graduate"></i>
+            <!-- Workbench Option Modules Pill (Icons Only) -->
+            <div class="studio-pill-group studio-options-pill-group" title="Workbench Modules">
+                <!-- Left Sidebar Panels -->
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-pairs" data-target="studio-section-pairs" data-panel="left" title="Discovered Asp/Glu Pairs (Pairs)" aria-label="Pairs">
+                    <i class="fa-solid fa-crosshairs" style="color: #38bdf8;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-proton" data-target="studio-section-proton" data-panel="left" title="Carboxyl Protonation States &amp; LBHB (Protonation)" aria-label="Protonation States">
+                    <i class="fa-solid fa-atom" style="color: #06b6d4;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-style" data-target="studio-section-style" data-panel="left" title="Representation &amp; Visual Styling (Style)" aria-label="Style">
+                    <i class="fa-solid fa-palette" style="color: #ec4899;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-density" data-target="studio-section-density" data-panel="left" title="2Fo-Fc &amp; Difference Density Maps (Density)" aria-label="Density">
+                    <i class="fa-solid fa-cube" style="color: #22c55e;"></i>
+                </button>
+                <div class="opt-separator"></div>
+                <!-- Right Sidebar Panels -->
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-geometry" data-target="studio-geom-telemetry" data-panel="right" title="Live Geometric Signatures (Geometry)" aria-label="Geometry">
+                    <i class="fa-solid fa-chart-line" style="color: #f59e0b;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-audit" data-target="studio-density-validation-section" data-panel="right" title="Density &amp; Model Validation (Density Validation)" aria-label="Density Validation">
+                    <i class="fa-solid fa-shield-halved" style="color: #10b981;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-atom-auditor" data-target="studio-atom-audit-section" data-panel="right" title="Carbox Atom Auditor (Atom Auditor)" aria-label="Atom Auditor">
+                    <i class="fa-solid fa-microchip" style="color: #34d399;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-proton-sim" data-target="studio-proton-sim-section" data-panel="right" title="Protonation Simulation &amp; Validation (PES Simulation)" aria-label="Protonation Simulation">
+                    <i class="fa-solid fa-wave-square" style="color: #818cf8;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-metals" data-target="studio-metal-coord-section" data-panel="right" title="Metal Coordination &amp; Coloring (Metals)" aria-label="Metals">
+                    <i class="fa-solid fa-gem" style="color: #c084fc;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-measurements" data-target="studio-section-measurements" data-panel="right" title="Atomic Measurements (Measure)" aria-label="Measurements">
+                    <i class="fa-solid fa-ruler-combined" style="color: #38bdf8;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-unitcell" data-target="studio-section-unitcell" data-panel="right" title="Unit Cell &amp; Symmetry (Unit Cell)" aria-label="Unit Cell">
+                    <i class="fa-solid fa-cubes" style="color: #60a5fa;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-microenv" data-target="studio-section-microenv" data-panel="right" title="Microenvironment &amp; pKa (pKa)" aria-label="Microenvironment">
+                    <i class="fa-solid fa-flask" style="color: #f472b6;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-dbregistry" data-target="studio-db-registry-section" data-panel="right" title="Database Cross-References (Databases)" aria-label="Databases">
+                    <i class="fa-solid fa-database" style="color: #2dd4bf;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only opt-panel-btn" id="btn-opt-tools" data-target="studio-refine-section" data-panel="right" title="Refinement &amp; Restraints Suite (Refinement)" aria-label="Refinement">
+                    <i class="fa-solid fa-sliders" style="color: #38bdf8;"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Right Group: Quick Tools, Go to Atom, Viewport Controls & Language -->
+        <div class="studio-header-group studio-header-right">
+            <!-- Analysis & Benchmark Tools Pill (Icons Only) -->
+            <div class="studio-pill-group studio-quick-tools">
+                <button type="button" class="btn-studio icon-only" id="btn-studio-ref-structures" title="Benchmark Reference Structures Gallery (Benchmarks)" aria-label="Benchmarks">
+                    <i class="fa-solid fa-gem" style="color: #a855f7;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only" id="btn-studio-macro-console" title="CarboxMol .CXL Live Script Console (Console - M)" aria-label="Console">
+                    <i class="fa-solid fa-terminal" style="color: #10b981;"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only" id="btn-studio-ligands" title="Ligand &amp; Binding Pocket 3D Interactions Engine (Ligand 3D)" aria-label="Ligand 3D">
+                    <i class="fa-solid fa-capsules" style="color: #38bdf8;"></i> <span class="badge-count" id="badge-ligand-count" style="display: none;">0</span>
+                </button>
+            </div>
+
+            <button type="button" class="btn-studio" id="btn-studio-goto-atom" title="Go to Specific Residue or Atom (⌘G / Ctrl+G)" data-i18n-title="btn_goto_atom_title">
+                <i class="fa-solid fa-location-crosshairs"></i> <span data-i18n="btn_goto_atom">Go to Atom</span> <kbd class="header-kbd">⌘G</kbd>
+            </button>
+
+            <!-- Utility Controls Pill -->
+            <div class="studio-pill-group">
+                <button type="button" class="btn-studio icon-only" id="btn-studio-snapshot" title="Save High-Res 4K Snapshot (P)" data-i18n-title="btn_snapshot_title">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only" id="btn-studio-fullscreen" title="Toggle Full 3D View (F)" data-i18n-title="btn_fullscreen_title">
+                    <i class="fa-solid fa-expand"></i>
+                </button>
+                <button type="button" class="btn-studio icon-only" id="btn-studio-shortcuts" title="Keyboard Shortcuts (? / H)" data-i18n-title="btn_shortcuts_title">
+                    <i class="fa-solid fa-keyboard"></i>
+                </button>
+            </div>
+
+            <!-- Language Flags Selector (UK, Azerbaijan, Israel) -->
+            <div class="studio-pill-group studio-lang-flags" role="group" aria-label="Language Selector" title="Language / Dil / שפה">
+                <button type="button" class="btn-studio lang-flag-btn active" data-lang="en" title="English (UK)" aria-label="English (UK)">
+                    <svg class="lang-flag-svg" viewBox="0 0 60 30" width="18" height="12" aria-hidden="true">
+                        <clipPath id="uk-flag-clip"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+                        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+                        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+                        <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#uk-flag-clip)" stroke="#C8102E" stroke-width="4"/>
+                        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+                        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+                    </svg>
+                    <span class="lang-flag-code">EN</span>
+                </button>
+                <button type="button" class="btn-studio lang-flag-btn" data-lang="az" title="Azərbaycan dili (Azerbaijan)" aria-label="Azərbaycan dili (Azerbaijan)">
+                    <svg class="lang-flag-svg" viewBox="0 0 1200 600" width="18" height="12" aria-hidden="true">
+                        <rect width="1200" height="200" fill="#00b5e2"/>
+                        <rect y="200" width="1200" height="200" fill="#ef3340"/>
+                        <rect y="400" width="1200" height="200" fill="#509e2f"/>
+                        <circle cx="570" cy="300" r="90" fill="#fff"/>
+                        <circle cx="590" cy="300" r="75" fill="#ef3340"/>
+                        <polygon points="650,300 665,310 660,328 676,322 682,338 692,324 708,331 704,313 720,307 708,296 720,285 704,279 708,261 692,268 682,254 676,270 660,264 665,282" fill="#fff"/>
+                    </svg>
+                    <span class="lang-flag-code">AZ</span>
+                </button>
+                <button type="button" class="btn-studio lang-flag-btn" data-lang="he" title="עברית (Israel)" aria-label="עברית (Israel)">
+                    <svg class="lang-flag-svg" viewBox="0 0 1100 800" width="18" height="12" aria-hidden="true">
+                        <rect width="1100" height="800" fill="#fff"/>
+                        <rect y="75" width="1100" height="100" fill="#0038b8"/>
+                        <rect y="625" width="1100" height="100" fill="#0038b8"/>
+                        <g stroke="#0038b8" stroke-width="27" fill="none">
+                            <polygon points="550,265 675,480 425,480"/>
+                            <polygon points="550,535 675,320 425,320"/>
+                        </g>
+                    </svg>
+                    <span class="lang-flag-code">HE</span>
+                </button>
+            </div>
+
+            <!-- PWA Standalone Mode Badge -->
+            <div class="pwa-standalone-badge" id="badge-pwa-standalone" title="Running in CarboxMol Native App" style="display: none;">
+                <i class="fa-solid fa-circle-check"></i> <span>App Mode</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ─── Main Workbench Grid ──────────────────────────────────────────────── -->
+    <main class="studio-main collapsed-left collapsed-right" id="studio-main-grid">
+
+        <!-- Left Inspector Panel -->
+        <aside class="studio-sidebar-left">
+            <!-- Mobile Drawer Header -->
+            <div class="sidebar-drawer-header mobile-only">
+                <span class="drawer-title"><i class="fa-solid fa-table-columns" style="color: #38bdf8;"></i> <span data-i18n="drawer_left_title">Inspector &amp; Tools</span></span>
+                <button type="button" class="btn-studio icon-only btn-close-drawer" id="btn-close-left-drawer" title="Close Panel" aria-label="Close Panel" data-i18n-title="btn_close_drawer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Discovered Pairs Module -->
+            <div class="studio-section" id="studio-section-pairs">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-crosshairs"></i> <span
+                            data-i18n="heading_pairs">Discovered Asp/Glu Pairs</span></span>
+                    <span class="section-badge" id="studio-pairs-count">0 Pairs</span>
+                </div>
+                <div class="pair-list-wrap" id="studio-pair-list">
+                    <!-- Dynamic Pair Cards -->
+                </div>
+            </div>
+
+            <!-- Protonation & pKa Modeling Module -->
+            <div class="studio-section" id="studio-section-proton">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-atom"></i> <span
+                            data-i18n="heading_proton_states">Protonation States</span></span>
+                    <span class="section-badge" id="studio-active-state-badge">Bare Native</span>
+                </div>
+                <div class="pill-grid">
+                    <button class="studio-pill active" id="pill-bare" data-state="none"><i class="fa-solid fa-dna"></i> <span
+                            data-i18n="pill_bare">Bare Native</span></button>
+                    <button class="studio-pill" id="pill-anionic" data-state="anionic"><i class="fa-solid fa-minus"></i>
+                        <span data-i18n="pill_anionic">Anionic (-COO⁻)</span></button>
+                    <button class="studio-pill" id="pill-ash" data-state="ash"><i class="fa-solid fa-plus"></i> <span
+                            data-i18n="pill_ash">Neutral ASH</span></button>
+                    <button class="studio-pill" id="pill-glh" data-state="glh"><i class="fa-solid fa-plus"></i> <span
+                            data-i18n="pill_glh">Neutral GLH</span></button>
+                    <button class="studio-pill" id="pill-lbhb" data-state="lbhb"><i class="fa-solid fa-bolt"></i> <span
+                            data-i18n="pill_lbhb">Shared LBHB</span></button>
+                </div>
+            </div>
+
+            <!-- Representation & View Controls Module -->
+            <div class="studio-section" id="studio-section-style">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-eye"></i> <span
+                            data-i18n="heading_repr">Representation &amp; Color</span></span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                    <button class="studio-pill active" id="btn-studio-cartoon" title="Backbone Cartoon Ribbon"><i class="fa-solid fa-ribbon"></i> <span
+                            data-i18n="btn_cartoon">Cartoon</span></button>
+                    <button class="studio-pill active" id="btn-studio-sidechains" title="Display all amino acid sidechains in sticks across the entire protein"><i class="fa-solid fa-code-branch"></i> <span
+                            data-i18n="btn_sidechains">All Sidechains</span></button>
+                    <button class="studio-pill" id="btn-studio-allatoms" title="Display 100% of all atoms (backbone + sidechains + ligands) as sticks"><i class="fa-solid fa-circle-nodes"></i> <span
+                            data-i18n="btn_allatoms">All Atoms (Sticks)</span></button>
+                    <button class="studio-pill" id="btn-studio-lines" title="Display all atoms in crystallographic wireframe lines"><i class="fa-solid fa-bezier-curve"></i> <span
+                            data-i18n="btn_lines">Wireframe (Lines)</span></button>
+
+                    <button class="studio-pill active" id="btn-studio-pocket" title="Highlight 4.5Å binding pocket in sticks"><i class="fa-solid fa-circle-dot"></i> <span
+                            data-i18n="btn_pocket">4.5&Aring; Pocket</span></button>
+                    <button class="studio-pill" id="btn-studio-spheres" title="Space-filling van der Waals spheres"><i class="fa-solid fa-atom"></i> <span
+                            data-i18n="btn_spheres">Spacefill (Spheres)</span></button>
+
+                    <button class="studio-pill" id="btn-studio-hbonds"><i class="fa-solid fa-link"></i> <span
+                            data-i18n="btn_hbonds">H-Bonds (&le;3.5&Aring;)</span></button>
+                    <button class="studio-pill" id="btn-studio-bfactor"><i class="fa-solid fa-fire-flame-curved"></i>
+                        <span data-i18n="btn_bfactor">B-Factor Heatmap</span></button>
+                    <button class="studio-pill" id="btn-studio-unitcell"><i class="fa-solid fa-cube"></i> <span
+                            data-i18n="btn_unitcell">Unit Cell Box</span></button>
+                    <button class="studio-pill" id="btn-studio-waters"><i class="fa-solid fa-droplet"></i> <span
+                            data-i18n="btn_waters">Solvent Waters</span></button>
+                </div>
+
+                <!-- Stick Color Scheme (CarboxMol / Rainbow / Residue) -->
+                <div class="density-control-row" style="margin-top: 10px;">
+                    <div class="density-control-label">
+                        <span><i class="fa-solid fa-palette" style="color: #a855f7;"></i> <span data-i18n="lbl_stick_color">Color Scheme</span></span>
+                        <strong id="studio-stick-color-val" style="color: #facc15;">CarboxMol (Yellow C)</strong>
                     </div>
-                    <div class="author-info">
-                        <strong>Suleiman M Hajizadeh</strong>
-                        <span>Institute of Molecular Biology, Ministry of Science and Education of the Republic of Azerbaijan</span>
-                        <span>Western Caspian University, Baku, Azerbaijan</span>
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 4px; margin-top: 5px;">
+                        <button class="studio-pill active" id="btn-stick-color-gemmimol" data-scheme="gemmimol" title="CarboxMol Crystallographic Standard: Golden-Yellow Carbons, Red Oxygens, Blue Nitrogens, Pink Waters" style="font-size: 10.5px; padding: 4px 5px;" data-i18n="btn_stick_gemmimol"><i class="fa-solid fa-gem" style="color: #facc15; margin-right: 3px;"></i>CarboxMol</button>
+                        <button class="studio-pill" id="btn-stick-color-spectrum" data-scheme="spectrum" title="Rainbow Spectrum along sequence" style="font-size: 10.5px; padding: 4px 5px;" data-i18n="btn_stick_rainbow"><i class="fa-solid fa-rainbow" style="color: #38bdf8; margin-right: 3px;"></i>Rainbow</button>
+                        <button class="studio-pill" id="btn-stick-color-type" data-scheme="type" title="By Residue Type (Acidic, Basic, Polar, Hydrophobic)" style="font-size: 10.5px; padding: 4px 5px;" data-i18n="btn_stick_residue"><i class="fa-solid fa-shapes" style="color: #ec4899; margin-right: 3px;"></i>Residue</button>
                     </div>
                 </div>
 
-                <div class="author-card">
-                    <div class="author-icon mrc">
-                        <i class="fa-solid fa-atom"></i>
+                <!-- Slab / Depth Clipping -->
+                <div class="density-control-row" style="margin-top: 10px;">
+                    <div class="density-control-label">
+                        <span><i class="fa-solid fa-layer-group"></i> <span data-i18n="lbl_slab">Slab / Clipping</span></span>
+                        <strong id="studio-slab-val" style="color: var(--accent-cyan);">12 Å</strong>
                     </div>
-                    <div class="author-info">
-                        <strong>Garib N. Murshudov</strong>
-                        <span>MRC Laboratory of Molecular Biology (LMB)</span>
-                        <span>Cambridge Biomedical Campus, Cambridge, United Kingdom</span>
+                    <input type="range" id="studio-slab-range" min="4" max="100" step="2" value="12"
+                        class="density-slider-studio" title="Adjust depth slice / slab thickness">
+                </div>
+
+                <!-- Crystallographic Depth Cueing & Contrast Dial -->
+                <div class="density-control-row" style="margin-top: 8px;">
+                    <div class="density-control-label">
+                        <span><i class="fa-solid fa-circle-half-stroke" style="color: #38bdf8;"></i> <span data-i18n="lbl_contrast_depth">Contrast &amp; Depth Fog</span></span>
+                        <strong id="studio-contrast-val" style="color: var(--accent-cyan);">High (100%)</strong>
+                    </div>
+                    <input type="range" id="studio-contrast-range" min="0" max="100" step="5" value="100"
+                        class="density-slider-studio" title="Dərinlik dumanı və kontrast / Distant residues fade into dark shadow, foreground illuminated">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px;">
+                    <button class="studio-pill active" id="btn-studio-depthfog" title="Uzaqda olanlar qaranlığa düşür (Depth Fog) / Distant residues fade into dark shadow">
+                        <i class="fa-solid fa-smog"></i> <span data-i18n="btn_depth_fog">Depth Fog</span>
+                    </button>
+                    <button class="studio-pill active" id="btn-studio-whitefocus" title="Yaxında ağ/aydın parlaq görünüş (White Focus) / Focused pair in crisp white carbon highlights">
+                        <i class="fa-solid fa-sun" style="color: #fbbf24;"></i> <span data-i18n="btn_white_focus">White Focus</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Crystallographic Electron Density Module (Carbox Density Engine) -->
+            <div class="studio-section" id="studio-section-density">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-cube"></i> <span
+                            data-i18n="heading_density">Electron Density Maps</span></span>
+                    <span class="section-badge" id="studio-density-badge">PDB-REDO / EBI</span>
+                </div>
+
+                <!-- Crystallographic Electron Density Data Source (PDB-REDO / PDBe) -->
+                <div class="density-source-card" style="margin-bottom: 8px; padding: 6px 8px; background: rgba(0,0,0,0.35); border-radius: 6px; border: 1px solid rgba(56,189,248,0.25);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; display: flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-server" style="color: #38bdf8;"></i>
+                            <span data-i18n="lbl_density_source">Data Source:</span>
+                        </span>
+                        <a href="https://pdb-redo.eu/" target="_blank" rel="noopener noreferrer" class="density-pdb-redo-link" id="link-pdb-redo-main" style="font-size: 9.5px; color: #38bdf8; text-decoration: none; display: flex; align-items: center; gap: 3px; font-weight: 600;" title="PDB-REDO - Fully automated crystallographic re-refinement & reflection validation (https://pdb-redo.eu/)">
+                            <span>pdb-redo.eu</span> <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 8px;"></i>
+                        </a>
+                    </div>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <button type="button" class="source-chip active" id="btn-src-pdb-redo" data-source="pdb-redo" title="PDB-REDO Re-refined Electron Density Maps & Structure Factors (https://pdb-redo.eu/)">
+                            <i class="fa-solid fa-rotate" style="color: #38bdf8;"></i> <strong style="font-weight: 700;">PDB-REDO</strong>
+                        </button>
+                        <button type="button" class="source-chip" id="btn-src-pdbe" data-source="pdbe" title="PDBe / EMBL-EBI WWPDB Deposited Electron Density Maps">
+                            <i class="fa-solid fa-atom" style="color: #94a3b8;"></i> <span>PDBe (EBI)</span>
+                        </button>
+                        <button type="button" class="chip-btn" id="btn-download-mtz" style="margin-left: auto; font-size: 9px; padding: 2px 6px; font-weight: 700; background: rgba(56,189,248,0.15); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8;" title="Download Re-refined MTZ Reflection File from PDB-REDO (https://pdb-redo.eu/)">
+                            <i class="fa-solid fa-file-arrow-down"></i> MTZ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Focal Active Target Card (Strict High-Contrast Carving Area) -->
+                <div class="density-focus-card" id="density-focus-info-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <i class="fa-solid fa-crosshairs" style="color: #38bdf8; font-size: 11px;"></i>
+                            <span style="color: var(--text-muted); font-size: 10px;">Focus:</span>
+                            <strong id="density-focus-target-label" style="color: #f1f5f9; font-family: var(--font-mono); font-size: 11px;">Active Atom</strong>
+                        </div>
+                        <span class="geom-chi-tag" id="density-focus-radius-tag" style="font-size: 9px; padding: 1px 5px; color: #38bdf8; border-color: rgba(56,189,248,0.3); white-space: nowrap;">
+                            <i class="fa-solid fa-circle-dot"></i> r &le; 6.5 &Aring;
+                        </span>
+                    </div>
+                    <div style="font-size: 9.5px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px;">
+                        <i class="fa-solid fa-crosshairs" style="color: #38bdf8; font-size: 9px;"></i>
+                        <span data-i18n="lbl_density_focal_note">Density carved to high-contrast focal area</span>
+                    </div>
+                </div>
+
+                <!-- Density Channels Bar: 3 Independent Maps + Compact [All ON / OFF] Switch -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted);"><i class="fa-solid fa-layer-group"></i> <span data-i18n="lbl_channels">Channels</span></span>
+                    <button class="chip-btn" id="btn-studio-trimap" style="font-size: 9.5px; padding: 2px 8px; border-radius: 4px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;" title="Toggle All Density Maps (2Fo-Fc, +Fo-Fc, -Fo-Fc) ON or OFF simultaneously">
+                        <i class="fa-solid fa-sliders"></i> <span id="txt-density-all" data-i18n="txt_density_all">All ON / OFF</span>
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 5px; margin-bottom: 8px;">
+                    <button class="studio-pill density-chan-btn" id="btn-studio-2fofc" title="Toggle 2Fo-Fc Electron Density Map (Blue Mesh, 1.4σ, Carved to Focus)">
+                        <i class="fa-solid fa-cube" style="color:#38bdf8; font-size: 10.5px;"></i>
+                        <span data-i18n="btn_2fofc" style="font-weight: 600;">2Fo-Fc</span>
+                        <span class="geom-chi-tag" id="badge-2fofc-sigma" style="margin-left:auto; font-size:8.5px; padding:0 3px;">1.4&sigma;</span>
+                    </button>
+                    <button class="studio-pill density-chan-btn" id="btn-studio-fofc-pos" title="Toggle +Fo-Fc Positive Difference Map (+3.0σ Green: Missing Model Features, Carved to Focus)">
+                        <i class="fa-solid fa-plus" style="color:#22c55e; font-size: 10.5px;"></i>
+                        <span style="font-weight: 600;">+Fo-Fc</span>
+                        <span class="geom-chi-tag" id="badge-fofc-pos-sigma" style="margin-left:auto; font-size:8.5px; padding:0 3px;">+3.0&sigma;</span>
+                    </button>
+                    <button class="studio-pill density-chan-btn" id="btn-studio-fofc-neg" title="Toggle -Fo-Fc Negative Difference Map (-3.0σ Red: Excess Model Features, Carved to Focus)">
+                        <i class="fa-solid fa-minus" style="color:#ef4444; font-size: 10.5px;"></i>
+                        <span style="font-weight: 600;">-Fo-Fc</span>
+                        <span class="geom-chi-tag" id="badge-fofc-neg-sigma" style="margin-left:auto; font-size:8.5px; padding:0 3px;">-3.0&sigma;</span>
+                    </button>
+                </div>
+
+                <!-- Map Carving Scope: Focus (6.5Å, matching contrast zone) vs Pocket (4.5Å) vs Residue (2Å) vs All Atoms -->
+                <div class="density-scope-row" style="margin-bottom: 9px;">
+                    <div style="display: flex; gap: 3px; font-size: 10px;">
+                        <button class="density-scope-btn active" id="btn-density-scope-sphere" title="Focal contrast area (CarboxMol standard: 6.5Å radius around brightened atom)" data-i18n="scope_focus">Focus (6.5&Aring;)</button>
+                        <button class="density-scope-btn" id="btn-density-scope-pocket" title="Focus electron density around 4.5Å carboxyl pair pocket" data-i18n="scope_pocket">Pocket (4.5&Aring;)</button>
+                        <button class="density-scope-btn" id="btn-density-scope-residue" title="Focus electron density tightly on active residue atoms (2.0Å radius)" data-i18n="scope_residue">Residue (2&Aring;)</button>
+                        <button class="density-scope-btn" id="btn-density-scope-all" title="Render electron density across all atoms" data-i18n="scope_all">All Atoms</button>
+                    </div>
+                </div>
+
+                <!-- 2Fo-Fc Contour Level (Sigma) Slider & Presets -->
+                <div class="density-control-row" style="margin-bottom: 8px;">
+                    <div class="density-control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 10.5px; font-weight: 600; color: #cbd5e1;"><i class="fa-solid fa-cube" style="color: #38bdf8;"></i> <span data-i18n="lbl_contour_sigma">2Fo-Fc Sigma</span></span>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <div style="display: flex; gap: 2px;">
+                                <button type="button" class="density-preset-btn" data-sigma="0.5" style="padding: 1px 4px; font-size: 8.5px;">0.5</button>
+                                <button type="button" class="density-preset-btn" data-sigma="1.0" style="padding: 1px 4px; font-size: 8.5px;">1.0</button>
+                                <button type="button" class="density-preset-btn active" data-sigma="1.4" style="padding: 1px 4px; font-size: 8.5px;">1.4</button>
+                                <button type="button" class="density-preset-btn" data-sigma="2.0" style="padding: 1px 4px; font-size: 8.5px;">2.0</button>
+                            </div>
+                            <strong id="studio-density-sigma-val" style="color: #38bdf8; font-family: var(--font-mono); font-size: 11px;">1.4 &sigma;</strong>
+                        </div>
+                    </div>
+                    <input type="range" id="studio-density-sigma-range" min="0.2" max="4.0" step="0.1" value="1.4"
+                        class="density-slider-studio" title="Adjust 2Fo-Fc electron density contour level in sigma units">
+                </div>
+
+                <!-- +Fo-Fc Positive Difference Map Sigma Slider & Presets -->
+                <div class="density-control-row" style="margin-bottom: 8px;">
+                    <div class="density-control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 10.5px; font-weight: 600; color: #cbd5e1;"><i class="fa-solid fa-plus" style="color: #22c55e;"></i> <span data-i18n="lbl_fofc_pos_sigma">+Fo-Fc Diff Sigma</span></span>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <div style="display: flex; gap: 2px;">
+                                <button type="button" class="density-pos-preset-btn" data-sigma="1.5" style="padding: 1px 4px; font-size: 8.5px;">+1.5</button>
+                                <button type="button" class="density-pos-preset-btn" data-sigma="2.5" style="padding: 1px 4px; font-size: 8.5px;">+2.5</button>
+                                <button type="button" class="density-pos-preset-btn active" data-sigma="3.0" style="padding: 1px 4px; font-size: 8.5px;">+3.0</button>
+                                <button type="button" class="density-pos-preset-btn" data-sigma="4.0" style="padding: 1px 4px; font-size: 8.5px;">+4.0</button>
+                            </div>
+                            <strong id="studio-density-fofc-pos-val" style="color: #22c55e; font-family: var(--font-mono); font-size: 11px;">+3.0 &sigma;</strong>
+                        </div>
+                    </div>
+                    <input type="range" id="studio-density-fofc-pos-range" min="1.0" max="6.0" step="0.1" value="3.0"
+                        class="density-slider-studio pos" title="Adjust +Fo-Fc positive difference map contour level in sigma units">
+                </div>
+
+                <!-- -Fo-Fc Negative Difference Map Sigma Slider & Presets -->
+                <div class="density-control-row" style="margin-bottom: 8px;">
+                    <div class="density-control-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 10.5px; font-weight: 600; color: #cbd5e1;"><i class="fa-solid fa-minus" style="color: #ef4444;"></i> <span data-i18n="lbl_fofc_neg_sigma">-Fo-Fc Diff Sigma</span></span>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <div style="display: flex; gap: 2px;">
+                                <button type="button" class="density-neg-preset-btn" data-sigma="1.5" style="padding: 1px 4px; font-size: 8.5px;">-1.5</button>
+                                <button type="button" class="density-neg-preset-btn" data-sigma="2.5" style="padding: 1px 4px; font-size: 8.5px;">-2.5</button>
+                                <button type="button" class="density-neg-preset-btn active" data-sigma="3.0" style="padding: 1px 4px; font-size: 8.5px;">-3.0</button>
+                                <button type="button" class="density-neg-preset-btn" data-sigma="4.0" style="padding: 1px 4px; font-size: 8.5px;">-4.0</button>
+                            </div>
+                            <strong id="studio-density-fofc-neg-val" style="color: #ef4444; font-family: var(--font-mono); font-size: 11px;">-3.0 &sigma;</strong>
+                        </div>
+                    </div>
+                    <input type="range" id="studio-density-fofc-neg-range" min="1.0" max="6.0" step="0.1" value="3.0"
+                        class="density-slider-studio neg" title="Adjust -Fo-Fc negative difference map contour level in sigma units">
+                </div>
+
+                <!-- Local Map Upload, PDB-REDO MTZ, & Telemetry -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 10.5px; color: var(--text-muted); background: rgba(0,0,0,0.25); padding: 4px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <label for="input-custom-map-file" class="chip-btn" style="cursor: pointer; font-size: 9.5px; padding: 2px 6px;" title="Upload local electron density map or reflection file (.ccp4, .map, .mrc, .dsn6, .mtz)">
+                            <i class="fa-solid fa-file-arrow-up"></i> <span data-i18n="btn_custom_map">Custom Map / MTZ</span>
+                        </label>
+                        <a id="density-pdb-redo-entry-link" href="https://pdb-redo.eu/" target="_blank" rel="noopener noreferrer" class="chip-btn" style="text-decoration: none; font-size: 9px; padding: 2px 6px; color: #38bdf8;" title="Open active entry on PDB-REDO (https://pdb-redo.eu/)">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> PDB-REDO
+                        </a>
+                    </div>
+                    <input type="file" id="input-custom-map-file" accept=".ccp4,.map,.dsn6,.mrc,.mtz" style="display: none;">
+                    <span id="studio-density-status-text" data-i18n="lbl_no_map" style="font-family: var(--font-mono); font-size: 9.5px; color: var(--text-muted);">No Map Loaded</span>
+                </div>
+
+                <!-- 1D Density Profile Inspector Button -->
+                <button class="studio-pill" id="btn-studio-density-profile"
+                    style="width: 100%; margin-top: 6px;"
+                    title="Open 1D Electron Density Line Profile Inspector for active carboxyl pair">
+                    <i class="fa-solid fa-chart-line" style="color: #38bdf8;"></i>
+                    <span data-i18n="btn_1d_density">1D Density Profile</span>
+                    <span class="section-badge" style="margin-left: auto;">Inspector</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Central 3D Canvas Viewport -->
+        <section class="studio-viewport-center">
+            <!-- Welcome / Empty State Overlay -->
+            <div id="studio-empty-state" class="studio-empty-overlay">
+                <div class="empty-state-card">
+                    <div class="empty-brand-icon">
+                        <img src="assets/carboxmol_logo.png?v=0.4.5" alt="CarboxMol Logo" class="empty-logo-img"
+                            onerror="this.onerror=null; this.src='assets/carboxmol_logo.png?v=0.4.5';">
+                    </div>
+                    <h2 class="empty-title" data-i18n="welcome_title">CarboxMol</h2>
+                    <p class="empty-desc" data-i18n="welcome_desc">
+                        Enterprise Macromolecular Crystallographic Workbench for Carboxyl Protonation States,
+                        Low-Barrier Hydrogen Bonds &amp; Microenvironments.
+                    </p>
+
+                    <!-- Central Quick Fetch Input -->
+                    <div class="empty-fetch-row">
+                        <div class="empty-input-wrap">
+                            <i class="fa-solid fa-dna" style="color: var(--accent-cyan);"></i>
+                            <input type="text" id="studio-empty-pdb-input" placeholder="Enter PDB (5GY6) or UniProt (P04637)..."
+                                maxlength="25" data-i18n-ph="empty_input_ph">
+
+                        </div>
+                        <button class="btn-studio primary" id="btn-empty-load"
+                            style="padding: 9px 18px; font-size: 12px; font-weight: 700;">
+                            <i class="fa-solid fa-bolt"></i> <span data-i18n="btn_empty_fetch">Fetch Structure</span>
+                        </button>
+                    </div>
+
+                    <!-- Drag and Drop Dropzone -->
+                    <div class="empty-dropzone-hint" id="studio-empty-dropzone"
+                        title="Click to browse files or drag and drop .pdb / .cif here">
+                        <i class="fa-solid fa-cloud-arrow-up" style="color: var(--accent-cyan); font-size: 20px;"></i>
+                        <div
+                            style="display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 2px;">
+                            <strong style="color: #fff; font-size: 12px;" data-i18n="drop_title">Drag &amp; Drop .pdb /
+                                .cif file here or Click to Browse</strong>
+                            <span style="font-size: 11px; color: var(--text-muted);" data-i18n="drop_hint">Enter a PDB
+                                code above or drag and drop a local <code>.pdb</code> / <code>.cif</code> file
+                                here.</span>
+                        </div>
+                        <input type="file" id="studio-file-input" accept=".pdb,.cif,.mmcif,.ent,.txt"
+                            style="display: none;">
+                    </div>
+
+                    <!-- Scientific Citation & Author Affiliations -->
+                    <div class="empty-author-reference-card">
+                        <div class="author-reference-header">
+                            <i class="fa-solid fa-book-journal-whills" style="color: var(--accent-amber);"></i>
+                            <span data-i18n="authors_title">Scientific Authors &amp; Reference</span>
+                        </div>
+
+                        <div class="authors-grid">
+                            <div class="author-item">
+                                <div class="author-avatar"><i class="fa-solid fa-user-graduate"></i></div>
+                                <div class="author-info">
+                                    <strong data-i18n="author1_name">Suleiman M Hajizadeh</strong>
+                                    <span class="author-affil" data-i18n="author1_affil1">Institute of Molecular Biology, Ministry of Science and
+                                        Education of the Republic of Azerbaijan, Baku AZ1073, Azerbaijan</span>
+                                    <span class="author-dept" data-i18n="author1_affil2">Western Caspian University, Baku AZ1001, Azerbaijan</span>
+                                </div>
+                            </div>
+
+                            <div class="author-item">
+                                <div class="author-avatar mrc"><i class="fa-solid fa-flask-vial"></i></div>
+                                <div class="author-info">
+                                    <strong data-i18n="author2_name">Garib N Murshudov</strong>
+                                    <span class="author-affil" data-i18n="author2_affil1">MRC Laboratory of Molecular Biology (LMB)</span>
+                                    <span class="author-dept" data-i18n="author2_affil2">Cambridge Biomedical Campus, Cambridge, United
+                                        Kingdom</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="reference-publication-row">
+                            <i class="fa-solid fa-quote-left" style="color: var(--text-muted); font-size: 11px;"></i>
+                            <span class="ref-text" data-i18n="ref_paper_title">
+                                Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures.
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 3Dmol Canvas Container -->
+            <div id="studio-3dmol-canvas"></div>
+
+            <!-- Viewport Top Crystallographic Quick-Bar (CarboxMol Precision Style) -->
+            <div class="viewport-crystal-topbar" id="studio-crystal-topbar">
+                <div class="crystal-topbar-left">
+                    <select id="crystal-sel-metals" class="crystal-topbar-select" title="Metals & Coordination Sites">
+                        <option value="">Metals (0)</option>
+                    </select>
+                    <select id="crystal-sel-ligands" class="crystal-topbar-select" title="Bound Ligands & Heterogens">
+                        <option value="">Ligands (0)</option>
+                    </select>
+                    <select id="crystal-sel-nonstd" class="crystal-topbar-select" title="Non-Standard Residues">
+                        <option value="">Non-std (0)</option>
+                    </select>
+                    <select id="crystal-sel-pairs" class="crystal-topbar-select" title="Carboxyl Pairs (LBHB)">
+                        <option value="">Pairs (0)</option>
+                    </select>
+                    <select id="crystal-sel-sites" class="crystal-topbar-select" title="Active Sites">
+                        <option value="">SITEs (0)</option>
+                    </select>
+                </div>
+                <div class="crystal-topbar-center">
+                    <span class="crystal-topbar-hint" id="crystal-topbar-hint" data-i18n="topbar_press_f_hint">Press H for controls HUD | Press F for 3D Zen mode</span>
+                </div>
+                <div class="crystal-topbar-right">
+                    <span class="crystal-pdb-badge" id="crystal-topbar-pdb">--</span>
+                    <span class="crystal-sg-badge" id="crystal-topbar-sg">--</span>
+                    <button class="crystal-topbar-help-toggle" id="btn-toggle-studio-hud" title="Toggle Controls HUD (H)" data-i18n-title="btn_toggle_hud_title">
+                        <kbd>H</kbd> <span data-i18n="btn_toggle_hud_txt">toggle HUD</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CarboxMol Crystallographic Controls HUD Overlay (Toggle with H / Shift+F) -->
+            <div id="studio-controls-hud" class="studio-controls-hud" style="display: none;">
+                <div class="studio-hud-header">
+                    <span class="studio-hud-title"><i class="fa-solid fa-cube"></i> <span data-i18n="hud_title">CarboxMol Controls</span></span>
+                    <button class="studio-hud-close" id="btn-close-studio-hud" title="Close (H / Esc)" aria-label="Close HUD"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="studio-hud-scroll">
+                    <div class="studio-hud-section">
+                        <div class="studio-hud-section-label" data-i18n="hud_mouse_label">mouse:</div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Left</span> = <span class="studio-hud-v" data-i18n="hud_m_rot">rotate</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Middle</span> = <span class="studio-hud-v" data-i18n="hud_m_center">select and center on atom</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Middle+drag or Ctrl+Left</span> = <span class="studio-hud-v" data-i18n="hud_m_pan">pan</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Right</span> = <span class="studio-hud-v" data-i18n="hud_m_zoom">zoom</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Ctrl+Right</span> = <span class="studio-hud-v" data-i18n="hud_m_clip">clipping</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Ctrl+Shift+Right</span> = <span class="studio-hud-v" data-i18n="hud_m_roll">roll</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Wheel</span> = <span class="studio-hud-v" data-i18n="hud_m_wheel">&sigma; level</span></div>
+                        <div class="studio-hud-line"><span class="studio-hud-k">Shift+Wheel</span> = <span class="studio-hud-v" data-i18n="hud_m_diff_wheel">diff map &sigma;</span></div>
+                    </div>
+
+                    <div class="studio-hud-section">
+                        <div class="studio-hud-section-label" data-i18n="hud_keyboard_label">keyboard:</div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="M">M</button> = <span class="studio-hud-v" data-i18n="hud_k_m">mainchain style</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="S">S</button> = <span class="studio-hud-v" data-i18n="hud_k_s">sidechain style</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="L">L</button> = <span class="studio-hud-v" data-i18n="hud_k_l">ligand style</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="T">T</button> = <span class="studio-hud-v" data-i18n="hud_k_t">water style</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="C">C</button> = <span class="studio-hud-v" data-i18n="hud_k_c">coloring</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="B">B</button> = <span class="studio-hud-v" data-i18n="hud_k_b">bg color</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="E">E</button> = <span class="studio-hud-v" data-i18n="hud_k_e">toggle fog</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="Q">Q</button> = <span class="studio-hud-v" data-i18n="hud_k_q">label font</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="+">+</button> = <span class="studio-hud-v" data-i18n="hud_k_plus">sigma level up</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="-">-</button> = <span class="studio-hud-v" data-i18n="hud_k_minus">sigma level down</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="]">]</button> = <span class="studio-hud-v" data-i18n="hud_k_rbracket">larger map radius</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="[">[</button> = <span class="studio-hud-v" data-i18n="hud_k_lbracket">smaller map radius</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="D">D</button> = <span class="studio-hud-v" data-i18n="hud_k_d">narrower clip</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="F">F</button> = <span class="studio-hud-v" data-i18n="hud_k_f">toggle HUD / wider clip</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="<">Shift+,</button> = <span class="studio-hud-v" data-i18n="hud_k_clip_back">move clip back</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key=">">Shift+.</button> = <span class="studio-hud-v" data-i18n="hud_k_clip_fwd">move clip forward</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="U">U</button> = <span class="studio-hud-v" data-i18n="hud_k_u">unitcell box</span> <span id="studio-hud-unitcell-text" style="color: #64748b; font-size: 10px;"></span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="\">\</button> = <span class="studio-hud-v" data-i18n="hud_k_backslash">toggle symmetry</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="Y">Y</button> = <span class="studio-hud-v" data-i18n="hud_k_y">hydrogens</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="V">V</button> = <span class="studio-hud-v" data-i18n="hud_k_v">inactive models</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="R">R</button> = <span class="studio-hud-v" data-i18n="hud_k_r">center view</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="G">G</button> = <span class="studio-hud-v" data-i18n="hud_k_g">density histogram</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="W">W</button> = <span class="studio-hud-v" data-i18n="hud_k_w">density style</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="I">I</button> = <span class="studio-hud-v" data-i18n="hud_k_i">spin</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="K">K</button> = <span class="studio-hud-v" data-i18n="hud_k_k">rock</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="Home">Home</button> = <span class="studio-hud-v" data-i18n="hud_k_home">wider sticks</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="End">End</button> = <span class="studio-hud-v" data-i18n="hud_k_end">thinner sticks</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="P">P</button> = <span class="studio-hud-v" data-i18n="hud_k_p">nearest C&alpha;</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="CtrlG">Ctrl+G</button> = <span class="studio-hud-v" data-i18n="hud_k_ctrlg">go to CID</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="Delete">Delete</button> = <span class="studio-hud-v" data-i18n="hud_k_del">selected atom/residue/chain</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="ShiftP">Shift+P</button> = <span class="studio-hud-v" data-i18n="hud_k_shiftp">permalink</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="Space">Space</button> = <span class="studio-hud-v" data-i18n="hud_k_space">next residue</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="ShiftSpace">Shift+Space</button> = <span class="studio-hud-v" data-i18n="hud_k_shiftspace">previous residue</span></div>
+                        <div class="studio-hud-line"><button class="studio-hud-kbtn" data-key="ShiftF">Shift+F</button> = <span class="studio-hud-v" data-i18n="hud_k_shiftf">full screen</span></div>
+                    </div>
+                </div>
+                <div class="studio-hud-footer">
+                    <span class="studio-hud-brand">CarboxMol <span id="studio-hud-version">v0.4.5</span></span>
+                    <span class="studio-hud-fps">FPS: <strong id="studio-hud-fps-val">60.0</strong></span>
+                </div>
+            </div>
+
+            <!-- 3D Coordinate Orientation Tripod (X, Y, Z Axes Widget) -->
+            <canvas id="studio-orientation-tripod" width="75" height="75" style="position: absolute; top: 48px; left: 12px; pointer-events: none; z-index: 14;" title="3D Coordinate Orientation"></canvas>
+
+            <!-- Floating Contour Level HUD Indicator (CarboxMol Style) -->
+            <div id="studio-contour-hud" class="floating-contour-hud" style="display: none;">
+                <i id="contour-hud-icon" class="fa-solid fa-layer-group" style="color: var(--accent-cyan);"></i>
+                <span id="contour-hud-text">Contour Level: 1.40 &sigma;</span>
+            </div>
+
+            <!-- Floating Rotation Pivot Indicator -->
+            <div id="studio-pivot-floating-badge" class="floating-pivot-badge" style="display: none;">
+                <i class="fa-solid fa-arrows-to-dot" style="color: var(--accent-cyan);"></i>
+                <span id="studio-pivot-floating-text">Rotating around: Active Pair</span>
+            </div>
+
+            <button class="floating-dock-btn dock-left" id="btn-toggle-left-dock" title="Toggle Left Sidebar ([ or L)" aria-label="Toggle Left Panel">
+                <i class="fa-solid fa-chevron-left" id="icon-toggle-left"></i>
+            </button>
+            <button class="floating-dock-btn dock-right" id="btn-toggle-right-dock" title="Toggle Right Sidebar (] or R)" aria-label="Toggle Right Panel">
+                <i class="fa-solid fa-chevron-right" id="icon-toggle-right"></i>
+            </button>
+
+            <!-- ─── Viewport HUD Info Strip (bottom-left) ──────────────────────── -->
+            <div class="viewport-hud-strip" id="studio-viewport-hud">
+                <!-- PDB Target Badge -->
+                <div class="hud-pill hud-pill-pdb">
+                    <i class="fa-solid fa-database" style="color:var(--accent-cyan);font-size:10px;"></i>
+                    <span style="color:var(--text-muted);font-size:10px;">PDB:</span>
+                    <strong id="studio-target-pdb" style="color:var(--accent-cyan);font-family:var(--font-mono);font-size:11px;letter-spacing:0.5px;">--</strong>
+                </div>
+                <!-- O···O Distance -->
+                <div class="hud-pill">
+                    <i class="fa-solid fa-arrows-left-right" style="color:var(--accent-amber);font-size:10px;"></i>
+                    <span style="color:var(--text-muted);font-size:10px;" data-i18n="ov_dist">O···O:</span>
+                    <strong id="studio-overlay-dist" style="color:#fff;font-family:var(--font-mono);font-size:11px;">--</strong>
+                </div>
+                <!-- Verdict -->
+                <div class="hud-pill">
+                    <i class="fa-solid fa-flask" style="color:var(--accent-purple);font-size:10px;"></i>
+                    <span style="color:var(--text-muted);font-size:10px;" data-i18n="ov_verdict">Verdict:</span>
+                    <strong id="studio-overlay-verdict" style="color:#fff;font-size:10.5px;">--</strong>
+                </div>
+                <!-- Closest Water -->
+                <div class="hud-pill">
+                    <i class="fa-solid fa-droplet" style="color:#38bdf8;font-size:10px;"></i>
+                    <span style="color:var(--text-muted);font-size:10px;" data-i18n="ov_water">Water:</span>
+                    <strong id="studio-overlay-water" style="color:#38bdf8;font-family:var(--font-mono);font-size:11px;">--</strong>
+                </div>
+                <!-- Crystallographic Occupancy Badge (Strict occ = 1.00 Protocol) -->
+                <div class="hud-pill" id="studio-occupancy-hud" title="Crystallographic Occupancy (q = 1.00 strict protocol)">
+                    <i class="fa-solid fa-certificate" style="color:var(--accent-emerald, #10b981);font-size:10px;"></i>
+                    <span style="color:var(--text-muted);font-size:10px;" data-i18n="ov_occupancy">Occupancy:</span>
+                    <strong id="studio-overlay-occupancy" style="color:var(--text-muted);font-family:var(--font-mono);font-size:11px;">--</strong>
+                </div>
+                <!-- Rotation Pivot Atom Indicator -->
+                <div class="hud-pill" id="studio-rotation-pivot-hud" title="Center of 3D rotation (Cursor drag rotates around this atom/residue)">
+                    <i class="fa-solid fa-arrows-to-dot" style="color:var(--accent-cyan);font-size:10px;"></i>
+                    <span style="color:var(--text-muted);font-size:10px;" data-i18n="lbl_pivot">Pivot:</span>
+                    <strong id="studio-rotation-pivot-val" style="color:var(--accent-cyan);font-family:var(--font-mono);font-size:11px;" data-i18n="pivot_active_pair">Active Pair</strong>
+                </div>
+            </div>
+
+            <!-- ─── Viewport Control Toolbar (right side, vertical) ────────────── -->
+            <div class="viewport-ctrl-toolbar" id="studio-viewport-toolbar">
+                <!-- Zoom In -->
+                <button class="vp-ctrl-btn" id="btn-vp-zoom-in" title="Zoom In (+)" data-i18n-title="btn_zoom_in_title">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <!-- Zoom Out -->
+                <button class="vp-ctrl-btn" id="btn-vp-zoom-out" title="Zoom Out (-)" data-i18n-title="btn_zoom_out_title">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+                <!-- Scroll Action Mode: Density Contour Level (Carbox Precision Mode, D) vs Zoom -->
+                <button class="vp-ctrl-btn active" id="btn-vp-scroll-mode" title="Toggle Wheel Action: Density Contour Level (CarboxMol Mode, D) / Camera Zoom" data-i18n-title="btn_scroll_mode_title">
+                    <i class="fa-solid fa-layer-group" style="color:var(--accent-cyan);"></i>
+                </button>
+                <!-- Divider -->
+                <div class="vp-ctrl-divider"></div>
+                <!-- Reset / Fit -->
+                <button class="vp-ctrl-btn" id="btn-vp-reset" title="Reset View &amp; Fit (Space / R)" data-i18n-title="btn_reset_view_title">
+                    <i class="fa-solid fa-arrows-to-circle"></i>
+                </button>
+                <!-- Center Rotation Pivot on Focused Atom / Pair -->
+                <button class="vp-ctrl-btn" id="btn-vp-center-pivot" title="Center Rotation Pivot on Active Pair or Clicked Atom (C)" data-i18n-title="btn_center_pivot_title">
+                    <i class="fa-solid fa-arrows-to-dot" style="color:var(--accent-cyan);"></i>
+                </button>
+                <!-- Divider -->
+                <div class="vp-ctrl-divider"></div>
+                <!-- Rotate X Axis -->
+                <button class="vp-ctrl-btn" id="btn-vp-rot-x" title="Rotate X Axis (↑ / ↓) [Shift for reverse]" data-i18n-title="btn_rot_x_title">
+                    <span style="font-size:10px;font-weight:700;color:#ef4444;font-family:var(--font-mono);">X</span>
+                </button>
+                <!-- Rotate Y Axis -->
+                <button class="vp-ctrl-btn" id="btn-vp-rot-y" title="Rotate Y Axis (← / →) [Shift for reverse]" data-i18n-title="btn_rot_y_title">
+                    <span style="font-size:10px;font-weight:700;color:#22c55e;font-family:var(--font-mono);">Y</span>
+                </button>
+                <!-- Roll Z Axis -->
+                <button class="vp-ctrl-btn" id="btn-vp-rot-z" title="Roll Z Axis (Z / C or Alt+Drag) [Shift for reverse]" data-i18n-title="btn_rot_z_title">
+                    <span style="font-size:10px;font-weight:700;color:#38bdf8;font-family:var(--font-mono);">Z</span>
+                </button>
+                <!-- Snapshot -->
+                <button class="vp-ctrl-btn" id="btn-vp-snapshot" title="Snapshot (P / ⌘S)" data-i18n-title="btn_vp_snapshot_title">
+                    <i class="fa-solid fa-camera"></i>
+                </button>
+                <!-- Divider -->
+                <div class="vp-ctrl-divider"></div>
+                <!-- Toggle Help -->
+                <button class="vp-ctrl-btn vp-ctrl-help-btn" id="btn-vp-help" title="Mouse &amp; Keyboard Help (? / H)" data-i18n-title="btn_vp_help_title">
+                    <i class="fa-solid fa-circle-question"></i>
+                </button>
+            </div>
+
+            <!-- ─── Mouse / Keyboard Help Overlay ─────────────────────────────── -->
+            <div class="vp-help-overlay" id="studio-vp-help" style="display:none;">
+                <div class="vp-help-header">
+                    <span><i class="fa-solid fa-computer-mouse" style="color:var(--accent-cyan);"></i> <span data-i18n="help_controls_title">Controls</span></span>
+                    <button class="vp-help-close" id="btn-vp-help-close" title="Close (H)"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="vp-help-body">
+                    <div class="vp-help-section-title" data-i18n="help_mouse_title">Mouse &amp; Gestures</div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><i class="fa-solid fa-computer-mouse"></i> <span data-i18n="help_left_click_key">Left Click</span></div>
+                        <div class="vp-help-desc" data-i18n="help_left_click_desc">Lock 3-axis rotation pivot (X, Y, Z) to atom</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><i class="fa-solid fa-computer-mouse"></i> <span data-i18n="help_left_drag_key">Left Drag</span></div>
+                        <div class="vp-help-desc" data-i18n="help_left_drag_desc">Rotate around X &amp; Y axes through focal atom</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>Alt</kbd> + <span data-i18n="help_alt_drag_key">Left Drag / Ring</span></div>
+                        <div class="vp-help-desc" data-i18n="help_alt_drag_desc">Roll around Z axis through focal atom</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><i class="fa-solid fa-computer-mouse"></i> <span data-i18n="help_right_drag_key">Right Drag</span></div>
+                        <div class="vp-help-desc" data-i18n="help_right_drag_desc">Translate / Pan view</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><i class="fa-solid fa-computer-mouse"></i> <span data-i18n="help_scroll_key">Scroll Wheel</span></div>
+                        <div class="vp-help-desc" data-i18n="help_scroll_desc">Adjust density contour (&sigma;) in Carbox Precision Mode, or Camera Zoom</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>Alt</kbd> / <kbd>Ctrl</kbd> + <span data-i18n="help_alt_scroll_key">Scroll</span></div>
+                        <div class="vp-help-desc" data-i18n="help_alt_scroll_desc">Adjust density contour level (&sigma;) in any mode</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>D</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_toggle_scroll_desc">Toggle Scroll Mode: Density Contour (&sigma;) vs Camera Zoom</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>Shift</kbd> + <span data-i18n="help_shift_scroll_key">Scroll</span></div>
+                        <div class="vp-help-desc" data-i18n="help_shift_scroll_desc">Adjust slab depth slice (clip plane)</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><i class="fa-solid fa-computer-mouse"></i> <span data-i18n="help_dbl_click_key">Dbl-Click</span></div>
+                        <div class="vp-help-desc" data-i18n="help_dbl_click_desc">Center camera on atom</div>
+                    </div>
+                    <div class="vp-help-section-title" style="margin-top:10px;" data-i18n="help_kbd_title">Keyboard &amp; Toolbar</div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_rot_xy_desc">Rotate around X and Y axes</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>Z</kbd> / <kbd>C</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_roll_z_desc">Roll around Z axis (CCW / CW)</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>X</kbd>, <kbd>Y</kbd>, <kbd>Z</kbd> Buttons</div>
+                        <div class="vp-help-desc" data-i18n="help_rot_btn_desc">Toolbar 15° rotation steps</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>[</kbd> / <kbd>L</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_sidebar_l_desc">Toggle Left Sidebar</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>]</kbd> / <kbd>R</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_sidebar_r_desc">Toggle Right Sidebar</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>S</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_seq_desc">Toggle Sequence Bar</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>F</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_zen_desc">Toggle Zen Fullscreen</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>Space</kbd> / <kbd>C</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_center_pair_desc">Center on active pair</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>1</kbd>–<kbd>5</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_switch_state_desc">Switch proton state</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>&larr;</kbd> / <kbd>&rarr;</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_nav_pairs_desc">Navigate carboxyl pairs</div>
+                    </div>
+                    <div class="vp-help-row">
+                        <div class="vp-help-key"><kbd>?</kbd> / <kbd>H</kbd></div>
+                        <div class="vp-help-desc" data-i18n="help_all_shortcuts_desc">All shortcuts cheat-sheet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Atom Pick Status Badge (top-right, shown during measurement) -->
+            <div class="hud-pick-badge" id="studio-overlay-picked-box" style="display:none;">
+                <i class="fa-solid fa-crosshairs" style="color:var(--accent-amber);font-size:10px;"></i>
+                <span id="studio-overlay-picked-val" style="font-size:11px;"></span>
+            </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <i class="fa-solid fa-shield-halved"></i>
-            <span>All rights reserved © 2026 CarboxMol Research Team.</span>
-        </footer>
+        <!-- Right Tool & Measurement Panel -->
+        <aside class="studio-sidebar-right">
+            <!-- Mobile Drawer Header -->
+            <div class="sidebar-drawer-header mobile-only">
+                <span class="drawer-title"><i class="fa-solid fa-chart-line" style="color: #f59e0b;"></i> <span data-i18n="drawer_right_title">Live Signatures &amp; Validation</span></span>
+                <button type="button" class="btn-studio icon-only btn-close-drawer" id="btn-close-right-drawer" title="Close Panel" aria-label="Close Panel" data-i18n-title="btn_close_drawer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
+            <!-- Automated Crystallographic Geometric Telemetry Engine -->
+            <div class="studio-section" id="studio-geom-telemetry">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-chart-line"></i> <span
+                            data-i18n="heading_geom_telemetry">Live Geometric Signatures</span></span>
+                    <span class="section-badge" id="studio-geom-badge">Auto Active</span>
+                </div>
+                <div class="geom-telemetry-grid">
+                    <div class="geom-telemetry-card">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-arrows-left-right"></i> <span data-i18n="geom_lbl_dist">Distance (d<sub>O···O</sub>)</span></span>
+                        <strong class="geom-telemetry-val highlight-dist" id="geom-val-dist">-- &Aring;</strong>
+                        <span class="geom-telemetry-sub" id="geom-sub-dist">LBHB &le; 2.55 &Aring;</span>
+                    </div>
+                    <div class="geom-telemetry-card">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-draw-polygon"></i> <span data-i18n="geom_lbl_theta1">Donor Angle (&theta;<sub>1</sub>)</span></span>
+                        <strong class="geom-telemetry-val" id="geom-val-theta1">-- &deg;</strong>
+                        <span class="geom-telemetry-sub" id="geom-sub-theta1" data-i18n="geom_sub_theta1">C-O···O angle</span>
+                    </div>
+                    <div class="geom-telemetry-card">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-draw-polygon"></i> <span data-i18n="geom_lbl_theta2">Acceptor Angle (&theta;<sub>2</sub>)</span></span>
+                        <strong class="geom-telemetry-val" id="geom-val-theta2">-- &deg;</strong>
+                        <span class="geom-telemetry-sub" id="geom-sub-theta2" data-i18n="geom_sub_theta2">O···O-C angle</span>
+                    </div>
+                    <div class="geom-telemetry-card">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-rotate"></i> <span data-i18n="geom_lbl_dihedral">Inter-Plane (&chi;<sub>inter</sub>)</span></span>
+                        <strong class="geom-telemetry-val highlight-dihedral" id="geom-val-dihedral">-- &deg;</strong>
+                        <span class="geom-telemetry-sub" id="geom-sub-dihedral" data-i18n="geom_sub_dihedral">Carboxyl plane dihedral</span>
+                    </div>
+                    <div class="geom-telemetry-card full-span">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-dna"></i> <span data-i18n="geom_lbl_torsions">Sidechain Torsions (&chi;<sub>1</sub> / &chi;<sub>2</sub>)</span></span>
+                        <div class="geom-telemetry-sidechains">
+                            <span class="geom-chi-tag" id="geom-val-chi-res1">Res1: --</span>
+                            <span class="geom-chi-tag" id="geom-val-chi-res2">Res2: --</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crystallographic Electron Density Quality & Model Error Validation -->
+            <div class="studio-section" id="studio-density-validation-section">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="heading_density_val">Density &amp; Model Validation</span></span>
+                    <span class="section-badge" id="studio-val-status-badge" style="background: rgba(74, 222, 128, 0.12); color: #4ade80; border-color: rgba(74, 222, 128, 0.3);">Validated</span>
+                </div>
+                <div class="geom-telemetry-grid" style="grid-template-columns: 1fr 1fr;">
+                    <div class="geom-telemetry-card">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-cube"></i> Res1 Carboxyl (2Fo-Fc)</span>
+                        <strong class="geom-telemetry-val" id="val-res1-density" style="color: #38bdf8;">-- &sigma;</strong>
+                        <span class="geom-telemetry-sub" id="val-res1-diff-sub">Fo-Fc: -- &sigma;</span>
+                    </div>
+                    <div class="geom-telemetry-card">
+                        <span class="geom-telemetry-label"><i class="fa-solid fa-cube"></i> Res2 Carboxyl (2Fo-Fc)</span>
+                        <strong class="geom-telemetry-val" id="val-res2-density" style="color: #38bdf8;">-- &sigma;</strong>
+                        <span class="geom-telemetry-sub" id="val-res2-diff-sub">Fo-Fc: -- &sigma;</span>
+                    </div>
+                    <div class="geom-telemetry-card full-span" id="val-model-verdict-card">
+                        <div style="display: flex; align-items: flex-start; gap: 8px;">
+                            <i class="fa-solid fa-circle-check" id="val-verdict-icon" style="color: #4ade80; margin-top: 2px; font-size: 13px;"></i>
+                            <div style="flex: 1;">
+                                <div id="val-verdict-title" style="font-weight: 700; font-size: 11px; color: var(--text-main);" data-i18n="val_verdict_title">Experimental Density Validation</div>
+                                <div id="val-verdict-desc" style="font-size: 10px; color: var(--text-muted); margin-top: 2px; line-height: 1.4;" data-i18n="val_verdict_desc">
+                                    Both carboxylate groups are covered by experimental 2Fo-Fc electron density without negative difference peaks.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carbox Library Atom Quality & Suspicious Geometry Auditor -->
+            <div class="studio-section" id="studio-atom-audit-section">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-microchip"></i> <span data-i18n="heading_atom_audit">Carbox Atom Auditor</span></span>
+                    <span class="badge" id="studio-atom-audit-badge" style="display:none; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Normal</span>
+                </div>
+                <div class="geom-telemetry-card full-span" id="studio-atom-audit-card" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.2); padding: 10px 12px; border-radius: 8px;">
+                    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-atom" id="studio-atom-audit-icon" style="color: #38bdf8; font-size: 15px;"></i>
+                            <div>
+                                <div id="studio-atom-audit-target" style="font-weight: 700; font-size: 12px; color: var(--text-main);" data-i18n="lbl_pick_audit">Pick any atom to audit</div>
+                                <div id="studio-atom-audit-sub" style="font-size: 10px; color: var(--text-muted); margin-top: 2px;" data-i18n="lbl_atom_audit_sub">Detects short carboxyl contacts, LBHBs, clashes &amp; B-factor outliers via Carbox Engine.</div>
+                            </div>
+                        </div>
+                        <button class="btn-measure-action" id="btn-audit-atom-carbox" style="display:none; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                            <i class="fa-solid fa-bolt"></i> <span data-i18n="btn_audit_lib">Audit Library</span>
+                        </button>
+                    </div>
+                    <div id="studio-atom-audit-details" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                        <div id="studio-atom-audit-flags" style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px;"></div>
+                        <div id="studio-atom-audit-rec" style="font-size: 11px; line-height: 1.4; color: #cbd5e1; margin-bottom: 6px;"></div>
+                        <div id="studio-atom-audit-restraint-box" style="display: none; background: rgba(0, 0, 0, 0.4); border-radius: 4px; padding: 6px 8px; font-family: monospace; font-size: 10px; color: #a5f3fc; word-break: break-all;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-family: sans-serif; font-size: 9px; color: #94a3b8;">
+                                <span>Carbox Refinement Restraint:</span>
+                                <button id="btn-copy-atom-restraint" style="background:none; border:none; color:#38bdf8; cursor:pointer; font-size:10px;"><i class="fa-solid fa-copy"></i> Copy</button>
+                            </div>
+                            <span id="studio-atom-audit-restraint-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carbox Protonation Validation & PES Simulation Studio -->
+            <div class="studio-section" id="studio-proton-sim-section">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-wave-square"></i> <span data-i18n="heading_proton_sim">Protonation Simulation &amp; Validation</span></span>
+                    <span class="badge" id="studio-proton-regime-badge" style="font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">LBHB / PES</span>
+                </div>
+                <div class="geom-telemetry-card full-span" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(168, 85, 247, 0.3); padding: 10px 12px; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: #e2e8f0;"><i class="fa-solid fa-calculator" style="color: #a855f7;"></i> <span data-i18n="lbl_pes_title">Proton Transfer Potential Energy Surface</span></div>
+                            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="lbl_pes_sub">Simulate O-H···O reaction coordinate &amp; evaluate model validity</div>
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn-measure-action" id="btn-run-proton-sim" style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.5); color: #c084fc; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                                <i class="fa-solid fa-play"></i> <span data-i18n="btn_run_sim">Run Simulation</span>
+                            </button>
+                            <button class="btn-measure-action" id="btn-swap-proton-mouths" title="Reverse transfer direction (Əksi olan proton ağzı / Swap Donor & Acceptor)" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                                <i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="btn_swap_mouths">Swap Mouths</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="geom-telemetry-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 8px;">
+                        <div class="geom-telemetry-card" style="padding: 6px 8px;">
+                            <span class="geom-telemetry-label" style="font-size: 9px;"><i class="fa-solid fa-shield-halved"></i> Barrier Height (ΔE‡)</span>
+                            <strong class="geom-telemetry-val" id="val-sim-barrier" style="color: #a855f7; font-size: 13px;">-- kcal/mol</strong>
+                            <span class="geom-telemetry-sub" id="val-sim-zpe">ZPE: -- kcal/mol</span>
+                        </div>
+                        <div class="geom-telemetry-card" style="padding: 6px 8px;">
+                            <span class="geom-telemetry-label" style="font-size: 9px;"><i class="fa-solid fa-check-double"></i> Model Verdict</span>
+                            <strong class="geom-telemetry-val" id="val-sim-verdict" style="color: #4ade80; font-size: 12px;">VALIDATED</strong>
+                            <span class="geom-telemetry-sub" id="val-sim-pka">pKa Shift: --</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Mini PES Canvas -->
+                    <div style="position: relative; width: 100%; height: 75px; background: rgba(0,0,0,0.5); border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);">
+                        <canvas id="canvas-proton-pes" width="280" height="75" style="width: 100%; height: 100%; display: block;"></canvas>
+                        <div id="pes-canvas-label" style="position: absolute; bottom: 3px; right: 6px; font-size: 8px; color: #64748b; font-family: monospace;">V(ξ) Reaction Coordinate</div>
+                    </div>
+
+                    <div id="sim-diagnostic-text" style="font-size: 10px; color: #94a3b8; line-height: 1.35; margin-top: 6px;">
+                        Click "Run Simulation" or "Əks Ağız" to simulate forward/reverse proton exchange trajectory.
+                    </div>
+                </div>
+            </div>
+
+            <!-- CarboxMol Metal Coordination, 4-Fold Geometry & Coloring Studio -->
+            <div class="studio-section" id="studio-metal-coord-section">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-gem"></i> <span data-i18n="heading_metal_coord">Metal Coordination &amp; Coloring</span></span>
+                    <span class="badge" id="studio-metal-count-badge" style="font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700; background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);">Metals</span>
+                </div>
+                <div class="geom-telemetry-card full-span" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.25); padding: 10px 12px; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 700; color: #e2e8f0;"><i class="fa-solid fa-cubes-stacked" style="color: #38bdf8;"></i> <span data-i18n="lbl_metal_title">4-Fold &amp; 6-Fold Metal Coordination Spheres</span></div>
+                            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="lbl_metal_sub">Detect Zn²⁺, Fe²⁺, Mg²⁺, Ca²⁺, color coordination polyhedra &amp; bonds</div>
+                        </div>
+                        <div style="display: flex; gap: 4px;">
+                            <button class="btn-measure-action" id="btn-analyze-metals" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.5); color: #38bdf8; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                                <i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="btn_detect">Detect</span>
+                            </button>
+                            <button class="btn-measure-action" id="btn-color-metals-elem" style="background: rgba(168, 85, 247, 0.2); border: 1px solid rgba(168, 85, 247, 0.5); color: #c084fc; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                                <i class="fa-solid fa-shapes"></i> <span data-i18n="btn_geometry">Geometry</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Metal Sites List / Pills -->
+                    <div id="metal-sites-container" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
+                        <span style="font-size: 10px; color: #64748b;">Click "Detect" to identify 4-fold/6-fold metal centers in structure.</span>
+                    </div>
+
+                    <div id="metal-site-detail-box" style="display:none; background: rgba(0,0,0,0.4); border-radius: 6px; padding: 8px; border: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #cbd5e1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <strong id="metal-detail-title" style="color: #38bdf8; font-size: 11px;">Zn301 (Four-Fold Tetrahedral)</strong>
+                            <div style="display: flex; gap: 4px;">
+                                <button class="btn-measure-action" id="btn-zoom-metal" style="font-size: 9px; padding: 2px 6px;"><i class="fa-solid fa-crosshairs"></i> <span data-i18n="btn_zoom">Zoom</span></button>
+                                <button class="btn-measure-action" id="btn-toggle-poly-faces" style="font-size: 9px; padding: 2px 6px; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4); color: #c084fc;"><i class="fa-solid fa-cubes"></i> <span data-i18n="lbl_geom_polyhedron">Polyhedron</span></button>
+                                <button class="btn-measure-action" id="btn-copy-metal-restraints" style="font-size: 9px; padding: 2px 6px;"><i class="fa-solid fa-copy"></i> <span data-i18n="lbl_copy_restraints">Restraints</span></button>
+                            </div>
+                        </div>
+                        <div id="metal-detail-ligands" style="font-size: 10px; color: #94a3b8; line-height: 1.4; margin-bottom: 6px;"></div>
+                        <!-- Live Geometry Telemetry Box -->
+                        <div id="metal-geometry-telemetry-box" style="display: none; background: rgba(15, 23, 42, 0.6); border-radius: 4px; padding: 6px 8px; border: 1px solid rgba(168, 85, 247, 0.25); font-size: 9.5px; color: #e2e8f0; line-height: 1.45;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crystallographic Measurements (Manual Atom Picking) -->
+            <div class="studio-section" id="studio-section-measurements">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-ruler-combined"></i> <span
+                            data-i18n="heading_measurements">Measurements</span></span>
+                    <div class="measure-header-actions">
+                        <button class="btn-measure-action" id="btn-measure-undo"
+                            title="Clear Last Measurement (Ctrl+Z / ⌘Z)">
+                            <i class="fa-solid fa-rotate-left"></i> <span data-i18n="btn_clear_last">Clear Last</span>
+                        </button>
+                        <button class="btn-measure-action danger" id="btn-measure-clear-all"
+                            title="Clear All 3D Measurements">
+                            <i class="fa-solid fa-trash-can"></i> <span data-i18n="btn_clear_all">Clear All</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="measure-tabs">
+                    <button class="measure-tab" data-mode="dist"><i class="fa-solid fa-ruler"></i> <span
+                            data-i18n="tab_dist">Distance (&Aring;)</span></button>
+                    <button class="measure-tab" data-mode="angle"><i class="fa-solid fa-draw-polygon"></i> <span
+                            data-i18n="tab_angle">Angle (&deg;)</span></button>
+                    <button class="measure-tab" data-mode="dihedral"><i class="fa-solid fa-rotate"></i> <span
+                            data-i18n="tab_dihedral">Dihedral (&chi;&deg;)</span></button>
+                </div>
+
+                <!-- Distance / Density Separation Control -->
+                <div class="measure-density-control" title="When unchecked, distance measurement will strictly measure geometry without triggering or carving electron density maps">
+                    <span><i class="fa-solid fa-wave-square" style="color:#64748b;font-size:10px;"></i> <span data-i18n="lbl_link_density">Link Density with Measures</span></span>
+                    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="checkbox" id="toggle-measure-density">
+                    </label>
+                </div>
+
+                <div class="measure-hint-box" id="studio-measure-hint-box">
+                    <div class="measure-hint-icon">
+                        <i class="fa-solid fa-ruler-combined"></i>
+                    </div>
+                    <span id="studio-measure-hint" data-i18n="measure_hint_dist">Click any 2 atoms in the 3D viewport to
+                        measure interatomic distance in Ångströms (Å).</span>
+                </div>
+
+                <div class="measure-presets" id="studio-measure-presets">
+                    <!-- Dynamic 1-Click Quick Presets for Angle & Dihedral -->
+                </div>
+
+                <div class="active-measure-list" id="studio-active-measurements-list">
+                    <!-- Dynamic live measurement cards -->
+                </div>
+            </div>
+
+            <!-- Unit Cell & Symmetry Module -->
+            <div class="studio-section" id="studio-section-unitcell">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-cubes"></i> <span
+                            data-i18n="heading_cell_sym">Unit Cell &amp; Symmetry</span></span>
+                    <span class="section-badge" id="studio-spacegroup-badge">P 1</span>
+                </div>
+                <div
+                    style="display: flex; flex-direction: column; gap: 6px; font-size: 11px; font-family: var(--font-mono);">
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);"
+                            data-i18n="lbl_lengths">Lengths (a, b, c):</span> <strong id="studio-cell-lengths"
+                            style="color: var(--accent-cyan);">-- &Aring;</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);"
+                            data-i18n="lbl_angles">Angles (&alpha;, &beta;, &gamma;):</span> <strong
+                            id="studio-cell-angles" style="color: var(--accent-purple);">-- &deg;</strong></div>
+                </div>
+            </div>
+
+
+            <!-- Microenvironment Metrics Module -->
+            <div class="studio-section" id="studio-section-microenv">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-microscope"></i> <span
+                            data-i18n="heading_microenv">Microenvironment &amp; pKa</span></span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px;">
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);"
+                            data-i18n="lbl_pka_shift">Calculated pKa Shift:</span> <strong id="studio-stat-pka"
+                            style="font-family: var(--font-mono); color: var(--accent-amber);">--</strong></div>
+                    <div style="display: flex; justify-content: space-between;"><span style="color: var(--text-muted);"
+                            data-i18n="lbl_dielectric">Dielectric Estimate (&epsilon;):</span> <strong
+                            id="studio-stat-dielectric" style="font-family: var(--font-mono);">--</strong></div>
+                </div>
+            </div>
+
+            <!-- External Biological & Crystallographic Database Registry -->
+            <div class="studio-section" id="studio-db-registry-section">
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-database"></i> <span
+                            data-i18n="heading_db_registry">Database Cross-References</span></span>
+                    <span class="section-badge" id="studio-db-badge"
+                        style="background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.25);">Live Synced</span>
+                </div>
+                <div class="db-registry-grid" id="studio-db-registry-grid">
+                    <!-- Dynamically populated with active clickable database URLs and badges -->
+                </div>
+            </div>
+
+            <!-- Crystallographic Refinement & Restraints Module (Carbox Refinement Suite) -->
+            <div class="studio-section refine-suite-section" id="studio-refine-section" style="flex: 1; display: flex; flex-direction: column;">
+
+                <div class="section-header">
+                    <span class="section-title"><i class="fa-solid fa-microchip"></i> <span
+                            data-i18n="heading_restraints">Refinement &amp; Restraints</span></span>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="chip-btn" id="btn-download-restraints" title="Download Current Script"
+                            style="font-size: 10px;"><i class="fa-solid fa-download"></i></button>
+                        <button class="chip-btn" id="btn-copy-restraints" title="Copy to Clipboard"
+                            style="font-size: 10px;"><i class="fa-solid fa-copy"></i></button>
+                    </div>
+                </div>
+
+                <!-- Single consolidated Launch button -->
+                <button id="btn-open-refine-modal" class="refine-launch-btn" title="Open Crystallographic Refinement Suite">
+                    <span class="refine-launch-icon"><i class="fa-solid fa-flask-vial"></i></span>
+                    <span class="refine-launch-text">
+                        <span class="refine-launch-title" data-i18n="btn_launch_refine">Launch Refinement Suite</span>
+                        <span class="refine-launch-sub">Carbox X-Ray &middot; Carbox Cryo-EM &middot; Carbox Restraints</span>
+                    </span>
+                    <i class="fa-solid fa-arrow-up-right-from-square refine-launch-arrow"></i>
+                </button>
+
+                <!-- Current active-suite indicator badges -->
+                <div class="refine-suite-badges" id="refine-suite-badges">
+                    <span class="rsuite-badge rsuite-xray" id="badge-suite-xray" title="Carbox X-Ray Refinement"><i class="fa-solid fa-flask"></i> Carbox X-Ray</span>
+                    <span class="rsuite-badge rsuite-cryoem" id="badge-suite-cryoem" title="Carbox Cryo-EM SPA Refinement"><i class="fa-solid fa-atom"></i> Carbox Cryo-EM</span>
+                    <span class="rsuite-badge rsuite-pipeline" id="badge-suite-pipeline" title="Carbox Restraints Pipeline"><i class="fa-solid fa-sliders"></i> Carbox Restraints</span>
+                </div>
+
+                <pre id="studio-refinement-block"
+                    style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 10px; font-family: var(--font-mono); font-size: 10px; color: #a78bfa; overflow-x: auto; white-space: pre-wrap; flex: 1; min-height: 120px; max-height: 200px; line-height: 1.45; margin-top: 6px;"></pre>
+            </div>
+        </aside>
+
+        <!-- Mobile Drawer Overlay Backdrop -->
+        <div class="studio-drawer-backdrop" id="studio-drawer-backdrop"></div>
     </main>
 
+    <!-- ─── Enterprise "Go to Atom" Navigator Modal Dialog ───────────────────── -->
+    <div id="modal-goto-atom" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card goto-atom-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-location-crosshairs" style="color: var(--accent-cyan);"></i>
+                    <span class="modal-title" data-i18n="goto_title">Go to Atom / Residue Navigator</span>
+                    <span class="modal-hotkey">⌘G / Ctrl+G</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-goto-atom"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Search & Filters -->
+                <div class="goto-grid">
+                    <div class="goto-field" style="max-width: 110px;">
+                        <label><i class="fa-solid fa-link"></i> <span data-i18n="goto_chain">Chain</span></label>
+                        <select id="goto-chain-select" class="goto-select">
+                            <!-- Populated with chains -->
+                        </select>
+                    </div>
+
+                    <div class="goto-field" style="flex: 2;">
+                        <label><i class="fa-solid fa-magnifying-glass"></i> <span data-i18n="goto_filter">Filter / Jump
+                                Residue</span></label>
+                        <div class="goto-search-wrap">
+                            <input type="text" id="goto-res-search"
+                                placeholder="Type residue name or number (ASP, GLU)..." autocomplete="off"
+                                data-i18n-ph="goto_filter_ph">
+                        </div>
+                    </div>
+
+                    <div class="goto-field" style="flex: 1.5;">
+                        <label><i class="fa-solid fa-atom"></i> <span data-i18n="goto_atom_target">Atom
+                                Target</span></label>
+                        <select id="goto-atom-select" class="goto-select">
+                            <option value="ALL" data-i18n="opt_all">All Atoms (Residue Center)</option>
+                            <option value="CA" data-i18n="opt_ca">CA (C-Alpha Backbone)</option>
+                            <option value="CARBOXYL" data-i18n="opt_carbox">Carboxyl Oxygens (OD/OE)</option>
+                            <option value="N" data-i18n="opt_n">N (Mainchain Nitrogen)</option>
+                            <option value="O" data-i18n="opt_o">O (Mainchain Oxygen)</option>
+                            <option value="CB" data-i18n="opt_cb">CB (C-Beta Sidechain)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Residue Quick List -->
+                <div class="goto-res-list-container" id="goto-res-list">
+                    <!-- Dynamic Residue Items -->
+                </div>
+
+                <!-- Live Selected Atom / Residue Diagnostic Preview Card -->
+                <div class="goto-preview-card" id="goto-preview-card">
+                    <div class="goto-preview-row">
+                        <div class="preview-target"><i class="fa-solid fa-bullseye"
+                                style="color: var(--accent-cyan);"></i> <span data-i18n="lbl_preview_target">Target:</span> <strong
+                                id="goto-target-label">--</strong></div>
+                        <div class="preview-coords"><i class="fa-solid fa-cube"></i> Coordinates: <code
+                                id="goto-target-coords">x: --, y: --, z: --</code></div>
+                    </div>
+                    <div class="goto-meta-row">
+                        <span>B-Factor: <strong id="goto-target-bfactor">--</strong></span>
+                        <span>Occupancy: <strong id="goto-target-occ">--</strong></span>
+                        <span>Charge / Type: <strong id="goto-target-type"
+                                style="color: var(--accent-purple);">--</strong></span>
+                    </div>
+                </div>
+
+                <div class="modal-actions-row">
+                    <button class="btn-studio" id="btn-goto-isolate" title="Isolate 5 Å pocket around target"><i
+                            class="fa-solid fa-circle-dot"></i> <span data-i18n="btn_isolate">Isolate 5Å
+                            Pocket</span></button>
+                    <button class="btn-studio primary" id="btn-goto-execute" style="flex: 1; font-weight: 700;"><i
+                            class="fa-solid fa-crosshairs"></i> <span data-i18n="btn_go_center">Go &amp; Center 3D
+                            View</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Carbox Crystallographic Refinement & Restraints Suite Modal ───────── -->
+    <div id="modal-refinement-suite" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card refine-modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-microchip" style="color: var(--accent-cyan);"></i>
+                    <span class="modal-title" data-i18n="refine_modal_title">Crystallographic Refinement &amp;
+                        Restraints Suite</span>
+                    <span class="modal-hotkey">Carbox X-Ray · Carbox Cryo-EM · Carbox Restraints</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-refine-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Suite Selection Tabs in Modal -->
+                <div class="modal-refine-tabs" id="modal-suite-tabs">
+                    <button class="modal-tab active" data-suite="xray"><i class="fa-solid fa-flask"></i> Carbox X-Ray
+                        (Crystallography)</button>
+                    <button class="modal-tab" data-suite="cryoem"><i class="fa-solid fa-atom"></i> Carbox Cryo-EM
+                        (SPA / Reciprocal)</button>
+                    <button class="modal-tab" data-suite="pipeline"><i class="fa-solid fa-sliders"></i> Carbox Restraints
+                        Pipeline Shell Script</button>
+                </div>
+
+                <!-- Parameters Grid -->
+                <div class="refine-params-grid">
+                    <div class="refine-param-item">
+                        <label><i class="fa-solid fa-ruler-horizontal"></i> <span data-i18n="lbl_target_dist">Target
+                                Restraint Dist (Å)</span></label>
+                        <input type="number" id="refine-input-dist" step="0.01" min="2.20" max="3.50" value="2.48"
+                            title="Target O···O distance">
+                    </div>
+                    <div class="refine-param-item">
+                        <label><i class="fa-solid fa-weight-hanging"></i> <span data-i18n="lbl_sigma">Sigma
+                                (Weight)</span></label>
+                        <input type="number" id="refine-input-sigma" step="0.01" min="0.01" max="0.20" value="0.03"
+                            title="Distance restraint sigma">
+                    </div>
+                    <div class="refine-param-item">
+                        <label><i class="fa-solid fa-atom"></i> <span data-i18n="lbl_hydr_mode">Hydrogen
+                                Mode</span></label>
+                        <select id="refine-select-hydr">
+                            <option value="ALL">ALL (All Atoms / Explicit)</option>
+                            <option value="POLAR">POLAR (Polar Hydrogen Only)</option>
+                            <option value="RIDING">RIDING (Standard Riding)</option>
+                            <option value="NO">NO (No Hydrogens)</option>
+                        </select>
+                    </div>
+                    <div class="refine-param-item">
+                        <label><i class="fa-solid fa-code-merge"></i> <span data-i18n="lbl_monomer_param">Carboxyl
+                                State</span></label>
+                        <select id="refine-select-monomer">
+                            <option value="AUTO">Auto (ASH / GLH for LBHB)</option>
+                            <option value="NEUTRAL">Force Neutral (ASH / GLH)</option>
+                            <option value="ANIONIC">Force Anionic (ASP / GLU)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Code Preview Block -->
+                <div class="refine-preview-container">
+                    <div class="refine-preview-header">
+                        <span id="refine-preview-filename"><i class="fa-solid fa-file-code"></i> <code
+                                style="color: var(--accent-cyan);">carbox_restraints.txt</code></span>
+                        <div class="refine-preview-actions">
+                            <button class="chip-btn" id="btn-modal-apply-3d" title="Focus and visualize this restraint in the 3D viewport"><i class="fa-solid fa-eye" style="color: var(--accent-cyan);"></i> <span data-i18n="btn_focus_3d">Focus 3D</span></button>
+                            <button class="chip-btn" id="btn-modal-copy-script"><i class="fa-solid fa-copy"></i> <span
+                                    data-i18n="btn_copy">Copy</span></button>
+                            <button class="chip-btn primary" id="btn-modal-download-script"><i
+                                    class="fa-solid fa-download"></i> <span data-i18n="btn_download">Download
+                                    File</span></button>
+                        </div>
+                    </div>
+                    <pre id="modal-refine-code-block"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Ligand Interactions & Binding Pocket 3D Suite Modal / Drawer ───── -->
+    <div id="modal-ligand-explorer" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card ligand-modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-capsules" style="color: var(--accent-emerald, #10b981);"></i>
+                    <span class="modal-title" data-i18n="modal_ligand_title">Ligand &amp; Binding Pocket 3D Interactions</span>
+                    <span class="modal-hotkey">RCSB Mol*++ · Multi-Type Non-Covalent Engine</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-ligand-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body ligand-modal-body">
+                <!-- Top Toolbar in Modal -->
+                <div class="ligand-controls-bar">
+                    <div class="ligand-select-wrap">
+                        <label><i class="fa-solid fa-vial"></i> Target Ligand:</label>
+                        <select id="ligand-select-dropdown" class="ligand-select">
+                            <option value="">Detecting ligands...</option>
+                        </select>
+                    </div>
+
+                    <div class="ligand-actions-row">
+                        <button class="chip-btn primary active" id="btn-toggle-pocket-focus" title="Focus camera and isolate binding pocket residues (< 5.0 Å)">
+                            <i class="fa-solid fa-crosshairs"></i> <span id="lbl-pocket-focus">Focus Pocket (< 5.0 Å)</span>
+                        </button>
+                        <button class="chip-btn" id="btn-toggle-pocket-labels" title="Toggle 3D distance and residue name labels">
+                            <i class="fa-solid fa-tag"></i> <span id="lbl-pocket-labels">Labels: ON</span>
+                        </button>
+                        <button class="chip-btn" id="btn-export-ligand-csv" title="Export interaction table as CSV">
+                            <i class="fa-solid fa-file-csv"></i> <span>Export CSV</span>
+                        </button>
+                        <button class="chip-btn" id="btn-export-ligand-cxl" title="Generate Pocket CarboxMol .CXL Macro Script">
+                            <i class="fa-solid fa-code"></i> <span>CarboxMol Pocket</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interaction Filter Chips -->
+                <div class="interaction-filter-chips" id="interaction-filter-chips">
+                    <button class="int-chip active" data-type="all"><span class="chip-dot" style="background: #fff;"></span> All (<span id="count-all">0</span>)</button>
+                    <button class="int-chip active" data-type="Hydrogen Bond"><span class="chip-dot" style="background: #10b981;"></span> H-Bonds (<span id="count-hbonds">0</span>)</button>
+                    <button class="int-chip active" data-type="Salt Bridge"><span class="chip-dot" style="background: #f59e0b;"></span> Salt Bridges (<span id="count-salt">0</span>)</button>
+                    <button class="int-chip active" data-type="Pi Interaction"><span class="chip-dot" style="background: #a855f7;"></span> &pi;-Stacking (<span id="count-pi">0</span>)</button>
+                    <button class="int-chip active" data-type="Hydrophobic"><span class="chip-dot" style="background: #06b6d4;"></span> Hydrophobic (<span id="count-hydro">0</span>)</button>
+                    <button class="int-chip active" data-type="Halogen Bond"><span class="chip-dot" style="background: #14b8a6;"></span> Halogen (<span id="count-halogen">0</span>)</button>
+                    <button class="int-chip active" data-type="Metal Coordination"><span class="chip-dot" style="background: #ec4899;"></span> Metals (<span id="count-metals">0</span>)</button>
+                    <button class="int-chip active" data-type="Water Bridge"><span class="chip-dot" style="background: #38bdf8;"></span> Water Bridges (<span id="count-water">0</span>)</button>
+                </div>
+
+                <!-- Telemetry & Contact Details Table -->
+                <div class="ligand-table-container">
+                    <table class="ligand-contacts-table" id="ligand-contacts-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Protein Residue</th>
+                                <th>Prot Atom</th>
+                                <th>Lig Atom</th>
+                                <th>Distance</th>
+                                <th>3D Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ligand-contacts-tbody">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 24px;">No ligand loaded.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Keyboard Shortcuts Modal Dialog (Quick Reference) ───────────────── -->
+    <div id="modal-shortcuts-help" class="studio-modal-overlay" style="display: none;">
+
+        <div class="modal-card shortcuts-modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-keyboard" style="color: var(--accent-cyan);"></i>
+                    <span class="modal-title" data-i18n="modal_shortcuts_title">Keyboard Shortcuts &amp; Navigation Controls</span>
+                    <span class="modal-hotkey">Press ? or H anytime</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-shortcuts-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body shortcuts-modal-body">
+                <div class="shortcuts-grid">
+                    <div class="shortcuts-col">
+                        <h4><i class="fa-solid fa-table-columns"></i> <span data-i18n="sc_cat_viewport">Viewport &amp; Sidebars</span></h4>
+                        <div class="shortcut-item"><kbd>[</kbd> / <kbd>L</kbd> <span data-i18n="sc_sidebar_l">Toggle Left Sidebar (Pairs List)</span></div>
+                        <div class="shortcut-item"><kbd>]</kbd> / <kbd>R</kbd> <span data-i18n="sc_sidebar_r">Toggle Right Sidebar (Inspector)</span></div>
+                        <div class="shortcut-item"><kbd>S</kbd> <span data-i18n="sc_seq_ribbon">Toggle Bottom Sequence Ribbon</span></div>
+                        <div class="shortcut-item"><kbd>O</kbd> <span data-i18n="sc_options_menu">Open Workbench Options &amp; Panels Menu</span></div>
+                        <div class="shortcut-item"><kbd>F</kbd> <span data-i18n="sc_toggle_full">Toggle Full 3D View (Zen Mode)</span></div>
+                        <div class="shortcut-item"><kbd>Space</kbd> / <kbd>C</kbd> <span data-i18n="sc_center_pair">Center on Active Carboxyl Pair</span></div>
+                        <div class="shortcut-item"><kbd>0</kbd> / <kbd>Home</kbd> <span data-i18n="sc_reset_cam">Reset Camera to Full Macromolecule</span></div>
+                    </div>
+
+                    <div class="shortcuts-col">
+                        <h4><i class="fa-solid fa-atom"></i> <span data-i18n="sc_cat_protonation">Protonation &amp; Navigation</span></h4>
+                        <div class="shortcut-item"><kbd>1</kbd> <span data-i18n="sc_prot_bare">Bare Native Structure</span></div>
+                        <div class="shortcut-item"><kbd>2</kbd> <span data-i18n="sc_prot_anionic">Anionic (-COO⁻) Repulsion</span></div>
+                        <div class="shortcut-item"><kbd>3</kbd> <span data-i18n="sc_prot_ash">Neutral ASH (Aspartate-COOH)</span></div>
+                        <div class="shortcut-item"><kbd>4</kbd> <span data-i18n="sc_prot_glh">Neutral GLH (Glutamate-COOH)</span></div>
+                        <div class="shortcut-item"><kbd>5</kbd> <span data-i18n="sc_prot_lbhb">Low-Barrier H-Bond (LBHB Shared H⁺)</span></div>
+                        <div class="shortcut-item"><kbd>&larr;</kbd> / <kbd>&rarr;</kbd> (or <kbd>J</kbd>/<kbd>K</kbd>) <span data-i18n="sc_pair_nav">Previous / Next Carboxyl Pair</span></div>
+                    </div>
+
+                    <div class="shortcuts-col">
+                        <h4><i class="fa-solid fa-ruler-combined"></i> <span data-i18n="sc_cat_tools">Tools &amp; Actions</span></h4>
+                        <div class="shortcut-item"><kbd>⌘G</kbd> / <kbd>Ctrl+G</kbd> <span data-i18n="sc_tool_goto">Go to Atom / Residue Navigator</span></div>
+                        <div class="shortcut-item"><kbd>P</kbd> / <kbd>⌘S</kbd> <span data-i18n="sc_tool_snap">Capture 4K High-Res Snapshot</span></div>
+                        <div class="shortcut-item"><kbd>Shift</kbd> + Scroll <span data-i18n="sc_tool_slab">Adjust Slab / Depth Clipping</span></div>
+                        <div class="shortcut-item"><kbd>Ctrl+Z</kbd> / <kbd>⌘Z</kbd> <span data-i18n="sc_tool_undo">Undo Last 3D Measurement</span></div>
+                        <div class="shortcut-item"><kbd>Esc</kbd> <span data-i18n="sc_tool_close">Close Modals / Cancel Active Pick</span></div>
+                        <div class="shortcut-item"><kbd>?</kbd> / <kbd>H</kbd> <span data-i18n="sc_tool_help">Open this Shortcuts Window</span></div>
+                    </div>
+
+                    <div class="shortcuts-col">
+                        <h4><i class="fa-solid fa-hand-pointer"></i> <span data-i18n="sc_cat_gestures">3D Navigation &amp; Density Dial Gestures</span></h4>
+                        <div class="shortcut-item"><kbd>Scroll Wheel</kbd> / <kbd>Pinch</kbd> <span data-i18n="sc_gest_zoom">Smooth Camera Zoom (In/Out)</span></div>
+                        <div class="shortcut-item"><kbd>Alt</kbd> + Scroll <span data-i18n="sc_gest_sigma">Adjust Electron Density Level (&sigma;)</span></div>
+                        <div class="shortcut-item"><kbd>Shift</kbd> + Scroll <span data-i18n="sc_gest_slab">Crystallographic Slab Depth Slice</span></div>
+                        <div class="shortcut-item"><kbd>Click &amp; Drag</kbd> <span data-i18n="sc_gest_rot">Rotate 3D Macromolecule</span></div>
+                        <div class="shortcut-item"><kbd>Right Click</kbd> / <kbd>2-Finger Click</kbd> <span data-i18n="sc_gest_pan">Translate / Pan 3D Camera</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ─── .CXL Macro Studio & Script Runner Modal ────────────────────────────── -->
+    <div id="modal-cxl-studio" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card cxl-modal-card" style="max-width: 820px; width: 92vw; max-height: 88vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-terminal" style="color: #a855f7;"></i>
+                    <span class="modal-title" data-i18n="modal_cxl_title">CarboxMol .CXL Macro Studio</span>
+                    <span class="modal-hotkey">Live Script Console &amp; Player</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-cxl-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1;">
+                <!-- Drag & Drop Zone / Script Selector -->
+                <div id="cxl-dropzone" style="border: 2px dashed rgba(168,85,247,0.4); border-radius: 8px; padding: 14px; text-align: center; background: rgba(168,85,247,0.06); cursor: pointer; transition: all 0.2s;">
+                    <i class="fa-solid fa-file-arrow-up" style="color: #c084fc; font-size: 20px; margin-bottom: 4px;"></i>
+                    <div style="font-size: 12px; color: #fff; font-weight: 600;">Drag &amp; Drop a <code style="color: #c084fc;">.cxl</code> macro script here, or click to browse</div>
+                    <div style="font-size: 10px; color: var(--text-muted);">Supports native CarboxMol (.cxl) and Python (.py) session scripts</div>
+                    <input type="file" id="input-cxl-file" accept=".cxl,.pml,.py,.txt" style="display: none;">
+                </div>
+
+                <!-- Action Toolbar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; gap: 6px;">
+                        <button class="chip-btn primary" id="btn-cxl-run" style="background: linear-gradient(135deg, #10b981, #06b6d4); color: #fff; font-weight: 700; border: none; padding: 6px 14px;">
+                            <i class="fa-solid fa-play"></i> <span>Run Macro (▶)</span>
+                        </button>
+                        <button class="chip-btn" id="btn-cxl-load-sample" style="font-size: 11px;">
+                            <i class="fa-solid fa-file-code"></i> <span>Load Sample</span>
+                        </button>
+                        <button class="chip-btn" id="btn-cxl-clear" style="font-size: 11px;">
+                            <i class="fa-solid fa-trash-can"></i> <span>Clear</span>
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button class="chip-btn" id="btn-cxl-export-file" style="font-size: 11px; border-color: #a855f7; color: #c084fc;">
+                            <i class="fa-solid fa-floppy-disk"></i> <span>Save .CXL File</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Monospace Macro Editor -->
+                <div style="position: relative; flex: 1; min-height: 220px; display: flex; flex-direction: column;">
+                    <textarea id="cxl-editor-textarea" spellcheck="false" placeholder="# Enter .cxl macro directives here...
+load_structure 4LGN --source=pdbe
+density_map 2fofc --sigma=1.0 --scope=pocket
+density_map fofc_positive --sigma=3.0 --scope=pocket
+select_pair site_1 --res1=A:27:OD2 --res2=A:58:OD1
+model_protonation_state --state=lbhb
+measure_distance dist_1 A:27:OD2 A:58:OD1 --target=2.410
+center_camera A:27 A:58 --zoom=14"
+                        style="width: 100%; flex: 1; min-height: 200px; max-height: 320px; background: rgba(10, 15, 30, 0.95); border: 1px solid rgba(168,85,247,0.3); border-radius: 6px; padding: 12px; font-family: var(--font-mono, monospace); font-size: 11.5px; color: #e2e8f0; line-height: 1.5; resize: vertical; outline: none;"></textarea>
+                </div>
+
+                <!-- Execution Output Console Log -->
+                <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; font-family: var(--font-mono, monospace); font-size: 10.5px; color: #94a3b8; max-height: 120px; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 2px;">
+                        <span style="color: var(--accent-cyan); font-weight: 600;"><i class="fa-solid fa-square-terminal"></i> Console Log</span>
+                        <span id="cxl-exec-status" style="color: #10b981;">Ready</span>
+                    </div>
+                    <div id="cxl-log-output" style="white-space: pre-wrap; line-height: 1.4;">[Console Ready] Load or paste a .cxl macro script and click 'Run Macro' to execute in the active 3D viewport.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Cross-Platform Download & Installation Hub Modal ───────────────────── -->
+    <div id="modal-download-hub" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card download-modal-card" style="max-width: 780px; width: 90vw; max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-download" style="color: #10b981;"></i>
+                    <span class="modal-title" data-i18n="modal_download_title">CarboxMol Cross-Platform Installation Hub</span>
+                    <span class="modal-hotkey">macOS · Linux · Windows · Web</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-download-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+                <!-- Platform Tabs in Modal -->
+                <div class="modal-refine-tabs" id="download-platform-tabs" style="display: flex; gap: 4px;">
+                    <button class="modal-tab active" data-platform="macos"><i class="fa-brands fa-apple"></i> macOS</button>
+                    <button class="modal-tab" data-platform="linux"><i class="fa-brands fa-linux"></i> Linux</button>
+                    <button class="modal-tab" data-platform="windows"><i class="fa-brands fa-windows"></i> Windows</button>
+                    <button class="modal-tab" data-platform="python"><i class="fa-brands fa-python"></i> <span data-i18n="tab_python_cli">Python CLI</span></button>
+                    <button class="modal-tab" data-platform="web"><i class="fa-solid fa-globe"></i> <span data-i18n="tab_web_pwa">Web / PWA</span></button>
+                </div>
+
+                <!-- Dynamic Content Panel for Selected Platform -->
+                <div id="download-platform-content" style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px;">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── Reference Benchmark Gallery Modal ──────────────────────────────── -->
+    <div id="modal-ref-structures" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card" style="max-width: 980px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-layer-group" style="color: #94a3b8;"></i>
+                    <span class="modal-title" data-i18n="modal_benchmarks_title">Macromolecular Anomaly &amp; Benchmark Library</span>
+                    <span class="modal-hotkey">Carbox Anomaly Survey (377+ PDBs) &amp; Atomic Resolution Benchmark Library</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-ref-structures"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+
+                <!-- Filter Bar -->
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 220px; position: relative;">
+                        <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 11px;"></i>
+                        <input type="text" id="ref-struct-search" placeholder="Search anomalous structures &amp; pairs (e.g. 8PO0, 5SAO, 1G66, ASP, GLU, 2.3Å)..."
+                            style="width: 100%; padding: 7px 10px 7px 30px; background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; color: #fff; font-size: 12px; box-sizing: border-box;">
+                    </div>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                        <button class="density-scope-btn active" id="ref-filter-all" data-filter="all">All (377+)</button>
+                        <button class="density-scope-btn" id="ref-filter-lbhb" data-filter="lbhb"><i class="fa-solid fa-bolt"></i> LBHB (&le;2.55 &Aring;)</button>
+                        <button class="density-scope-btn" id="ref-filter-ultra-short" data-filter="ultra_short">Ultra-Short (&lt;2.6 &Aring;)</button>
+                        <button class="density-scope-btn" id="ref-filter-buried" data-filter="buried">Buried</button>
+                        <button class="density-scope-btn" id="ref-filter-atomic" data-filter="Atomic">Atomic (&lt;1.0 &Aring;)</button>
+                    </div>
+                    <button class="ref-struct-btn" id="btn-sync-ref-catalog" style="width:auto; padding:5px 10px; font-size:11px;" title="Reload anomaly &amp; reference catalog">
+                        <i class="fa-solid fa-arrows-rotate"></i> Sync
+                    </button>
+                    <span id="ref-struct-count" style="font-size: 11px; color: var(--text-muted); white-space: nowrap;">Loading structures...</span>
+                </div>
+
+                <!-- Structure Cards Grid (populated by JS) -->
+                <div class="ref-struct-grid" id="ref-struct-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── 1D Electron Density Profile Inspector Modal ─────────────────────── -->
+    <div id="modal-density-profile" class="studio-modal-overlay" style="display: none;">
+        <div class="modal-card" style="max-width: 900px; width: 94vw; max-height: 92vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i class="fa-solid fa-wave-square" style="color: #38bdf8;"></i>
+                    <span class="modal-title" data-i18n="modal_density_profile_title">1D Electron Density Line Profile &amp; Hydrogen Delocalization Profiler</span>
+                    <span class="modal-hotkey" id="density-profile-pdb-badge">–</span>
+                </div>
+                <button class="modal-close-btn" id="btn-close-density-profile"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto;">
+
+                <!-- Key Metrics Row (6 Quantitative Stat Chips) -->
+                <div class="density-stat-grid" id="density-profile-stat-grid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Protonation Verdict -->
+                <div class="density-verdict-banner" id="density-profile-verdict">
+                    <i class="fa-solid fa-circle-info" style="color: #38bdf8; font-size: 14px; flex-shrink: 0;"></i>
+                    <span id="density-profile-verdict-text">Sampling quantitative electron density profile…</span>
+                </div>
+
+                <!-- 1D Profile Canvas with Crosshair overlay -->
+                <div class="density-chart-box" style="position: relative;">
+                    <canvas id="density-profile-canvas" class="density-chart-canvas" height="250"></canvas>
+                    <div id="density-profile-tooltip" style="position: absolute; display: none; pointer-events: none; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--accent-cyan); border-radius: 6px; padding: 6px 10px; font-size: 11px; font-family: var(--font-mono); color: #fff; z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,0.6);"></div>
+                </div>
+
+                <!-- Benchmark Quick Presets -->
+                <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Scientific Presets:</span>
+                    <button class="density-scope-btn" onclick="applyDensityProfilePreset('1G66')">⚡ 1G66 LBHB (0.90Å, d=2.45Å)</button>
+                    <button class="density-scope-btn" onclick="applyDensityProfilePreset('1GA6')">⚡ 1GA6 Multi-LBHB (1.00Å, d=2.49Å)</button>
+                    <button class="density-scope-btn" onclick="applyDensityProfilePreset('1EJG')">⚡ 1EJG Crambin (0.54Å Atomic)</button>
+                    <button class="density-scope-btn" onclick="applyDensityProfilePreset('ASH')">Neutral ASH (d=2.60Å)</button>
+                    <button class="density-scope-btn" onclick="applyDensityProfilePreset('IONIZED')">Ionized COO⁻ (d=2.85Å)</button>
+                </div>
+
+                <!-- Multi-Parameter Controls -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; font-size: 11px; background: rgba(15,23,42,0.6); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+                    <div>
+                        <label style="color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between;">
+                            <span>Protonation State</span>
+                        </label>
+                        <select id="density-profile-state" style="width:100%; padding: 6px 8px; background: rgba(10,15,29,0.9); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; color: #fff; font-size: 11px;">
+                            <option value="lbhb">LBHB (Centered Shared H⁺)</option>
+                            <option value="protonated">Neutral ASH (H⁺ on O1)</option>
+                            <option value="protonated_o2">Neutral GLH (H⁺ on O2)</option>
+                            <option value="ionized">Ionized COO⁻ (Unprotonated)</option>
+                            <option value="double_well">Double-Well Delocalized H⁺</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between;">
+                            <span>Target O...O Dist</span>
+                            <span id="label-profile-dist" style="color:var(--accent-cyan); font-weight:700;">2.45 Å</span>
+                        </label>
+                        <input type="range" id="density-profile-dist-slider" min="2.15" max="3.40" step="0.01" value="2.45"
+                            style="width:100%; accent-color: var(--accent-cyan);">
+                    </div>
+                    <div>
+                        <label style="color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between;">
+                            <span>B-factor O1</span>
+                            <span id="label-profile-b1" style="color:#ef4444; font-weight:700;">8.0 Å²</span>
+                        </label>
+                        <input type="range" id="density-profile-b1-slider" min="2.0" max="45.0" step="0.5" value="8.0"
+                            style="width:100%; accent-color: #ef4444;">
+                    </div>
+                    <div>
+                        <label style="color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between;">
+                            <span>B-factor O2</span>
+                            <span id="label-profile-b2" style="color:#38bdf8; font-weight:700;">8.0 Å²</span>
+                        </label>
+                        <input type="range" id="density-profile-b2-slider" min="2.0" max="45.0" step="0.5" value="8.0"
+                            style="width:100%; accent-color: #38bdf8;">
+                    </div>
+                    <div>
+                        <label style="color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between;">
+                            <span>Resolution d_min</span>
+                            <span id="label-profile-res" style="color:#facc15; font-weight:700;">0.90 Å</span>
+                        </label>
+                        <input type="range" id="density-profile-res-slider" min="0.50" max="2.50" step="0.05" value="0.90"
+                            style="width:100%; accent-color: #facc15;">
+                    </div>
+                </div>
+
+                <!-- Action & Export Bar -->
+                <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-top: 2px;">
+                    <div style="display: flex; gap: 6px;">
+                        <button id="btn-density-profile-recompute" class="ref-struct-btn" style="width: auto; padding: 6px 12px;">
+                            <i class="fa-solid fa-rotate"></i> Recompute Profile
+                        </button>
+                        <button id="btn-density-profile-viewport" class="ref-struct-btn" style="width: auto; padding: 6px 12px; background: linear-gradient(135deg, rgba(74,222,128,0.2), rgba(6,182,212,0.2)); border-color: rgba(74,222,128,0.4);" title="Render 3D density cage around this pair in 3D viewport">
+                            <i class="fa-solid fa-cubes" style="color:#4ade80;"></i> Sync 3D Viewport
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                        <button id="btn-density-export-png" class="ref-struct-btn" style="width: auto; padding: 6px 10px;" title="Export high-resolution PNG diagram">
+                            <i class="fa-solid fa-image"></i> Export PNG
+                        </button>
+                        <button id="btn-density-export-csv" class="ref-struct-btn" style="width: auto; padding: 6px 10px;" title="Export raw trajectory points as CSV">
+                            <i class="fa-solid fa-file-csv"></i> Export CSV
+                        </button>
+                        <button id="btn-density-copy-latex" class="ref-struct-btn" style="width: auto; padding: 6px 10px;" title="Copy LaTeX formatted summary table">
+                            <i class="fa-solid fa-copy"></i> Copy LaTeX
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workbench Command Palette & Quick Navigation Modal (Keyboard shortcut O) -->
+    <div class="workbench-hub-dropdown" id="workbench-hub-dropdown" style="display: none;" role="menu" aria-label="Workbench Options">
+        <div class="hub-dropdown-backdrop" id="hub-dropdown-backdrop"></div>
+        <div class="hub-dropdown-menu">
+            <div class="hub-search-bar">
+                <i class="fa-solid fa-magnifying-glass hub-search-icon"></i>
+                <input type="text" id="hub-filter-input" placeholder="Search options..." data-i18n-ph="hub_search_ph" autocomplete="off" spellcheck="false">
+                <button type="button" class="hub-search-clear" id="btn-hub-clear-search" title="Clear filter" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="hub-menu-list" id="hub-menu-list">
+                <div class="hub-menu-label" data-i18n="optgroup_nav_modules">Navbar Modules</div>
+                <button type="button" class="hub-item" data-action="studio-section-pairs" role="menuitem">
+                    <i class="fa-solid fa-crosshairs hub-item-icon" style="color: #38bdf8;"></i>
+                    <span class="hub-item-title" data-i18n="opt_pairs">Discovered Pairs &amp; States</span>
+                    <span class="hub-item-badge">Pairs</span>
+                </button>
+                <button type="button" class="hub-item" data-action="studio-section-style" role="menuitem">
+                    <i class="fa-solid fa-palette hub-item-icon" style="color: #ec4899;"></i>
+                    <span class="hub-item-title" data-i18n="opt_style">Representation &amp; Visual Style</span>
+                    <span class="hub-item-badge">Style</span>
+                </button>
+                <button type="button" class="hub-item" data-action="studio-section-density" role="menuitem">
+                    <i class="fa-solid fa-cube hub-item-icon" style="color: #22c55e;"></i>
+                    <span class="hub-item-title" data-i18n="opt_density">Electron Density Maps (2Fo-Fc)</span>
+                    <span class="hub-item-badge">Density</span>
+                </button>
+                <button type="button" class="hub-item" data-action="studio-geom-telemetry" role="menuitem">
+                    <i class="fa-solid fa-chart-line hub-item-icon" style="color: #f59e0b;"></i>
+                    <span class="hub-item-title" data-i18n="opt_geometry">Live Geometric Signatures</span>
+                    <span class="hub-item-badge">Geometry</span>
+                </button>
+                <button type="button" class="hub-item" data-action="studio-density-validation-section" role="menuitem">
+                    <i class="fa-solid fa-shield-halved hub-item-icon" style="color: #10b981;"></i>
+                    <span class="hub-item-title" data-i18n="opt_audit">Density Validation &amp; Auditor</span>
+                    <span class="hub-item-badge">Audit</span>
+                </button>
+                <button type="button" class="hub-item" data-action="studio-refine-section" role="menuitem">
+                    <i class="fa-solid fa-sliders hub-item-icon" style="color: #38bdf8;"></i>
+                    <span class="hub-item-title" data-i18n="opt_tools">Refinement &amp; Restraints Suite</span>
+                    <span class="hub-item-badge">Tools</span>
+                </button>
+                <div class="hub-menu-divider"></div>
+                <div class="hub-menu-label" data-i18n="optgroup_view_help">View &amp; Help Modes (F &amp; H)</div>
+                <button type="button" class="hub-item" data-action="action-fullscreen" role="menuitem">
+                    <i class="fa-solid fa-expand hub-item-icon" style="color: #ec4899;"></i>
+                    <span class="hub-item-title" data-i18n="opt_zen_full">Hide Panels / 3D Zen</span>
+                    <span class="hub-item-shortcut"><kbd>F</kbd></span>
+                </button>
+                <button type="button" class="hub-item" data-action="action-shortcuts" role="menuitem">
+                    <i class="fa-solid fa-keyboard hub-item-icon" style="color: #a855f7;"></i>
+                    <span class="hub-item-title" data-i18n="opt_shortcuts_help">Shortcuts &amp; Viewport Help</span>
+                    <span class="hub-item-shortcut"><kbd>H</kbd></span>
+                </button>
+            </div>
+            <div class="hub-menu-footer">
+                <span><kbd>↑</kbd><kbd>↓</kbd> <span data-i18n="hub_key_nav">Navigate</span></span>
+                <span><kbd>↵</kbd> <span data-i18n="hub_key_select">Select</span></span>
+                <span><kbd>Esc</kbd> <span data-i18n="hub_key_close">Close</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Studio Core Logic Script -->
+    <script src="structures.js?v=0.4.5"></script>
+    <script src="studio.js?v=0.4.5"></script>
+
+
+
+
+
+
+
+
+    <!-- Vercel Speed Insights & Web Analytics Real User Monitoring (RUM) -->
+    <script>
+        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
+    <script>
+        window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
+
+    <!-- Silent PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            });
+        }
+    </script>
 </body>
+
 </html>
