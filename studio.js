@@ -2278,17 +2278,51 @@
             }
         }
 
+        const STD_AMINO = new Set([
+            'ALA','ARG','ASN','ASP','CYS','GLN','GLU','GLY','HIS','ILE',
+            'LEU','LYS','MET','PHE','PRO','SER','THR','TRP','TYR','VAL',
+            'ASH','GLH','LYN','HID','HIE','HIP','CYX','CYM'
+        ]);
+        const WATER_RES = new Set(['SOL', 'WAT', 'HOH', 'TIP', 'TIP3', 'TIP4', 'DOD', 'OH2']);
+        const ION_RES = new Set(['NA', 'CL', 'MG', 'CA', 'K', 'ZN', 'FE', 'SOD', 'CLA']);
+
+        let inProtein = true;
         let atomIndex = 1;
-        for (let i = 2; i < rawLines.length; i++) {
+        for (let i = 2; i < rawLines.length - 1; i++) {
             const line = rawLines[i];
             if (line.length < 38) continue;
             const resNr = parseInt(line.substring(0, 5).trim(), 10) || 1;
-            const resName = line.substring(5, 10).trim() || 'MOL';
+            const resName = line.substring(5, 10).trim().toUpperCase() || 'MOL';
             const atomName = line.substring(10, 15).trim() || 'C';
             const x = (parseFloat(line.substring(20, 28)) * 10).toFixed(3);
             const y = (parseFloat(line.substring(28, 36)) * 10).toFixed(3);
             const z = (parseFloat(line.substring(36, 44)) * 10).toFixed(3);
             if (isNaN(x) || isNaN(y) || isNaN(z)) continue;
+
+            let recordType = 'ATOM  ';
+            let chain = 'A';
+
+            if (STD_AMINO.has(resName)) {
+                recordType = 'ATOM  ';
+                chain = 'A';
+            } else if (WATER_RES.has(resName)) {
+                if (inProtein) {
+                    pdb += `TER   ${String(atomIndex % 100000).padStart(5, ' ')}      ${resName} A\n`;
+                    inProtein = false;
+                }
+                recordType = 'HETATM';
+                chain = 'W';
+            } else if (ION_RES.has(resName)) {
+                if (inProtein) {
+                    pdb += `TER   ${String(atomIndex % 100000).padStart(5, ' ')}      ${resName} A\n`;
+                    inProtein = false;
+                }
+                recordType = 'HETATM';
+                chain = 'I';
+            } else {
+                recordType = 'HETATM';
+                chain = 'B';
+            }
 
             const atomNumStr = String(atomIndex % 100000).padStart(5, ' ');
             const resNumStr = String(resNr % 10000).padStart(4, ' ');
@@ -2307,7 +2341,7 @@
             }
             const elementPadded = element.padStart(2, ' ');
 
-            const pdbLine = `ATOM  ${atomNumStr} ${formattedAtomName} ${formattedResName} A${resNumStr}    ${String(x).padStart(8, ' ')}${String(y).padStart(8, ' ')}${String(z).padStart(8, ' ')}  1.00  0.00          ${elementPadded}\n`;
+            const pdbLine = `${recordType}${atomNumStr} ${formattedAtomName} ${formattedResName} ${chain}${resNumStr}    ${String(x).padStart(8, ' ')}${String(y).padStart(8, ' ')}${String(z).padStart(8, ' ')}  1.00  0.00          ${elementPadded}\n`;
             pdb += pdbLine;
             atomIndex++;
             if (atomCount > 0 && atomIndex > atomCount) break;
@@ -14964,7 +14998,8 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
                 if (!modal) return;
                 modal.style.display = 'flex';
                 if (inputTarget && currentPdbId) {
-                    inputTarget.value = currentPdbId;
+                    const cleanId = currentPdbId.replace(/(_SOLV|_PROCESSED|_NEWBOX|_GMX).*$/i, '').trim().toUpperCase();
+                    inputTarget.value = cleanId || currentPdbId;
                 }
                 fetchRuntimeInfo();
             }
@@ -15108,14 +15143,20 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
             }
 
             async function launchGromacsJob(stages) {
-                const target = (inputTarget.value || currentPdbId || '1AKI').trim().toUpperCase();
+                let target = (inputTarget.value || currentPdbId || '1AKI').trim().toUpperCase();
+                target = target.replace(/(_SOLV|_PROCESSED|_NEWBOX|_GMX).*$/i, '');
+                if (!target) target = '1AKI';
                 const ff = selectFf ? selectFf.value : 'amber99sb-ildn';
                 const water = selectWater ? selectWater.value : 'spce';
                 const dist = parseFloat(inputDist ? inputDist.value : 1.0) || 1.0;
                 const salt = parseFloat(inputSalt ? inputSalt.value : 0.15) || 0.15;
                 const dur = parseFloat(selectDuration ? selectDuration.value : 1.0) || 1.0;
 
-                if (consoleOutput) consoleOutput.textContent = `[CarboxMol GROMACS] Launching job for ${target}...\n`;
+                const isProcessedModel = currentPdbId && /(_SOLV|_PROCESSED|_NEWBOX|_GMX)/i.test(currentPdbId);
+                const isGromacsText = currentModelData && (currentModelData.includes('Converted from GROMACS') || currentModelData.includes(' SOL ') || currentModelData.includes(' OW '));
+                const modelPayload = (isProcessedModel || isGromacsText) ? '' : (currentModelData || '');
+
+                if (consoleOutput) consoleOutput.textContent = `[CarboxMol GROMACS] Launching high-precision MD pipeline for ${target}...\n`;
                 if (btnLoadResult) btnLoadResult.style.display = 'none';
 
                 try {
@@ -15124,7 +15165,7 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             pdb_id: target,
-                            pdb_text: currentModelData || '',
+                            pdb_text: modelPayload,
                             forcefield: ff,
                             water_model: water,
                             box_clearance_nm: dist,
@@ -15177,7 +15218,7 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
             if (btnLoadResult) {
                 btnLoadResult.addEventListener('click', async () => {
                     if (!activeJobId || !lastResultFiles) return;
-                    const fileToLoad = lastResultFiles.em_gro || lastResultFiles.solv_gro || lastResultFiles.box_gro;
+                    const fileToLoad = lastResultFiles.trajectory_pdb || lastResultFiles.nvt_gro || lastResultFiles.em_gro || lastResultFiles.solv_gro || lastResultFiles.box_gro;
                     if (!fileToLoad) {
                         showToast('No coordinate output found to load', 'warning');
                         return;
@@ -15188,29 +15229,50 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
                         const res = await fetch(`/api/gromacs/file/${activeJobId}/${fileToLoad}`);
                         if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         const rawData = await res.text();
-                        const targetCode = (inputTarget.value || currentPdbId || 'GMX').toUpperCase();
+                        const targetCode = (inputTarget.value || currentPdbId || 'GMX').replace(/(_SOLV|_PROCESSED|_NEWBOX|_GMX).*$/i, '').toUpperCase();
+                        const isTraj = fileToLoad.endsWith('.pdb') && rawData.includes('MODEL');
                         const displayData = fileToLoad.toLowerCase().endsWith('.gro') ? convertGroToPdb(rawData) : rawData;
+
                         loadRawStructureData(`${targetCode}_GMX`, displayData, 'pdb');
+
                         if (typeof viewer !== 'undefined' && viewer) {
-                            const nonSolventSel = { resn: WATER_RESNAMES, invert: true };
-                            const nonSolventAtoms = viewer.selectedAtoms(nonSolventSel) || [];
-                            if (nonSolventAtoms.length > 0) {
-                                viewer.zoomTo(nonSolventSel, 800);
-                            } else {
-                                viewer.zoomTo({}, 800);
-                            }
+                            viewer.clear();
+                            viewer.addModel(displayData, 'pdb');
 
-                            // Distinctive CPK styling for counterions (Na+ green, Cl- cyan)
-                            try {
-                                viewer.addStyle({ resn: ['NA', 'SOD', 'Na'] }, { sphere: { color: '#22c55e', radius: 0.7 } });
-                                viewer.addStyle({ resn: ['CL', 'CLA', 'Cl'] }, { sphere: { color: '#06b6d4', radius: 0.8 } });
-                            } catch (e) {}
+                            // 1. Macromolecule Ribbon & Sidechains
+                            viewer.setStyle({ chain: 'A' }, {
+                                cartoon: { color: 'spectrum', opacity: 0.95 },
+                                stick: { radius: 0.15, colorscheme: 'amino' }
+                            });
 
-                            // Enable unit cell wireframe to visualize periodic simulation boundaries
+                            // 2. Hydration Shell: Translucent cyan sticks for waters within 4.5Å of protein
+                            viewer.setStyle({ chain: 'W', within: { distance: 4.5, sel: { chain: 'A' } } }, {
+                                stick: { radius: 0.08, color: '#38bdf8', opacity: 0.65 }
+                            });
+
+                            // 3. Counterions: Na+ (emerald green sphere) and Cl- (cyan sphere)
+                            viewer.setStyle({ resn: ['NA', 'SOD', 'Na'] }, { sphere: { color: '#10b981', radius: 0.75 } });
+                            viewer.setStyle({ resn: ['CL', 'CLA', 'Cl'] }, { sphere: { color: '#06b6d4', radius: 0.85 } });
+
+                            // 4. Enable unit cell wireframe to visualize simulation boundaries
                             try {
                                 showUnitCell = true;
                                 renderUnitCellBox();
                             } catch (e) {}
+
+                            // 5. Center camera precisely on the protein macromolecule
+                            const proteinAtoms = viewer.selectedAtoms({ chain: 'A' }) || [];
+                            if (proteinAtoms.length > 0) {
+                                viewer.zoomTo({ chain: 'A' }, 800);
+                            } else {
+                                viewer.zoomTo({}, 800);
+                            }
+
+                            // 6. Play trajectory animation if multi-frame PDB
+                            if (isTraj && typeof viewer.animate === 'function') {
+                                viewer.animate({ loop: 'forward', interval: 100, reps: 0 });
+                                showToast('Playing molecular dynamics trajectory...', 'info');
+                            }
 
                             viewer.render();
                         }
