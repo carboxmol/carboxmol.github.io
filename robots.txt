@@ -1,0 +1,36 @@
+# ==============================================================================
+# Carbox & CarboxMol — Enterprise Search Engine Robots Policy
+# Canonical Host: https://carboxmol.github.io
+# XML Sitemap:    https://carboxmol.github.io/sitemap.xml
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /libs/
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /assets/
+Allow: /carboxmol_logo.png
+Allow: /favicon.png
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+Sitemap: https://carboxmol.github.io/sitemap.xml
+Host: https://carboxmol.github.io

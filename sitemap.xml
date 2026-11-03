@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- 1. Primary Hub & Portal Root -->
+  <url>
+    <loc>https://carboxmol.github.io/</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carboxmol.github.io/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="az" href="https://carboxmol.github.io/?lang=az"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://carboxmol.github.io/?lang=he"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carboxmol.github.io/"/>
+    <image:image>
+      <image:loc>https://carboxmol.github.io/assets/carboxmol_logo.png</image:loc>
+      <image:title>CarboxMol 3D Crystallography &amp; GROMACS MD Platform</image:title>
+      <image:caption>CarboxMol Macromolecular Crystallographic Studio &amp; Molecular Dynamics Platform</image:caption>
+    </image:image>
+  </url>
+
+  <!-- 2. Interactive 3D Crystallography & GROMACS MD Studio -->
+  <url>
+    <loc>https://carboxmol.github.io/studio.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carboxmol.github.io/studio.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="az" href="https://carboxmol.github.io/studio.html?lang=az"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://carboxmol.github.io/studio.html?lang=he"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carboxmol.github.io/studio.html"/>
+    <image:image>
+      <image:loc>https://carboxmol.github.io/assets/carboxmol_logo.png</image:loc>
+      <image:title>CarboxMol Studio 3D Viewport</image:title>
+      <image:caption>Interactive 3D Macromolecular Crystallography &amp; GROMACS Simulation Studio</image:caption>
+    </image:image>
+  </url>
+
+  <!-- 3. Carbox Analytics & Structural Survey Dashboard -->
+  <url>
+    <loc>https://carboxmol.github.io/dashboard.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carboxmol.github.io/dashboard.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="az" href="https://carboxmol.github.io/dashboard.html?lang=az"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://carboxmol.github.io/dashboard.html?lang=he"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carboxmol.github.io/dashboard.html"/>
+    <image:image>
+      <image:loc>https://carboxmol.github.io/assets/carbox_logo.png</image:loc>
+      <image:title>Carbox Survey &amp; Analytics Dashboard</image:title>
+      <image:caption>Macromolecular Carboxyl-Carboxyl Interactions and pKa Shift Telemetry</image:caption>
+    </image:image>
+  </url>
+
+  <!-- 4. Official Documentation & Scientific Specifications Portal -->
+  <url>
+    <loc>https://carboxmol.github.io/docs.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carboxmol.github.io/docs.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="az" href="https://carboxmol.github.io/docs.html?lang=az"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://carboxmol.github.io/docs.html?lang=he"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carboxmol.github.io/docs.html"/>
+  </url>
+
+  <!-- 5. Downloads & Distribution Hub -->
+  <url>
+    <loc>https://carboxmol.github.io/downloads.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carboxmol.github.io/downloads.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="az" href="https://carboxmol.github.io/downloads.html?lang=az"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://carboxmol.github.io/downloads.html?lang=he"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carboxmol.github.io/downloads.html"/>
+  </url>
+
+  <!-- 6. Platform Infrastructure & Maintenance -->
+  <url>
+    <loc>https://carboxmol.github.io/maintenance.html</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://carboxmol.github.io/maintenance.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="az" href="https://carboxmol.github.io/maintenance.html?lang=az"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://carboxmol.github.io/maintenance.html?lang=he"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://carboxmol.github.io/maintenance.html"/>
+  </url>
+
+  <!-- 7. Master Monograph & Documentation PDF -->
+  <url>
+    <loc>https://carboxmol.github.io/CARBOX_MASTER_MANUAL.pdf</loc>
+    <lastmod>2026-11-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+</urlset>

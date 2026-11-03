@@ -2255,6 +2255,67 @@
         showToast('Rotation center reset to macromolecule centroid', 'info');
     }
 
+    // ─── GROMACS .gro to PDB Transpiler ──────────────────────────────────────────
+    function convertGroToPdb(groText) {
+        if (!groText) return '';
+        const rawLines = groText.split(/\r?\n/).filter(l => l.trim().length > 0);
+        if (rawLines.length < 3) return groText;
+        const title = rawLines[0].trim();
+        const atomCount = parseInt(rawLines[1].trim(), 10) || 0;
+        let pdb = `TITLE     ${title}\nREMARK    Converted from GROMACS .gro by CarboxMol\n`;
+
+        // Check if last line contains box vectors (3 numbers in nm)
+        const lastLine = rawLines[rawLines.length - 1].trim().split(/\s+/);
+        if (lastLine.length >= 3) {
+            const bx = parseFloat(lastLine[0]) * 10;
+            const by = parseFloat(lastLine[1]) * 10;
+            const bz = parseFloat(lastLine[2]) * 10;
+            if (!isNaN(bx) && !isNaN(by) && !isNaN(bz) && bx > 0) {
+                const sBx = bx.toFixed(3).padStart(9, ' ');
+                const sBy = by.toFixed(3).padStart(9, ' ');
+                const sBz = bz.toFixed(3).padStart(9, ' ');
+                pdb += `CRYST1${sBx}${sBy}${sBz}  90.00  90.00  90.00 P 1           1\n`;
+            }
+        }
+
+        let atomIndex = 1;
+        for (let i = 2; i < rawLines.length; i++) {
+            const line = rawLines[i];
+            if (line.length < 38) continue;
+            const resNr = parseInt(line.substring(0, 5).trim(), 10) || 1;
+            const resName = line.substring(5, 10).trim() || 'MOL';
+            const atomName = line.substring(10, 15).trim() || 'C';
+            const x = (parseFloat(line.substring(20, 28)) * 10).toFixed(3);
+            const y = (parseFloat(line.substring(28, 36)) * 10).toFixed(3);
+            const z = (parseFloat(line.substring(36, 44)) * 10).toFixed(3);
+            if (isNaN(x) || isNaN(y) || isNaN(z)) continue;
+
+            const atomNumStr = String(atomIndex % 100000).padStart(5, ' ');
+            const resNumStr = String(resNr % 10000).padStart(4, ' ');
+            let formattedAtomName = atomName.length >= 4 ? atomName.substring(0, 4) : ' ' + atomName.padEnd(3, ' ');
+            if (atomName === 'O1' || atomName === 'OT1') formattedAtomName = ' O  ';
+            else if (atomName === 'O2' || atomName === 'OT2') formattedAtomName = ' OXT';
+            const formattedResName = resName.padEnd(3, ' ').substring(0, 3);
+            
+            // Extract standard chemical element for accurate CPK styling & atomic bonds
+            let element = 'C';
+            const cleanName = atomName.replace(/[0-9]/g, '').trim().toUpperCase();
+            if (['CL', 'NA', 'MG', 'FE', 'ZN', 'BR'].some(m => cleanName.startsWith(m))) {
+                element = cleanName.substring(0, 2);
+            } else if (cleanName.length > 0) {
+                element = cleanName[0];
+            }
+            const elementPadded = element.padStart(2, ' ');
+
+            const pdbLine = `ATOM  ${atomNumStr} ${formattedAtomName} ${formattedResName} A${resNumStr}    ${String(x).padStart(8, ' ')}${String(y).padStart(8, ' ')}${String(z).padStart(8, ' ')}  1.00  0.00          ${elementPadded}\n`;
+            pdb += pdbLine;
+            atomIndex++;
+            if (atomCount > 0 && atomIndex > atomCount) break;
+        }
+        pdb += "TER\nENDMDL\n";
+        return pdb;
+    }
+
     function initStudioViewer() {
         ensureViewer();
 
@@ -2266,12 +2327,18 @@
             if (!file) return;
             const reader = new FileReader();
             const fname = file.name.toUpperCase();
+            const isGro = fname.endsWith('.GRO');
             const fmt = fname.endsWith('.CIF') || fname.endsWith('.MMCIF') ? 'cif' : 'pdb';
             const code = file.name.split('.')[0].toUpperCase();
 
             showToast(`Reading ${file.name}...`, 'info');
             reader.onload = function (evt) {
-                loadRawStructureData(code, evt.target.result, fmt);
+                let data = evt.target.result;
+                if (isGro) {
+                    data = convertGroToPdb(data);
+                    showToast(`Loaded GROMACS structure: ${file.name}`, 'success');
+                }
+                loadRawStructureData(code, data, isGro ? 'pdb' : fmt);
             };
             reader.onerror = function () {
                 showToast(`Failed to read file ${file.name}`, 'error');
@@ -2754,13 +2821,29 @@
             selectPair(0, false);
         } else {
             activePairIdx = -1;
-            safeSet('studio-overlay-dist', 'None Detected');
-            safeSet('studio-overlay-verdict', 'No Carboxyl Pairs (d ≤ 3.6Å)');
+            const allAtomsInitial = viewer.selectedAtoms({}) || [];
+            const hasProteinOrLigand = allAtomsInitial.some(a => !WATER_RESNAMES.includes(String(a.resn || '').trim().toUpperCase()));
+            if (allAtomsInitial.length > 0 && !hasProteinOrLigand) {
+                showWaters = true;
+                const btnWaters = document.getElementById('btn-studio-waters');
+                if (btnWaters) btnWaters.classList.add('active');
+                safeSet('studio-overlay-dist', 'GROMACS Box');
+                safeSet('studio-overlay-verdict', `Solvent Box (${allAtomsInitial.length} Water Atoms)`);
+            } else {
+                safeSet('studio-overlay-dist', 'None Detected');
+                safeSet('studio-overlay-verdict', 'No Carboxyl Pairs (d ≤ 3.6Å)');
+            }
             safeSet('studio-overlay-water', '--');
             safeSet('studio-overlay-occupancy', '--');
         }
         renderProtonationModel(currentProtonState || 'none');
-        viewer.zoomTo({}, 600);
+        const nonSolventSel = { resn: WATER_RESNAMES, invert: true };
+        const nonSolventAtoms = viewer.selectedAtoms(nonSolventSel) || [];
+        if (nonSolventAtoms.length > 0) {
+            viewer.zoomTo(nonSolventSel, 600);
+        } else {
+            viewer.zoomTo({}, 600);
+        }
         viewer.render();
         if (typeof populateCrystallographicTopbar === 'function') populateCrystallographicTopbar();
     }
@@ -4595,13 +4678,18 @@
                         : { colorfunc: getDepthAtomColor, radius: 0.16, quality: 3 }
                 });
             }
-            // Solvent Waters (cleanly rendered or hidden)
-            if (showWaters) {
+            // Solvent Waters (cleanly rendered or hidden; auto-displayed if structure is a pure solvent box)
+            const allAtomsInScene = viewer.selectedAtoms({}) || [];
+            const hasNonWater = allAtomsInScene.some(a => !WATER_RESNAMES.includes(String(a.resn || '').trim().toUpperCase()));
+            if (showWaters || !hasNonWater) {
                 const waterStyle = showBFactor
-                    ? { sphere: { colorscheme: 'b', radius: 0.20, quality: 3 } }
-                    : { sphere: { color: '#fb7185', radius: 0.20, quality: 3 } };
+                    ? { stick: { colorscheme: 'b', radius: 0.12 }, sphere: { colorscheme: 'b', radius: 0.22, quality: 3 } }
+                    : { stick: { radius: 0.12 }, sphere: { radius: 0.22, quality: 3 } };
                 viewer.setStyle({ resn: WATER_RESNAMES }, waterStyle);
                 viewer.setStyle({ hetflag: true, resn: WATER_RESNAMES }, waterStyle);
+                if (!hasNonWater) {
+                    viewer.setStyle({}, waterStyle);
+                }
             } else {
                 viewer.setStyle({ resn: WATER_RESNAMES }, {});
                 viewer.setStyle({ hetflag: true, resn: WATER_RESNAMES }, {});
@@ -12274,13 +12362,16 @@
                             executeCxlScript(script);
                         };
                         reader.readAsText(file);
-                    } else if (name.endsWith('.pdb') || name.endsWith('.cif') || name.endsWith('.ent')) {
+                    } else if (name.endsWith('.pdb') || name.endsWith('.cif') || name.endsWith('.ent') || name.endsWith('.gro')) {
                         reader.onload = (evt) => {
-                            const modelData = evt.target.result;
+                            let modelData = evt.target.result;
+                            if (name.endsWith('.gro')) {
+                                modelData = convertGroToPdb(modelData);
+                            }
                             currentPdbId = file.name.replace(/\.[^/.]+$/, '').toUpperCase();
                             const format = name.endsWith('.cif') ? 'cif' : 'pdb';
-                            loadDirectModelData(modelData, format);
-                            showToast(`Loaded local macromolecular structure: ${file.name}`, 'success');
+                            loadRawStructureData(currentPdbId, modelData, format);
+                            showToast(`Loaded macromolecular structure: ${file.name}`, 'success');
                         };
                         reader.readAsText(file);
                     }
@@ -14837,6 +14928,305 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
                 }
             });
         }
+
+        // ─── GROMACS Enterprise Molecular Dynamics Studio Controller ─────────────
+        function initGromacsStudioUI() {
+            const btnOpenModal = document.getElementById('btn-studio-gromacs-md');
+            const modal = document.getElementById('modal-gromacs-md');
+            const btnClose = document.getElementById('btn-close-gromacs-modal');
+            const badgeRuntime = document.getElementById('gmx-runtime-badge');
+
+            const inputTarget = document.getElementById('gmx-input-target');
+            const selectFf = document.getElementById('gmx-select-forcefield');
+            const selectWater = document.getElementById('gmx-select-water');
+            const inputDist = document.getElementById('gmx-input-box-dist');
+            const inputSalt = document.getElementById('gmx-input-salt');
+            const selectDuration = document.getElementById('gmx-select-duration');
+
+            const btnStart = document.getElementById('btn-gmx-start-run');
+            const btnSolvate = document.getElementById('btn-gmx-solvate-only');
+            const btnExportScript = document.getElementById('btn-gmx-export-script');
+            const btnAbort = document.getElementById('btn-gmx-abort');
+            const btnLoadResult = document.getElementById('btn-gmx-load-result');
+
+            const progressContainer = document.getElementById('gmx-progress-container');
+            const progressFill = document.getElementById('gmx-progress-bar-fill');
+            const progressText = document.getElementById('gmx-current-stage-text');
+            const progressPercent = document.getElementById('gmx-progress-percent');
+            const consoleOutput = document.getElementById('gmx-console-output');
+            const consoleStatus = document.getElementById('gmx-console-status');
+
+            let activeJobId = null;
+            let pollTimer = null;
+            let lastResultFiles = null;
+
+            function openModal() {
+                if (!modal) return;
+                modal.style.display = 'flex';
+                if (inputTarget && currentPdbId) {
+                    inputTarget.value = currentPdbId;
+                }
+                fetchRuntimeInfo();
+            }
+
+            function closeModal() {
+                if (!modal) return;
+                modal.style.display = 'none';
+            }
+
+            if (btnOpenModal) btnOpenModal.addEventListener('click', openModal);
+            if (btnClose) btnClose.addEventListener('click', closeModal);
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeModal();
+                });
+            }
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal && modal.style.display !== 'none') {
+                    closeModal();
+                }
+            });
+
+            async function fetchRuntimeInfo() {
+                try {
+                    const res = await fetch('/api/gromacs/info');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.is_available) {
+                            badgeRuntime.innerHTML = `<i class="fa-solid fa-circle-check"></i> GROMACS ${data.version} (${data.simd_instructions || 'Native'})`;
+                            badgeRuntime.style.background = 'rgba(16, 185, 129, 0.15)';
+                            badgeRuntime.style.color = '#34d399';
+                            badgeRuntime.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+                        } else {
+                            badgeRuntime.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> GROMACS Not Found`;
+                            badgeRuntime.style.background = 'rgba(239, 68, 68, 0.15)';
+                            badgeRuntime.style.color = '#f87171';
+                            badgeRuntime.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+                        }
+                    }
+                } catch (e) {
+                    console.warn('GROMACS info check failed:', e);
+                }
+            }
+
+            if (btnExportScript) {
+                btnExportScript.addEventListener('click', async () => {
+                    const target = (inputTarget.value || currentPdbId || '1AKI').trim().toUpperCase();
+                    const ff = selectFf ? selectFf.value : 'amber99sb-ildn';
+                    const water = selectWater ? selectWater.value : 'spce';
+                    const dist = parseFloat(inputDist ? inputDist.value : 1.0) || 1.0;
+                    const salt = parseFloat(inputSalt ? inputSalt.value : 0.15) || 0.15;
+                    const dur = parseFloat(selectDuration ? selectDuration.value : 1.0) || 1.0;
+
+                    try {
+                        btnExportScript.disabled = true;
+                        btnExportScript.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
+                        const res = await fetch('/api/gromacs/script', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                pdb_id: target,
+                                forcefield: ff,
+                                water_model: water,
+                                box_clearance_nm: dist,
+                                salt_conc: salt,
+                                duration_ns: dur
+                            })
+                        });
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        const data = await res.json();
+                        const blob = new Blob([data.script], { type: 'text/x-sh;charset=utf-8' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = data.filename || `carboxmol_gmx_${target.toLowerCase()}.sh`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                        showToast(`Exported GROMACS script: ${a.download}`, 'success');
+                    } catch (err) {
+                        showToast(`Failed generating script: ${err.message}`, 'error');
+                    } finally {
+                        btnExportScript.disabled = false;
+                        btnExportScript.innerHTML = '<i class="fa-solid fa-download"></i> Export Script (.sh)';
+                    }
+                });
+            }
+
+            function startPolling(jobId) {
+                activeJobId = jobId;
+                if (pollTimer) clearInterval(pollTimer);
+                if (progressContainer) progressContainer.style.display = 'flex';
+                if (btnAbort) btnAbort.style.display = 'inline-flex';
+                if (btnStart) btnStart.disabled = true;
+                if (btnSolvate) btnSolvate.disabled = true;
+                if (consoleStatus) consoleStatus.textContent = 'Running...';
+
+                pollTimer = setInterval(async () => {
+                    try {
+                        const res = await fetch(`/api/gromacs/status/${jobId}`);
+                        if (!res.ok) return;
+                        const data = await res.json();
+
+                        if (progressFill) progressFill.style.width = `${data.progress_percent || 0}%`;
+                        if (progressPercent) progressPercent.textContent = `${data.progress_percent || 0}%`;
+                        if (progressText) progressText.textContent = data.current_stage || 'Simulating...';
+
+                        if (consoleOutput && data.logs && data.logs.length) {
+                            consoleOutput.textContent = data.logs.join('\n');
+                            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                        }
+
+                        if (data.status === 'SUCCESS') {
+                            clearInterval(pollTimer);
+                            pollTimer = null;
+                            lastResultFiles = data.result_files || {};
+                            if (consoleStatus) {
+                                consoleStatus.textContent = `Completed in ${data.elapsed_seconds}s`;
+                                consoleStatus.style.color = '#34d399';
+                            }
+                            if (btnAbort) btnAbort.style.display = 'none';
+                            if (btnLoadResult) btnLoadResult.style.display = 'inline-flex';
+                            if (btnStart) btnStart.disabled = false;
+                            if (btnSolvate) btnSolvate.disabled = false;
+                            showToast(`GROMACS Simulation Completed Successfully!`, 'success');
+                        } else if (data.status === 'FAILED' || data.status === 'ABORTED') {
+                            clearInterval(pollTimer);
+                            pollTimer = null;
+                            if (consoleStatus) {
+                                consoleStatus.textContent = data.status === 'ABORTED' ? 'Cancelled' : 'Failed';
+                                consoleStatus.style.color = '#f87171';
+                            }
+                            if (btnAbort) btnAbort.style.display = 'none';
+                            if (btnStart) btnStart.disabled = false;
+                            if (btnSolvate) btnSolvate.disabled = false;
+                            showToast(`Simulation ended: ${data.error || 'Aborted by user'}`, 'warning');
+                        }
+                    } catch (e) {
+                        console.error('Poll error:', e);
+                    }
+                }, 1000);
+            }
+
+            async function launchGromacsJob(stages) {
+                const target = (inputTarget.value || currentPdbId || '1AKI').trim().toUpperCase();
+                const ff = selectFf ? selectFf.value : 'amber99sb-ildn';
+                const water = selectWater ? selectWater.value : 'spce';
+                const dist = parseFloat(inputDist ? inputDist.value : 1.0) || 1.0;
+                const salt = parseFloat(inputSalt ? inputSalt.value : 0.15) || 0.15;
+                const dur = parseFloat(selectDuration ? selectDuration.value : 1.0) || 1.0;
+
+                if (consoleOutput) consoleOutput.textContent = `[CarboxMol GROMACS] Launching job for ${target}...\n`;
+                if (btnLoadResult) btnLoadResult.style.display = 'none';
+
+                try {
+                    const res = await fetch('/api/gromacs/run', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            pdb_id: target,
+                            pdb_text: currentModelData || '',
+                            forcefield: ff,
+                            water_model: water,
+                            box_clearance_nm: dist,
+                            salt_conc: salt,
+                            duration_ns: dur,
+                            stages: stages
+                        })
+                    });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    startPolling(data.job_id);
+                } catch (err) {
+                    showToast(`Failed starting simulation: ${err.message}`, 'error');
+                    if (btnStart) btnStart.disabled = false;
+                    if (btnSolvate) btnSolvate.disabled = false;
+                }
+            }
+
+            if (btnStart) {
+                btnStart.addEventListener('click', () => {
+                    const stages = ['em'];
+                    const chkNvt = document.getElementById('gmx-chk-nvt');
+                    if (chkNvt && chkNvt.checked) stages.push('nvt');
+                    launchGromacsJob(stages);
+                });
+            }
+
+            if (btnSolvate) {
+                btnSolvate.addEventListener('click', () => {
+                    launchGromacsJob([]);
+                });
+            }
+
+            if (btnAbort) {
+                btnAbort.addEventListener('click', async () => {
+                    if (!activeJobId) return;
+                    try {
+                        await fetch('/api/gromacs/cancel', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ job_id: activeJobId })
+                        });
+                        showToast('Sent abort signal to GROMACS runner', 'info');
+                    } catch (e) {
+                        showToast('Failed to abort job', 'warning');
+                    }
+                });
+            }
+
+            if (btnLoadResult) {
+                btnLoadResult.addEventListener('click', async () => {
+                    if (!activeJobId || !lastResultFiles) return;
+                    const fileToLoad = lastResultFiles.em_gro || lastResultFiles.solv_gro || lastResultFiles.box_gro;
+                    if (!fileToLoad) {
+                        showToast('No coordinate output found to load', 'warning');
+                        return;
+                    }
+                    try {
+                        btnLoadResult.disabled = true;
+                        btnLoadResult.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+                        const res = await fetch(`/api/gromacs/file/${activeJobId}/${fileToLoad}`);
+                        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                        const rawData = await res.text();
+                        const targetCode = (inputTarget.value || currentPdbId || 'GMX').toUpperCase();
+                        const displayData = fileToLoad.toLowerCase().endsWith('.gro') ? convertGroToPdb(rawData) : rawData;
+                        loadRawStructureData(`${targetCode}_GMX`, displayData, 'pdb');
+                        if (typeof viewer !== 'undefined' && viewer) {
+                            const nonSolventSel = { resn: WATER_RESNAMES, invert: true };
+                            const nonSolventAtoms = viewer.selectedAtoms(nonSolventSel) || [];
+                            if (nonSolventAtoms.length > 0) {
+                                viewer.zoomTo(nonSolventSel, 800);
+                            } else {
+                                viewer.zoomTo({}, 800);
+                            }
+
+                            // Distinctive CPK styling for counterions (Na+ green, Cl- cyan)
+                            try {
+                                viewer.addStyle({ resn: ['NA', 'SOD', 'Na'] }, { sphere: { color: '#22c55e', radius: 0.7 } });
+                                viewer.addStyle({ resn: ['CL', 'CLA', 'Cl'] }, { sphere: { color: '#06b6d4', radius: 0.8 } });
+                            } catch (e) {}
+
+                            // Enable unit cell wireframe to visualize periodic simulation boundaries
+                            try {
+                                showUnitCell = true;
+                                renderUnitCellBox();
+                            } catch (e) {}
+
+                            viewer.render();
+                        }
+                        closeModal();
+                        showToast(`Loaded GROMACS simulation: ${fileToLoad} (Protein centered & Solvation Cell active)`, 'success');
+                    } catch (e) {
+                        showToast(`Error loading result: ${e.message}`, 'error');
+                    } finally {
+                        btnLoadResult.disabled = false;
+                        btnLoadResult.innerHTML = '<i class="fa-solid fa-eye"></i> Load 3D Simulation Result';
+                    }
+                });
+            }
+        }
+
+        initGromacsStudioUI();
 
     // Wrap initialization
 })();
