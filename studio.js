@@ -4596,13 +4596,16 @@
 
         // 2. Base Macromolecular Representation (Backbone Cartoon Ribbon + Nucleic Acids)
         if (showCartoon) {
-            const ribbonOpacity = depthCueingEnabled ? Math.max(0.35, 0.65 - depthContrastLevel * 0.30) : 0.85;
+            const ribbonOpacity = depthCueingEnabled ? Math.max(0.55, 0.85 - depthContrastLevel * 0.20) : 0.90;
+            const cartoonSpec = showBFactor
+                ? { colorscheme: 'b', opacity: ribbonOpacity }
+                : (stickColorScheme === 'spectrum'
+                    ? { color: 'spectrum', opacity: ribbonOpacity }
+                    : (stickColorScheme === 'type'
+                        ? { colorscheme: 'secondary', opacity: ribbonOpacity }
+                        : { color: 'spectrum', opacity: ribbonOpacity }));
             viewer.setStyle({}, {
-                cartoon: showBFactor
-                    ? { colorscheme: 'b', opacity: ribbonOpacity }
-                    : (depthCueingEnabled || whiteFocusEnabled
-                        ? { colorfunc: getDepthAtomColor, opacity: ribbonOpacity }
-                        : { color: 'spectrum', opacity: ribbonOpacity })
+                cartoon: cartoonSpec
             });
             // Ensure nucleic acids (RNA / DNA) are clearly rendered with slender bonds
             viewer.addStyle({ resn: ['A', 'C', 'G', 'U', 'DA', 'DC', 'DG', 'DT', 'I', 'DI'] }, {
@@ -15239,20 +15242,31 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
                             viewer.clear();
                             viewer.addModel(displayData, 'pdb');
 
-                            // 1. Macromolecule Ribbon & Sidechains
-                            viewer.setStyle({ chain: 'A' }, {
-                                cartoon: { color: 'spectrum', opacity: 0.95 },
-                                stick: { radius: 0.15, colorscheme: 'amino' }
+                            // Disable heavy depth fog so the full simulation cell and protein are bright and clear
+                            depthCueingEnabled = false;
+                            const btnFog = document.getElementById('btn-studio-depth-fog');
+                            if (btnFog) btnFog.classList.remove('active');
+                            const sliderFog = document.getElementById('slider-depth-contrast');
+                            if (sliderFog) sliderFog.value = 0;
+                            const fogVal = document.getElementById('val-depth-contrast');
+                            if (fogVal) fogVal.textContent = 'Off (0%)';
+
+                            // 1. Protein Macromolecule (All Chains): Vibrant Secondary Structure Cartoon + Amino Sticks
+                            viewer.setStyle({ hetflag: false }, {
+                                cartoon: { color: 'spectrum', opacity: 0.95, thickness: 0.45 },
+                                stick: { radius: 0.14, colorscheme: 'amino' }
                             });
 
-                            // 2. Hydration Shell: Translucent cyan sticks for waters within 4.5Å of protein
-                            viewer.setStyle({ chain: 'W', within: { distance: 4.5, sel: { chain: 'A' } } }, {
-                                stick: { radius: 0.08, color: '#38bdf8', opacity: 0.65 }
+                            // 2. Hydration Shell: 5.0Å solvent shell around protein in translucent cyan
+                            viewer.setStyle({ resn: WATER_RESNAMES, within: { distance: 5.0, sel: { hetflag: false } } }, {
+                                stick: { radius: 0.08, color: '#38bdf8', opacity: 0.60 }
                             });
 
                             // 3. Counterions: Na+ (emerald green sphere) and Cl- (cyan sphere)
-                            viewer.setStyle({ resn: ['NA', 'SOD', 'Na'] }, { sphere: { color: '#10b981', radius: 0.75 } });
-                            viewer.setStyle({ resn: ['CL', 'CLA', 'Cl'] }, { sphere: { color: '#06b6d4', radius: 0.85 } });
+                            viewer.setStyle({ resn: ['NA', 'SOD', 'Na', 'SODIUM'] }, { sphere: { color: '#10b981', radius: 0.85 } });
+                            viewer.setStyle({ resn: ['CL', 'CLA', 'Cl', 'CHLORIDE'] }, { sphere: { color: '#06b6d4', radius: 0.85 } });
+                            viewer.setStyle({ atom: ['NA', 'SOD'] }, { sphere: { color: '#10b981', radius: 0.85 } });
+                            viewer.setStyle({ atom: ['CL', 'CLA'] }, { sphere: { color: '#06b6d4', radius: 0.85 } });
 
                             // 4. Enable unit cell wireframe to visualize simulation boundaries
                             try {
@@ -15261,12 +15275,7 @@ $B$-factors ($B_{\\text{O1}} / B_{\\text{O2}}$) & ${d.b1.toFixed(1)} / ${d.b2.to
                             } catch (e) {}
 
                             // 5. Center camera precisely on the protein macromolecule
-                            const proteinAtoms = viewer.selectedAtoms({ chain: 'A' }) || [];
-                            if (proteinAtoms.length > 0) {
-                                viewer.zoomTo({ chain: 'A' }, 800);
-                            } else {
-                                viewer.zoomTo({}, 800);
-                            }
+                            viewer.zoomTo({ hetflag: false }, 800);
 
                             // 6. Play trajectory animation if multi-frame PDB
                             if (isTraj && typeof viewer.animate === 'function') {
