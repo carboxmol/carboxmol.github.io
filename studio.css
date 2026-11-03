@@ -66,8 +66,9 @@ body {
     box-shadow: 0 1px 0 rgba(6, 182, 212, 0.12), 0 4px 16px rgba(0, 0, 0, 0.45);
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 10px;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: nowrap;
     z-index: 9000;
     overflow-x: auto;
@@ -112,13 +113,16 @@ body {
 .studio-header-center {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
-    flex-shrink: 0;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .studio-header-right {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 6px;
     flex-shrink: 0;
     margin-left: auto;
@@ -4188,49 +4192,95 @@ html[dir="rtl"] .goto-preview-card code {
     gap: 4px;
 }
 
-@media (max-width: 1440px) {
-    .studio-header .header-kbd {
+/* Wide Screens (<= 1580px): Collapse secondary link text & dock text */
+@media (max-width: 1580px) {
+    .studio-header {
+        padding: 0 8px;
+        gap: 6px;
+    }
+    .studio-nav-cross-links .btn-studio span {
+        display: none !important;
+    }
+    .dock-ctrl-btn span {
+        display: none !important;
+    }
+    .header-kbd {
+        display: none !important;
+    }
+}
+
+/* Standard Desktop / Laptop (<= 1420px): Collapse Go to Atom text & flag codes */
+@media (max-width: 1420px) {
+    .studio-header {
+        padding: 0 6px;
+        gap: 5px;
+    }
+    .studio-header-group {
+        gap: 4px;
+    }
+    #btn-studio-goto-atom span {
+        display: none !important;
+    }
+    .studio-lang-flags .lang-flag-code {
         display: none !important;
     }
     .loader-input-wrap input {
         width: 65px !important;
     }
+    .studio-options-pill-group .btn-studio.icon-only,
+    .studio-quick-tools .btn-studio.icon-only {
+        width: 23px !important;
+        height: 23px !important;
+        font-size: 10px !important;
+        padding: 1px 3px !important;
+    }
 }
 
-/* At 1280px: compact loader input and fine-tune gap */
-@media (max-width: 1280px) {
-    .studio-header {
-        padding: 0 6px;
-        gap: 6px;
-    }
-    .studio-header-group {
-        gap: 4px;
+/* Mid-Size Laptops & Split Views (<= 1260px): Compact branding & buttons */
+@media (max-width: 1260px) {
+    .brand-title {
+        display: none !important;
     }
     .loader-input-wrap input {
         width: 58px !important;
     }
-}
-
-/* At 1100px: compact brand title on tighter viewports */
-@media (max-width: 1100px) {
-    .brand-title {
-        display: none !important;
+    .studio-header-group {
+        gap: 3px;
+    }
+    .studio-pill-group {
+        padding: 1px 2px;
+        gap: 1px;
+    }
+    .studio-options-pill-group .btn-studio.icon-only,
+    .studio-quick-tools .btn-studio.icon-only {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 9.5px !important;
     }
 }
 
-@media (max-width: 860px) {
-    .studio-header {
-        padding: 2px 6px;
-        height: 42px;
-        min-height: 42px;
-        gap: 4px;
-    }
+/* Tablets & Smaller Displays (<= 1080px): Ultra-compact & touch scrolling */
+@media (max-width: 1080px) {
     .brand-badge {
         display: none !important;
     }
     .loader-input-wrap input {
         width: 50px !important;
         font-size: 9.5px !important;
+    }
+    .studio-header {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(56, 189, 248, 0.35) transparent;
+    }
+    .studio-header::-webkit-scrollbar {
+        height: 3px;
+        display: block;
+    }
+    .studio-header::-webkit-scrollbar-thumb {
+        background: rgba(56, 189, 248, 0.4);
+        border-radius: 3px;
     }
 }
 
@@ -4793,8 +4843,9 @@ html[dir="rtl"] .goto-preview-card code {
         font-size: 11px !important;
     }
 
-    /* Enforce touch-friendly tap targets */
-    .btn-studio {
+    /* Enforce touch-friendly tap targets for body and drawer controls without blowing up navbar */
+    .studio-main .btn-studio,
+    .modal-card .btn-studio {
         min-height: 38px;
         padding: 6px 10px;
         font-size: 12px;
@@ -4843,7 +4894,8 @@ html[dir="rtl"] .goto-preview-card code {
         display: none;
     }
 
-    .btn-studio {
+    .studio-main .btn-studio,
+    .modal-card .btn-studio {
         min-height: 36px;
         padding: 6px 10px;
     }
