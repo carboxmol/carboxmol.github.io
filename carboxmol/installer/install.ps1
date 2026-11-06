@@ -1,6 +1,6 @@
 # ==============================================================================
 # CarboxMol Windows PowerShell Installer
-# Carbox Architecture Team
+# Suleiman M Hajizadeh & Garib N Murshudov
 # ==============================================================================
 $ErrorActionPreference = "Stop"
 
@@ -21,7 +21,7 @@ Write-Host "[1/3] Detected Python: $(python --version)" -ForegroundColor Green
 # 2. Upgrade pip and install package
 Write-Host "[2/3] Installing CarboxMol & dependencies..." -ForegroundColor Green
 python -m pip install --upgrade pip
-python -m pip install "git+https://github.com/carbox/carbox.git"
+python -m pip install "git+https://github.com/project-carbox/carbox.git"
 
 # 3. Completion message
 Write-Host "======================================================================" -ForegroundColor Cyan

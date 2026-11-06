@@ -1,10 +1,10 @@
 # Carbox — Master Documentation & Project Guide
 
 > **Structural Identification of Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding in High-Resolution Protein Crystal Structures**  
-> **Authors:** Carbox Architecture Team¹* & Carbox Platform²  
+> **Authors:** Suleiman M Hajizadeh¹* & Garib N Murshudov²  
 > ¹*Institute of Molecular Biology, Ministry of Science and Education of the Republic of Azerbaijan, Baku; Western Caspian University*  
 > ²*MRC Laboratory of Molecular Biology, Cambridge, United Kingdom*  
-> \**Corresponding author: [team@carbox.org](mailto:team@carbox.org)*
+> \**Corresponding author: [suleyman.hacizade1@gmail.com](mailto:suleyman.hacizade1@gmail.com)*
 
 ---
 
@@ -172,7 +172,7 @@ Carbox/
 ### Install & CLI
 
 ```bash
-git clone https://github.com/carbox/carbox.git
+git clone https://github.com/project-carbox/carbox.git
 cd Carbox
 pip install -e .
 

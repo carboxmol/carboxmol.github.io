@@ -57,5 +57,5 @@
   <text x="256" y="77" font-family="'Inter', -apple-system, sans-serif" font-weight="900" font-size="16" fill="#34d399" text-anchor="middle" letter-spacing="3">DOWNLOADS</text>
 
   <!-- Bottom Release Label: "WHEEL · BINARY · CIF" -->
-  <text x="256" y="432" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="18" fill="#e2e8f0" text-anchor="middle" letter-spacing="3">RELEASE 2026</text>
+  <text x="256" y="432" font-family="'JetBrains Mono', monospace" font-weight="700" font-size="18" fill="#e2e8f0" text-anchor="middle" letter-spacing="3">VERSION 0.4.5</text>
 </svg>

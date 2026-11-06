@@ -1,10 +1,10 @@
 # CarboxMol and Carbox — Release Notes (v0.4.5)
 
 **Release Date:** September 21, 2026  
-**Authors:** Carbox & CarboxMol Engineering Group  
+**Authors:** Suleiman M Hajizadeh & Garib N Murshudov  
 **Affiliations:** Institute of Molecular Biology and Biotechnologies, Baku; MRC Laboratory of Molecular Biology, Cambridge, UK  
-**Repository:** <https://github.com/carbox/carbox>  
-**Downloads Hub:** <https://carbox.vercel.app/downloads.html>  
+**Repository:** <https://github.com/project-carbox/carbox>  
+**Downloads Hub:** <https://carboxmol.github.io/downloads.html>  
 
 > 🚀 **Official v0.4.5 Release Notes:** For the standalone v0.4.5 release notes with full change manifest, SHA-256 checksums, and direct package links, see [RELEASE_NOTES_v0.4.5.md](RELEASE_NOTES_v0.4.5.md).
 
@@ -113,7 +113,7 @@ All 141 tests pass with 100% success rate across Python 3.9 through 3.14.
 
 | Package | Version | Tarball Archive (.tar.gz) | Zip Archive (.zip) | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **CarboxMol** | `0.4.5` | [`CarboxMol-0.4.5-Universal.tar.gz`](https://github.com/carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.tar.gz) *(479 MB)*<br>`SHA-256: ae5c30416b6be146cfd5ad621452cd6b202669db7e06933f4636d7dc4b101912` | [`CarboxMol-0.4.5-Universal.zip`](https://github.com/carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.zip) *(494 MB)*<br>`SHA-256: ead2981490aff0f53091aa768aabca70a70b8397e7e94c8026d5f2a30d6b1fcd` | 3D Workbench, PyQt6 Desktop Application, Crystallography Engine, `.cxl` Suite |
-| **Carbox** | `0.4.5` | [`carbox-0.4.5.tar.gz`](https://github.com/carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.tar.gz) *(2.7 MB)*<br>`SHA-256: de5a9b1d9c444ef54463c3959ac48c49e23c586cb58eed9d7d187fcc4a20bb04` | [`carbox-0.4.5.zip`](https://github.com/carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.zip) *(3.3 MB)*<br>`SHA-256: f0a96c4e5a8b22c876c6654d726e5b3af1cce9eea20d067ed0c18b0cfecfa32c` | High-Throughput Survey Pipeline and Benchmark Dataset |
+| **CarboxMol** | `0.4.5` | [`CarboxMol-0.4.5-Universal.tar.gz`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.tar.gz) *(479 MB)*<br>`SHA-256: ae5c30416b6be146cfd5ad621452cd6b202669db7e06933f4636d7dc4b101912` | [`CarboxMol-0.4.5-Universal.zip`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.zip) *(494 MB)*<br>`SHA-256: ead2981490aff0f53091aa768aabca70a70b8397e7e94c8026d5f2a30d6b1fcd` | 3D Workbench, PyQt6 Desktop Application, Crystallography Engine, `.cxl` Suite |
+| **Carbox** | `0.4.5` | [`carbox-0.4.5.tar.gz`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.tar.gz) *(2.7 MB)*<br>`SHA-256: de5a9b1d9c444ef54463c3959ac48c49e23c586cb58eed9d7d187fcc4a20bb04` | [`carbox-0.4.5.zip`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.zip) *(3.3 MB)*<br>`SHA-256: f0a96c4e5a8b22c876c6654d726e5b3af1cce9eea20d067ed0c18b0cfecfa32c` | High-Throughput Survey Pipeline and Benchmark Dataset |
 
-Distribution archives are located in `releases/`, `dist/`, and `public/releases/`, and can be downloaded from the [Downloads Hub](https://carbox.vercel.app/downloads.html). For standalone release documentation, refer to [RELEASE_NOTES_v0.4.5.md](RELEASE_NOTES_v0.4.5.md).
+Distribution archives are located in `releases/`, `dist/`, and `public/releases/`, and can be downloaded from the [Downloads Hub](https://carboxmol.github.io/downloads.html). For standalone release documentation, refer to [RELEASE_NOTES_v0.4.5.md](RELEASE_NOTES_v0.4.5.md).

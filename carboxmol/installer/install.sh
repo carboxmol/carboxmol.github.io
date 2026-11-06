@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # CarboxMol Cross-Platform Installer (macOS & Linux)
-# Carbox Architecture Team
+# Suleiman M Hajizadeh & Garib N Murshudov
 # ==============================================================================
 set -e
 
 echo "======================================================================"
 echo "  CarboxMol — Interactive Crystallography Workbench Installer"
-echo "  Carbox Architecture Team"
+echo "  Suleiman M Hajizadeh & Garib N Murshudov"
 echo "======================================================================"
 
 # 1. Detect OS and Architecture
@@ -32,7 +32,7 @@ echo "[2/4] Found Python: $PY_VER"
 # 3. Install CarboxMol via pip
 echo "[3/4] Installing CarboxMol & Carbox packages..."
 python3 -m pip install --upgrade pip
-python3 -m pip install "carbox @ git+https://github.com/carbox/carbox.git" || {
+python3 -m pip install "carbox @ git+https://github.com/project-carbox/carbox.git" || {
     echo "Direct git install failed, installing local wheel or development link..."
     python3 -m pip install -e .
 }

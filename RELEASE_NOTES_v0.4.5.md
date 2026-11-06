@@ -1,17 +1,17 @@
 # Carbox & CarboxMol — Official Release Notes (v0.4.5)
 
 **Release Version:** `v0.4.5`  
-**Release Tag:** [`v0.4.5`](https://github.com/carbox/carbox/releases/tag/v0.4.5)  
+**Release Tag:** [`v0.4.5`](https://github.com/project-carbox/carbox/releases/tag/v0.4.5)  
 **Release Date:** September 21, 2026  
 **Authors:** Suleiman M Hajizadeh<sup>1,2*</sup>, Garib N Murshudov<sup>3</sup>  
 **Affiliations:**  
 - <sup>1</sup> *Institute of Molecular Biology, Ministry of Science and Education of the Republic of Azerbaijan, Baku AZ1073, Azerbaijan*  
 - <sup>2</sup> *Western Caspian University, Baku AZ1001, Azerbaijan*  
 - <sup>3</sup> *MRC Laboratory of Molecular Biology, Francis Crick Avenue, Cambridge CB2 0QH, United Kingdom*  
-**Corresponding Author:** [team@carbox.org](mailto:team@carbox.org)  
+**Corresponding Author:** [suleyman.hacizade1@gmail.com](mailto:suleyman.hacizade1@gmail.com)  
 **License:** [Mozilla Public License 2.0 (MPL-2.0)](file:///Users/macbookairm2/Documents/GitHub/Carbox/LICENSE)  
-**Repository:** <https://github.com/carbox/carbox>  
-**Downloads Hub:** <https://carbox.vercel.app/downloads.html>  
+**Repository:** <https://github.com/project-carbox/carbox>  
+**Downloads Hub:** <https://carboxmol.github.io/downloads.html>  
 
 ---
 
@@ -35,10 +35,10 @@ All official v0.4.5 release distribution archives are available for direct downl
 
 | Package | Version | File Name | Size | SHA-256 Checksum | Target Platform |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **CarboxMol** | `0.4.5` | [`CarboxMol-0.4.5-Universal.tar.gz`](https://github.com/carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.tar.gz) | 479 MB | `ae5c30416b6be146cfd5ad621452cd6b202669db7e06933f4636d7dc4b101912` | macOS / Linux / Docker |
-| **CarboxMol** | `0.4.5` | [`CarboxMol-0.4.5-Universal.zip`](https://github.com/carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.zip) | 494 MB | `ead2981490aff0f53091aa768aabca70a70b8397e7e94c8026d5f2a30d6b1fcd` | Windows / Universal |
-| **Carbox** | `0.4.5` | [`carbox-0.4.5.tar.gz`](https://github.com/carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.tar.gz) | 2.7 MB | `de5a9b1d9c444ef54463c3959ac48c49e23c586cb58eed9d7d187fcc4a20bb04` | Source tarball (Any OS) |
-| **Carbox** | `0.4.5` | [`carbox-0.4.5.zip`](https://github.com/carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.zip) | 3.3 MB | `f0a96c4e5a8b22c876c6654d726e5b3af1cce9eea20d067ed0c18b0cfecfa32c` | Source zip (Any OS) |
+| **CarboxMol** | `0.4.5` | [`CarboxMol-0.4.5-Universal.tar.gz`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.tar.gz) | 479 MB | `ae5c30416b6be146cfd5ad621452cd6b202669db7e06933f4636d7dc4b101912` | macOS / Linux / Docker |
+| **CarboxMol** | `0.4.5` | [`CarboxMol-0.4.5-Universal.zip`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/CarboxMol-0.4.5-Universal.zip) | 494 MB | `ead2981490aff0f53091aa768aabca70a70b8397e7e94c8026d5f2a30d6b1fcd` | Windows / Universal |
+| **Carbox** | `0.4.5` | [`carbox-0.4.5.tar.gz`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.tar.gz) | 2.7 MB | `de5a9b1d9c444ef54463c3959ac48c49e23c586cb58eed9d7d187fcc4a20bb04` | Source tarball (Any OS) |
+| **Carbox** | `0.4.5` | [`carbox-0.4.5.zip`](https://github.com/project-carbox/carbox/releases/download/v0.4.5/carbox-0.4.5.zip) | 3.3 MB | `f0a96c4e5a8b22c876c6654d726e5b3af1cce9eea20d067ed0c18b0cfecfa32c` | Source zip (Any OS) |
 
 > 📁 **Local Distribution Paths:** Archives are stored locally in both `releases/`, `public/releases/`, `webapp/releases/`, and `dist/`.
 
@@ -95,7 +95,7 @@ All official v0.4.5 release distribution archives are available for direct downl
 ### Quick Installation via pip
 ```bash
 # Install directly from GitHub
-pip install git+https://github.com/carbox/carbox.git
+pip install git+https://github.com/project-carbox/carbox.git
 
 # Verify versions
 carbox --version      # Returns: carbox 0.4.5
