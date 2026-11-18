@@ -10382,12 +10382,6 @@
 
                 isMeasurementModeActive = true;
                 // Activate selected mode
-                document.querySelectorAll('.measure-tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                measureMode = targetMode;
-                if (canvasBox) canvasBox.style.cursor = 'crosshair';
-
-                // Clear any incomplete pick spheres
                 pendingPickShapes.forEach(s => {
                     try { viewer.removeShape(s); } catch (e) {}
                 });
@@ -13653,21 +13647,6 @@
             }
         }
         updateDockButtonStates();
-
-        // Quick Benchmark Preset Chips Handler (with automatic 2Fo-Fc map streaming)
-        document.querySelectorAll('.empty-preset-chip').forEach(chip => {
-            chip.addEventListener('click', (e) => {
-                e.preventDefault();
-                const pdb = chip.getAttribute('data-pdb');
-                if (pdb) {
-                    const emptyInput = document.getElementById('studio-empty-pdb-input');
-                    if (emptyInput) emptyInput.value = pdb;
-                    const topInput = document.getElementById('studio-pdb-input');
-                    if (topInput) topInput.value = pdb;
-                    loadStructure(pdb);
-                }
-            });
-        });
 
         // Mobile Drawer Close Buttons & Backdrop Dismissal
         const btnCloseLeft = document.getElementById('btn-close-left-drawer');

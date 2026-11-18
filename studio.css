@@ -2617,55 +2617,6 @@ body.zen-mode .studio-main .studio-sidebar-right {
     color: var(--text-muted);
 }
 
-.empty-quick-presets {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    margin: 12px 0 16px 0;
-    width: 100%;
-    max-width: 480px;
-}
-
-.empty-benchmarks-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.empty-preset-chips-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.empty-preset-chip {
-    background: rgba(56, 189, 248, 0.08);
-    border: 1px solid rgba(56, 189, 248, 0.28);
-    color: #38bdf8;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 5px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.empty-preset-chip:hover {
-    background: rgba(56, 189, 248, 0.24);
-    border-color: #38bdf8;
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
-}
-
 .empty-dropzone-hint {
     font-size: 11.5px;
     color: var(--text-secondary);

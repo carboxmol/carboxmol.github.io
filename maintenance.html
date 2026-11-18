@@ -338,9 +338,9 @@
         }
 
         .lang-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
             margin-bottom: 32px;
         }
 
@@ -348,14 +348,18 @@
             background: #f8fafc;
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 18px 22px;
+            padding: 18px 20px;
             text-align: left;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
         }
 
         .lang-card:hover {
             border-color: #cbd5e1;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
         }
 
         .lang-card.rtl {
@@ -370,7 +374,7 @@
             letter-spacing: 0.06em;
             color: #475569;
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 7px;
@@ -380,34 +384,54 @@
             justify-content: flex-start;
         }
 
+        .lang-pill {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #0f172a;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
         .lang-card-title {
             font-size: 15.5px;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .lang-card-desc {
             font-size: 13px;
             color: var(--text-muted);
             line-height: 1.55;
+            margin-bottom: 12px;
+            flex-grow: 1;
         }
 
         .docs-highlight-note {
-            margin-top: 10px;
+            margin-top: auto;
             padding-top: 10px;
             border-top: 1px solid var(--border-color);
             font-size: 12px;
             color: #0f766e;
             line-height: 1.5;
-            display: flex;
-            gap: 8px;
-            align-items: flex-start;
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.15s;
+        }
+
+        .docs-highlight-note:hover {
+            color: #0d9488;
+            text-decoration: underline;
         }
 
         .docs-highlight-note i {
             color: #0d9488;
-            margin-top: 2px;
             flex-shrink: 0;
             font-size: 12px;
         }
@@ -643,52 +667,43 @@
             <!-- Azerbaijani -->
             <article class="lang-card">
                 <div class="lang-header">
-                                        <span>AZƏRBAYCAN</span>
+                    <span class="lang-pill">AZ</span>
+                    <span>AZƏRBAYCAN</span>
                 </div>
-                <h2 class="lang-card-title">Layihə inkişaf etdirilməkdədir</h2>
-                <p class="lang-card-desc">CarboxMol platforması hazırda aktiv inkişaf mərhələsindədir və tezliklə yenilənmiş versiya ilə yenidən deploy olunacaqdır.</p>
-                <div class="docs-highlight-note">
+                <h2 class="lang-card-title">Aktiv İnkişaf Mərhələsindədir</h2>
+                <p class="lang-card-desc">CarboxMol platforması və 3D kristalloqrafiya mühərriki hazırda mütəmadi elmi və mühəndislik təkmilləşdirmələri mərhələsindədir.</p>
+                <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-highlight-note">
                     <i class="fa-solid fa-book-open"></i>
-                    <span><strong>Read the Docs Sənədləşməsi:</strong> Layihənin bütün nəzəriyyəsi, alqoritmləri və təlimatları üçün <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-link">carboxmol.readthedocs.io/en/latest</a> portalına daxil ola bilərsiniz.</span>
-                </div>
-                <div class="data-access-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span><strong>Məxfi Data Siyasəti:</strong> Buradakı bütün xam kristalloqrafik datalar və əsas mənbə kodları məxfidir (Private). Giriş (access) üçün: <a href="mailto:suleyman.hacizade1@gmail.com?subject=Access%20Request%20-%20CarboxMol%20Private%20Data" class="email-link">suleyman.hacizade1@gmail.com</a></span>
-                </div>
+                    <span>Read the Docs Sənədləşməsi</span>
+                </a>
             </article>
 
             <!-- English -->
             <article class="lang-card">
                 <div class="lang-header">
-                                        <span>ENGLISH</span>
+                    <span class="lang-pill">EN</span>
+                    <span>ENGLISH</span>
                 </div>
                 <h2 class="lang-card-title">Project Under Active Development</h2>
-                <p class="lang-card-desc">CarboxMol is currently undergoing comprehensive engineering upgrades and will be redeployed shortly.</p>
-                <div class="docs-highlight-note">
+                <p class="lang-card-desc">CarboxMol is actively undergoing engineering upgrades across real-space electron density carving, refinement, and molecular dynamics.</p>
+                <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-highlight-note">
                     <i class="fa-solid fa-book-open"></i>
-                    <span><strong>Read the Docs Portal:</strong> For comprehensive theory, validation protocols, and API guides, visit <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-link">carboxmol.readthedocs.io/en/latest</a>.</span>
-                </div>
-                <div class="data-access-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span><strong>Private Data Policy:</strong> All research datasets and core repositories are strictly Private. To request access: <a href="mailto:suleyman.hacizade1@gmail.com?subject=Access%20Request%20-%20CarboxMol%20Private%20Data" class="email-link">suleyman.hacizade1@gmail.com</a></span>
-                </div>
+                    <span>Official Read the Docs Manual</span>
+                </a>
             </article>
 
             <!-- Hebrew (RTL) -->
             <article class="lang-card rtl" dir="rtl" lang="he">
                 <div class="lang-header">
-                                        <span>עברית</span>
+                    <span class="lang-pill">HE</span>
+                    <span>עברית</span>
                 </div>
-                <h2 class="lang-card-title">הפרויקט נמצא כעת בפיתוח פעיל</h2>
-                <p class="lang-card-desc">פלטפורמת CarboxMol עוברת כעת שדרוגים מקיפים ותועלה מחדש בקרוב בגרסה מעודכנת.</p>
-                <div class="docs-highlight-note">
+                <h2 class="lang-card-title">הפרויקט נמצא בפיתוח פעיל</h2>
+                <p class="lang-card-desc">פלטפורמת CarboxMol עוברת כעת שדרוגים מקיפים בתחומי קריסטלוגרפיה מבנית, צפיפות אלקטרונים ודינמיקה מולקולרית.</p>
+                <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-highlight-note">
                     <i class="fa-solid fa-book-open"></i>
-                    <span><strong>תיעוד Read the Docs:</strong> לתיעוד המלא של תיאוריית LBHB, אלגוריתמים והוראות הפעלה, בקרו בפורטל: <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-link">carboxmol.readthedocs.io/en/latest</a>.</span>
-                </div>
-                <div class="data-access-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span><strong>מדיניות נתונים פרטיים:</strong> כל מאגרי הנתונים וקודי המקור הינם פרטיים (Private). לקבלת גישה (Access): <a href="mailto:suleyman.hacizade1@gmail.com?subject=Access%20Request%20-%20CarboxMol%20Private%20Data" class="email-link">suleyman.hacizade1@gmail.com</a></span>
-                </div>
+                    <span>תיעוד רשמי ב-Read the Docs</span>
+                </a>
             </article>
 
         </section>

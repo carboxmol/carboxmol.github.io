@@ -600,9 +600,9 @@
         }
 
         .lang-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
             margin-bottom: 32px;
         }
 
@@ -610,14 +610,18 @@
             background: #f8fafc;
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            padding: 18px 22px;
+            padding: 18px 20px;
             text-align: left;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
         }
 
         .lang-card:hover {
             border-color: #cbd5e1;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
         }
 
         .lang-card.rtl {
@@ -632,7 +636,7 @@
             letter-spacing: 0.06em;
             color: #475569;
             text-transform: uppercase;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 7px;
@@ -642,34 +646,54 @@
             justify-content: flex-start;
         }
 
+        .lang-pill {
+            display: inline-block;
+            background: #e2e8f0;
+            color: #0f172a;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
         .lang-card-title {
             font-size: 15.5px;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .lang-card-desc {
             font-size: 13px;
             color: var(--text-muted);
             line-height: 1.55;
+            margin-bottom: 12px;
+            flex-grow: 1;
         }
 
         .docs-highlight-note {
-            margin-top: 10px;
+            margin-top: auto;
             padding-top: 10px;
             border-top: 1px solid var(--border-color);
             font-size: 12px;
             color: #0f766e;
             line-height: 1.5;
-            display: flex;
-            gap: 8px;
-            align-items: flex-start;
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.15s;
+        }
+
+        .docs-highlight-note:hover {
+            color: #0d9488;
+            text-decoration: underline;
         }
 
         .docs-highlight-note i {
             color: #0d9488;
-            margin-top: 2px;
             flex-shrink: 0;
             font-size: 12px;
         }
@@ -1013,52 +1037,43 @@
             <!-- Azerbaijani -->
             <article class="lang-card">
                 <div class="lang-header">
-                                        <span>AZƏRBAYCAN</span>
+                    <span class="lang-pill">AZ</span>
+                    <span>AZƏRBAYCAN</span>
                 </div>
-                <h2 class="lang-card-title">Layihə inkişaf etdirilməkdədir</h2>
-                <p class="lang-card-desc">CarboxMol platforması hazırda aktiv inkişaf mərhələsindədir və tezliklə yenilənmiş versiya ilə yenidən deploy olunacaqdır.</p>
-                <div class="docs-highlight-note">
+                <h2 class="lang-card-title">Aktiv İnkişaf Mərhələsindədir</h2>
+                <p class="lang-card-desc">CarboxMol platforması və 3D kristalloqrafiya mühərriki hazırda mütəmadi elmi və mühəndislik təkmilləşdirmələri mərhələsindədir.</p>
+                <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-highlight-note">
                     <i class="fa-solid fa-book-open"></i>
-                    <span><strong>Read the Docs Sənədləşməsi:</strong> Layihənin bütün nəzəriyyəsi, alqoritmləri və təlimatları üçün <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-link">carboxmol.readthedocs.io/en/latest</a> portalına daxil ola bilərsiniz.</span>
-                </div>
-                <div class="data-access-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span><strong>Məxfi Data Siyasəti:</strong> Buradakı bütün xam kristalloqrafik datalar və əsas mənbə kodları məxfidir (Private). Giriş (access) üçün: <a href="mailto:suleyman.hacizade1@gmail.com?subject=Access%20Request%20-%20CarboxMol%20Private%20Data" class="email-link">suleyman.hacizade1@gmail.com</a></span>
-                </div>
+                    <span>Read the Docs Sənədləşməsi</span>
+                </a>
             </article>
 
             <!-- English -->
             <article class="lang-card">
                 <div class="lang-header">
-                                        <span>ENGLISH</span>
+                    <span class="lang-pill">EN</span>
+                    <span>ENGLISH</span>
                 </div>
                 <h2 class="lang-card-title">Project Under Active Development</h2>
-                <p class="lang-card-desc">CarboxMol is currently undergoing comprehensive engineering upgrades and will be redeployed shortly.</p>
-                <div class="docs-highlight-note">
+                <p class="lang-card-desc">CarboxMol is actively undergoing engineering upgrades across real-space electron density carving, refinement, and molecular dynamics.</p>
+                <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-highlight-note">
                     <i class="fa-solid fa-book-open"></i>
-                    <span><strong>Read the Docs Portal:</strong> For comprehensive theory, validation protocols, and API guides, visit <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-link">carboxmol.readthedocs.io/en/latest</a>.</span>
-                </div>
-                <div class="data-access-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span><strong>Private Data Policy:</strong> All research datasets and core repositories are strictly Private. To request access: <a href="mailto:suleyman.hacizade1@gmail.com?subject=Access%20Request%20-%20CarboxMol%20Private%20Data" class="email-link">suleyman.hacizade1@gmail.com</a></span>
-                </div>
+                    <span>Official Read the Docs Manual</span>
+                </a>
             </article>
 
             <!-- Hebrew (RTL) -->
             <article class="lang-card rtl" dir="rtl" lang="he">
                 <div class="lang-header">
-                                        <span>עברית</span>
+                    <span class="lang-pill">HE</span>
+                    <span>עברית</span>
                 </div>
-                <h2 class="lang-card-title">הפרויקט נמצא כעת בפיתוח פעיל</h2>
-                <p class="lang-card-desc">פלטפורמת CarboxMol עוברת כעת שדרוגים מקיפים ותועלה מחדש בקרוב בגרסה מעודכנת.</p>
-                <div class="docs-highlight-note">
+                <h2 class="lang-card-title">הפרויקט נמצא בפיתוח פעיל</h2>
+                <p class="lang-card-desc">פלטפורמת CarboxMol עוברת כעת שדרוגים מקיפים בתחומי קריסטלוגרפיה מבנית, צפיפות אלקטרונים ודינמיקה מולקולרית.</p>
+                <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-highlight-note">
                     <i class="fa-solid fa-book-open"></i>
-                    <span><strong>תיעוד Read the Docs:</strong> לתיעוד המלא של תיאוריית LBHB, אלגוריתמים והוראות הפעלה, בקרו בפורטל: <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer" class="docs-link">carboxmol.readthedocs.io/en/latest</a>.</span>
-                </div>
-                <div class="data-access-note">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span><strong>מדיניות נתונים פרטיים:</strong> כל מאגרי הנתונים וקודי המקור הינם פרטיים (Private). לקבלת גישה (Access): <a href="mailto:suleyman.hacizade1@gmail.com?subject=Access%20Request%20-%20CarboxMol%20Private%20Data" class="email-link">suleyman.hacizade1@gmail.com</a></span>
-                </div>
+                    <span>תיעוד רשמי ב-Read the Docs</span>
+                </a>
             </article>
 
         </section>
@@ -1197,107 +1212,7 @@
         </section>
 
         <!-- Footer -->
-        
-        <!-- Senior-Architect SEO & Academic Search Index (Semantic Taxonomy) -->
-        <section class="research-search-index-section" id="academic-search-index" aria-label="Research Topics &amp; Academic Search Index">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-tag">CRYSTALLOGRAPHY &amp; SIMULATION TAXONOMY</span>
-                    <h2 class="section-title">Scientific Search Index &amp; 3D Workbench Topics</h2>
-                    <p class="section-subtitle">
-                        Comprehensive index of macromolecular crystallographic tools, 2mFo-DFc electron density streaming, GROMACS molecular dynamics, and PDB benchmark structures across CarboxMol.
-                    </p>
-                </div>
-
-                <div class="seo-taxonomy-grid">
-                    <div class="seo-tax-card">
-                        <h3><i class="fa-solid fa-cube"></i> Interactive 3D WebGL Crystallography</h3>
-                        <p>
-                            High-performance WebGL2 macromolecular rendering powered by 3Dmol.js. Stream crystallographic unit cells, symmetry wireframes, and secondary structure ribbons with real-time stereochemical regularization.
-                        </p>
-                        <div class="seo-term-list">
-                            <span class="seo-term-tag">3Dmol.js WebGL</span>
-                            <span class="seo-term-tag">Unit Cell Symmetry</span>
-                            <span class="seo-term-tag">Ribbon Rendering</span>
-                            <span class="seo-term-tag">Real-Space Refinement</span>
-                            <span class="seo-term-tag">PDB / mmCIF</span>
-                        </div>
-                    </div>
-
-                    <div class="seo-tax-card">
-                        <h3><i class="fa-solid fa-water"></i> In-Browser GROMACS Molecular Dynamics</h3>
-                        <p>
-                            Client-side molecular dynamics execution using WebAssembly-accelerated GROMACS (pdb2gmx, mdrun). Simulate active site solvation shells, dielectric screening, and structural relaxation in real-time.
-                        </p>
-                        <div class="seo-term-list">
-                            <span class="seo-term-tag">GROMACS WebAssembly</span>
-                            <span class="seo-term-tag">pdb2gmx</span>
-                            <span class="seo-term-tag">mdrun</span>
-                            <span class="seo-term-tag">Amber / CHARMM</span>
-                            <span class="seo-term-tag">Solvation Shells</span>
-                        </div>
-                    </div>
-
-                    <div class="seo-tax-card">
-                        <h3><i class="fa-solid fa-layer-group"></i> Electron Density Map Streaming</h3>
-                        <p>
-                            Direct streaming and local carving of 2mFo-DFc and mFo-DFc difference maps from PDB-REDO and CCP4 MRC2014 binaries. Validate Low-Barrier Hydrogen Bonds and anomalous carboxyl protonation states.
-                        </p>
-                        <div class="seo-term-list">
-                            <span class="seo-term-tag">2mFo-DFc Map Carving</span>
-                            <span class="seo-term-tag">CCP4 MRC2014</span>
-                            <span class="seo-term-tag">PDB-REDO</span>
-                            <span class="seo-term-tag">Difference Density</span>
-                            <span class="seo-term-tag">Fisher Z RSCC</span>
-                        </div>
-                    </div>
-
-                    <div class="seo-tax-card">
-                        <h3><i class="fa-solid fa-dna"></i> Metal Coordination &amp; Macro Automation</h3>
-                        <p>
-                            Stereochemical screening of transition metal coordination spheres (tau4 tetrahedral, tau6 octahedral), MolProbity clashscore validation, and CXL (Carbox eXtensible Language) batch macro automation.
-                        </p>
-                        <div class="seo-term-list">
-                            <span class="seo-term-tag">Zinc Finger tau4</span>
-                            <span class="seo-term-tag">Octahedral tau6</span>
-                            <span class="seo-term-tag">MolProbity Clashscore</span>
-                            <span class="seo-term-tag">Ramachandran Validator</span>
-                            <span class="seo-term-tag">CXL Macro Language</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="seo-queries-box">
-                    <h4><i class="fa-solid fa-magnifying-glass"></i> Key Natural Search Intents &amp; Trilingual Queries</h4>
-                    <ul class="seo-queries-list">
-                        <li><strong>English:</strong> Interactive 3D macromolecular crystallography workbench and GROMACS molecular dynamics platform</li>
-                        <li><strong>Az&aelig;rbaycanca:</strong> 3D z&uuml;lal strukturu vizualla&scedil;d&infin;rma, GROMACS molekulyar dinamika v&aelig; 2mFo-DFc elektron s&infin;xl&infin;&divide;&infin; x&aelig;rit&aelig;l&aelig;ri</li>
-                        <li><strong>Crystallography:</strong> In-browser 2mFo-DFc electron density carving for Low-Barrier Hydrogen Bond validation</li>
-                        <li><strong>Automation:</strong> CXL macro scripting for high-throughput PDB structural bioinformatics pipelines</li>
-                        <li><strong>Authors:</strong> Engineered by Suleiman M Hajizadeh &amp; Prof. Garib N Murshudov (IMB Baku &amp; MRC LMB Cambridge)</li>
-                        <li><strong>Hebrew / RTL:</strong> &#1492;&#1491;&#1502;&#1497;&#1492; &#1502;&#1493;&#1504;&#1511;&#1493;&#1500;&#1512;&#1497;&#1514; &#1514;&#1500;&#1514;-&#1502;&#1502;&#1491;&#1497;&#1514; &#1493;&#1502;&#1508;&#1493;&#1514; &#1510;&#1508;&#1497;&#1505;&#1493;&#1514; &#1488;&#1504;&#1511;&#1496;&#1512;&#1493;&#1504;&#1497;&#1501;</li>
-                    </ul>
-
-                    <div class="seo-badges-cloud">
-                        <a href="https://carboxmol.github.io/" class="seo-cloud-pill">CarboxMol Platform</a>
-                        <a href="https://carboxmol.github.io/studio.html" class="seo-cloud-pill">3D Studio &amp; Viewport</a>
-                        <a href="https://carboxmol.github.io/dashboard.html" class="seo-cloud-pill">Survey Dashboard</a>
-                        <a href="https://carboxmol.github.io/downloads.html" class="seo-cloud-pill">Downloads &amp; Releases</a>
-                        <a href="https://carboxmol.github.io/docs.html" class="seo-cloud-pill">Documentation Hub</a>
-                        <a href="https://carboxmol.readthedocs.io/en/latest/" class="seo-cloud-pill">Read the Docs Manual</a>
-                        <a href="https://project-carbox.github.io/" class="seo-cloud-pill">Project Carbox Core</a>
-                        <a href="https://carboxmol.github.io/studio.html" class="seo-cloud-pill">GROMACS Web Simulation</a>
-                        <a href="https://carboxmol.github.io/studio.html" class="seo-cloud-pill">2mFo-DFc Density Carving</a>
-                        <a href="https://carboxmol.github.io/studio.html" class="seo-cloud-pill">CCP4 MRC2014 Reader</a>
-                        <a href="https://carboxmol.github.io/downloads.html" class="seo-cloud-pill">Desktop App (macOS, Windows, Linux)</a>
-                        <a href="https://carboxmol.github.io/studio.html" class="seo-cloud-pill">Suleiman M Hajizadeh</a>
-                        <a href="https://carboxmol.github.io/studio.html" class="seo-cloud-pill">Prof. Garib N Murshudov</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-<footer class="footer">
+        <footer class="footer">
             <i class="fa-solid fa-shield-halved"></i>
             <span>All rights reserved © Suleiman M Hajizadeh ·</span>
             <a href="https://carboxmol.readthedocs.io/en/latest/" target="_blank" rel="noopener noreferrer"> CarboxMol Docs</a>
