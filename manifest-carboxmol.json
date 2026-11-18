@@ -1,0 +1,86 @@
+{
+  "name": "CarboxMol 3D - Macromolecular Crystallographic Workbench",
+  "short_name": "CarboxMol",
+  "id": "carboxmol-crystallography-studio",
+  "description": "Enterprise Macromolecular Crystallographic Workbench for Carboxyl Protonation States, Low-Barrier Hydrogen Bonds & Microenvironments",
+  "start_url": "./studio.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070c18",
+  "theme_color": "#090d16",
+  "categories": ["science", "education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "assets/carboxmol_pwa_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/carboxmol_pwa_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/carboxmol_pwa_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/carboxmol_pwa_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/carboxmol_apple_touch_icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/carboxmol_favicon64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/carboxmol_favicon32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "CarboxMol 3D Workbench",
+      "short_name": "3D Studio",
+      "description": "Open CarboxMol 3D Crystallographic Workbench",
+      "url": "./studio.html",
+      "icons": [{ "src": "assets/carboxmol_pwa_icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Documentation Portal",
+      "short_name": "Docs",
+      "description": "CarboxMol Complete Documentation",
+      "url": "./docs.html",
+      "icons": [{ "src": "assets/carboxmol_pwa_icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Downloads Hub",
+      "short_name": "Downloads",
+      "description": "Download CarboxMol suite & tools",
+      "url": "./downloads.html",
+      "icons": [{ "src": "assets/carboxmol_pwa_icon_192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Carbox Survey Dashboard",
+      "short_name": "Dashboard",
+      "description": "Inspect 2,500 PDB structures & carboxyl survey dataset",
+      "url": "./dashboard.html",
+      "icons": [{ "src": "assets/carbox_pwa_icon_192.png", "sizes": "192x192" }]
+    }
+  ]
+}
