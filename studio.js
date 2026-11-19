@@ -11207,7 +11207,12 @@
                 discoveredPairs.forEach((p, idx) => {
                     const opt = document.createElement('option');
                     opt.value = String(idx);
-                    opt.textContent = `P${idx+1}: ${p.res1.resn}${p.res1.resi}–${p.res2.resn}${p.res2.resi} (${p.dist.toFixed(2)}Å)`;
+                    const rn1 = p.resn1 || (p.res1 && p.res1.resn) || 'ASP';
+                    const ri1 = p.resi1 || (p.res1 && p.res1.resi) || '';
+                    const rn2 = p.resn2 || (p.res2 && p.res2.resn) || 'GLU';
+                    const ri2 = p.resi2 || (p.res2 && p.res2.resi) || '';
+                    const dist = typeof p.distance === 'number' ? p.distance : (typeof p.dist === 'number' ? p.dist : 2.5);
+                    opt.textContent = `P${idx+1}: ${rn1}${ri1}–${rn2}${ri2} (${dist.toFixed(2)}Å)`;
                     crystalSelPairs.appendChild(opt);
                 });
             }
@@ -11219,7 +11224,11 @@
                 discoveredPairs.forEach((p, idx) => {
                     const opt = document.createElement('option');
                     opt.value = `pair:${idx}`;
-                    opt.textContent = `LBHB Site: ${p.res1.resn}${p.res1.resi}-${p.res2.resn}${p.res2.resi}`;
+                    const rn1 = p.resn1 || (p.res1 && p.res1.resn) || 'ASP';
+                    const ri1 = p.resi1 || (p.res1 && p.res1.resi) || '';
+                    const rn2 = p.resn2 || (p.res2 && p.res2.resn) || 'GLU';
+                    const ri2 = p.resi2 || (p.res2 && p.res2.resi) || '';
+                    opt.textContent = `LBHB Site: ${rn1}${ri1}-${rn2}${ri2}`;
                     crystalSelSites.appendChild(opt);
                 });
                 metalsMap.forEach((m, key) => {
