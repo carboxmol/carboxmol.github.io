@@ -145,21 +145,25 @@
             }
         })();
 
-        // Global Fetch Interceptor to bypass ngrok-free interstitial warning page on all API requests
+        // Safe Fetch Interceptor to bypass ngrok-free warning only when targeting ngrok tunnels
         (function() {
             if (window.fetch) {
                 const _origFetch = window.fetch;
                 window.fetch = function(url, options) {
                     options = options || {};
-                    options.headers = options.headers || {};
-                    if (options.headers instanceof Headers) {
-                        if (!options.headers.has('ngrok-skip-browser-warning')) {
-                            options.headers.set('ngrok-skip-browser-warning', 'true');
+                    const urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : '');
+                    const isNgrokTarget = urlStr.includes('ngrok') || (window.location.hostname.includes('ngrok') && (urlStr.startsWith('/') || urlStr.startsWith(window.location.origin)));
+                    if (isNgrokTarget) {
+                        options.headers = options.headers || {};
+                        if (options.headers instanceof Headers) {
+                            if (!options.headers.has('ngrok-skip-browser-warning')) {
+                                options.headers.set('ngrok-skip-browser-warning', 'true');
+                            }
+                        } else if (Array.isArray(options.headers)) {
+                            options.headers.push(['ngrok-skip-browser-warning', 'true']);
+                        } else {
+                            options.headers['ngrok-skip-browser-warning'] = 'true';
                         }
-                    } else if (Array.isArray(options.headers)) {
-                        options.headers.push(['ngrok-skip-browser-warning', 'true']);
-                    } else {
-                        options.headers['ngrok-skip-browser-warning'] = 'true';
                     }
                     return _origFetch.call(this, url, options);
                 };

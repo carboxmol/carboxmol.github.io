@@ -3114,16 +3114,33 @@
         const cleanUniprot = cleanPdb.replace(/^AF-/i, '').split('-')[0];
 
         // List of candidate URL endpoints to cascade through
-        const endpoints = [
+        const isStaticHost = typeof window !== 'undefined' && (
+            window.location.hostname.includes('github.io') ||
+            window.location.hostname.includes('vercel.app') ||
+            window.location.protocol === 'file:'
+        );
+
+        const endpoints = isStaticHost ? [
+            { url: `https://files.rcsb.org/download/${cleanPdb}.pdb`, defaultFmt: 'pdb' },
+            { url: `https://www.ebi.ac.uk/pdbe/entry-files/download/${cleanPdb.toLowerCase()}.cif`, defaultFmt: 'cif' },
+            { url: `https://files.rcsb.org/download/${cleanPdb}.cif`, defaultFmt: 'cif' },
+            { url: `https://www.ebi.ac.uk/pdbe/entry-files/download/pdb${cleanPdb.toLowerCase()}.ent`, defaultFmt: 'pdb' },
+            { url: `https://models.rcsb.org/v1/${cleanPdb.toLowerCase()}/atoms?type=cif`, defaultFmt: 'cif' },
+            { url: `https://alphafold.ebi.ac.uk/files/AF-${cleanUniprot}-F1-model_v6.cif`, defaultFmt: 'cif' },
+            { url: `https://alphafold.ebi.ac.uk/files/AF-${cleanUniprot}-F1-model_v4.cif`, defaultFmt: 'cif' },
+            { url: `/api/structure/${encodeURIComponent(cleanPdb)}`, defaultFmt: 'pdb' },
+            { url: `/api/structure/${encodeURIComponent(cleanPdb)}?format=pdb`, defaultFmt: 'pdb' },
+            { url: `/api/structure/${encodeURIComponent(cleanPdb)}?format=cif`, defaultFmt: 'cif' }
+        ] : [
             { url: `/api/structure/${encodeURIComponent(cleanPdb)}`, defaultFmt: 'pdb' },
             { url: `/api/structure/${encodeURIComponent(cleanPdb)}?format=pdb`, defaultFmt: 'pdb' },
             { url: `/api/structure/${encodeURIComponent(cleanPdb)}?format=cif`, defaultFmt: 'cif' },
             { url: `https://files.rcsb.org/download/${cleanPdb}.pdb`, defaultFmt: 'pdb' },
+            { url: `https://www.ebi.ac.uk/pdbe/entry-files/download/${cleanPdb.toLowerCase()}.cif`, defaultFmt: 'cif' },
             { url: `https://files.rcsb.org/download/${cleanPdb}.cif`, defaultFmt: 'cif' },
             { url: `https://alphafold.ebi.ac.uk/files/AF-${cleanUniprot}-F1-model_v6.cif`, defaultFmt: 'cif' },
             { url: `https://alphafold.ebi.ac.uk/files/AF-${cleanUniprot}-F1-model_v4.cif`, defaultFmt: 'cif' },
             { url: `https://models.rcsb.org/v1/${cleanPdb.toLowerCase()}/atoms?type=cif`, defaultFmt: 'cif' },
-            { url: `https://www.ebi.ac.uk/pdbe/entry-files/download/${cleanPdb.toLowerCase()}.cif`, defaultFmt: 'cif' },
             { url: `https://www.ebi.ac.uk/pdbe/entry-files/download/pdb${cleanPdb.toLowerCase()}.ent`, defaultFmt: 'pdb' }
         ];
 
@@ -5394,67 +5411,74 @@
         if (!pdbClean) return null;
         
         let rawBuffer = null;
+        const isStaticHost = typeof window !== 'undefined' && (
+            window.location.hostname.includes('github.io') ||
+            window.location.hostname.includes('vercel.app') ||
+            window.location.protocol === 'file:'
+        );
 
-        // 1. Try local server density cache endpoint with selected source (PDB-REDO / PDBe)
-        try {
-            const localUrl = `/api/density/${pdbClean}?type=${mapType}&source=${densitySource}`;
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), 6000);
-            const resp = await fetch(localUrl, { signal: controller.signal });
-            clearTimeout(timer);
-            if (resp.ok) {
-                const buf = await resp.arrayBuffer();
-                if (buf.byteLength > 1024) rawBuffer = buf;
-            }
-        } catch (e) {
-            console.warn('[Density Engine] Local density fetch timed out or deferred:', e);
-        }
-
-        // 1b. Fallback to auto source on local server
-        if (!rawBuffer) {
+        // 1. Try local server density cache endpoint (only when running on a server host with /api)
+        if (!isStaticHost) {
             try {
-                const autoUrl = `/api/density/${pdbClean}?type=${mapType}&source=auto`;
+                const localUrl = `/api/density/${pdbClean}?type=${mapType}&source=${densitySource}`;
                 const controller = new AbortController();
-                const timer = setTimeout(() => controller.abort(), 4000);
-                const resp = await fetch(autoUrl, { signal: controller.signal });
+                const timer = setTimeout(() => controller.abort(), 6000);
+                const resp = await fetch(localUrl, { signal: controller.signal });
                 clearTimeout(timer);
                 if (resp.ok) {
                     const buf = await resp.arrayBuffer();
                     if (buf.byteLength > 1024) rawBuffer = buf;
                 }
-            } catch (e) {}
-        }
+            } catch (e) {
+                console.warn('[Density Engine] Local density fetch timed out or deferred:', e);
+            }
 
-        // 1c. Direct local structure_engine portal data fallback (e.g. 4un4_final_m0.map, 1mru_m0.map)
-        if (!rawBuffer) {
-            try {
-                const isDiff = mapType === 'fofc' || mapType === 'diff';
-                const portalMapCandidates = isDiff
-                    ? [
-                        `/carboxmol/structure_engine/portal/data/${pdbClean}_final_diff_m0.map`,
-                        `/carboxmol/structure_engine/portal/data/${pdbClean}_diff_m0.map`,
-                        `/carboxmol/structure_engine/portal/data/${pdbClean}_diff.map`,
-                        `/carboxmol/structure_engine/data/${pdbClean}_final_diff_m0.map`
-                    ]
-                    : [
-                        `/carboxmol/structure_engine/portal/data/${pdbClean}_final_m0.map`,
-                        `/carboxmol/structure_engine/portal/data/${pdbClean}_m0.map`,
-                        `/carboxmol/structure_engine/portal/data/${pdbClean}.map`,
-                        `/carboxmol/structure_engine/data/${pdbClean}_final_m0.map`
-                    ];
-                for (const candUrl of portalMapCandidates) {
-                    try {
-                        const pResp = await fetch(candUrl);
-                        if (pResp.ok) {
-                            const pBuf = await pResp.arrayBuffer();
-                            if (pBuf.byteLength > 1024) {
-                                rawBuffer = pBuf;
-                                break;
+            // 1b. Fallback to auto source on local server
+            if (!rawBuffer) {
+                try {
+                    const autoUrl = `/api/density/${pdbClean}?type=${mapType}&source=auto`;
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 4000);
+                    const resp = await fetch(autoUrl, { signal: controller.signal });
+                    clearTimeout(timer);
+                    if (resp.ok) {
+                        const buf = await resp.arrayBuffer();
+                        if (buf.byteLength > 1024) rawBuffer = buf;
+                    }
+                } catch (e) {}
+            }
+
+            // 1c. Direct local structure_engine portal data fallback (e.g. 4un4_final_m0.map, 1mru_m0.map)
+            if (!rawBuffer) {
+                try {
+                    const isDiff = mapType === 'fofc' || mapType === 'diff';
+                    const portalMapCandidates = isDiff
+                        ? [
+                            `/carboxmol/structure_engine/portal/data/${pdbClean}_final_diff_m0.map`,
+                            `/carboxmol/structure_engine/portal/data/${pdbClean}_diff_m0.map`,
+                            `/carboxmol/structure_engine/portal/data/${pdbClean}_diff.map`,
+                            `/carboxmol/structure_engine/data/${pdbClean}_final_diff_m0.map`
+                        ]
+                        : [
+                            `/carboxmol/structure_engine/portal/data/${pdbClean}_final_m0.map`,
+                            `/carboxmol/structure_engine/portal/data/${pdbClean}_m0.map`,
+                            `/carboxmol/structure_engine/portal/data/${pdbClean}.map`,
+                            `/carboxmol/structure_engine/data/${pdbClean}_final_m0.map`
+                        ];
+                    for (const candUrl of portalMapCandidates) {
+                        try {
+                            const pResp = await fetch(candUrl);
+                            if (pResp.ok) {
+                                const pBuf = await pResp.arrayBuffer();
+                                if (pBuf.byteLength > 1024) {
+                                    rawBuffer = pBuf;
+                                    break;
+                                }
                             }
-                        }
-                    } catch (e) {}
-                }
-            } catch (e) {}
+                        } catch (e) {}
+                    }
+                } catch (e) {}
+            }
         }
 
         // 2. Multi-Repository Remote Streaming (PDBe / EBI / RCSB)
@@ -5564,7 +5588,7 @@
         const ny = volData.size.y;
         const nz = volData.size.z;
         const total = nx * ny * nz;
-        if (volData.data.length < total || total <= 0) return;
+        if (volData.data.length < total || total <= 0 || total > 3500000) return;
 
         for (let p = 0; p < passes; p++) {
             const src = volData.data;
@@ -6512,7 +6536,8 @@
         try {
             if (format === 'pdb' || modelText.includes('CRYST1')) {
                 const lines = modelText.split('\n');
-                for (let i = 0; i < Math.min(lines.length, 50); i++) {
+                const maxLines = Math.min(lines.length, 1500);
+                for (let i = 0; i < maxLines; i++) {
                     const line = lines[i];
                     if (line.startsWith('CRYST1')) {
                         a = parseFloat(line.substring(6, 15)) || 0;
@@ -6523,6 +6548,9 @@
                         gamma = parseFloat(line.substring(47, 54)) || 90.0;
                         sg = line.substring(55, 66).trim() || 'P 1';
                         break;
+                    }
+                    if (line.startsWith('ATOM  ') || line.startsWith('HETATM')) {
+                        break; // Stop scanning once coordinates start
                     }
                 }
             } else {
