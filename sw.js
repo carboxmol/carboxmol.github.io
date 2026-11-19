@@ -1,8 +1,8 @@
 // Carbox & CarboxMol PWA Universal Service Worker
-// Version: v0.5.3 · High-Resilience Dynamic Updates & Auto-Sync Engine
+// Version: v0.5.4 · High-Resilience Dynamic Updates & Auto-Sync Engine
 'use strict';
 
-const PWA_VERSION = 'v0.5.3';
+const PWA_VERSION = 'v0.5.4';
 const CACHE_NAME = 'carboxmol-pwa-' + PWA_VERSION;
 const RUNTIME_CACHE = 'carboxmol-runtime-' + PWA_VERSION;
 
@@ -100,6 +100,12 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
+
+  // Strictly pass-through third-party origins (RCSB, PDBe, EMBL-EBI, AlphaFold, PDB-REDO, CDNs)
+  // Cross-origin requests must never be hijacked or converted to 503 offline errors
+  if (url.origin !== self.location.origin) {
+    return;
+  }
 
   // 1. Live dynamic backend endpoints (do not cache mutable API by default)
   if (url.pathname.startsWith('/api/')) {
