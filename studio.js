@@ -2993,6 +2993,7 @@
             try {
                 safeSet('studio-pairs-count', `${discoveredPairs.length} Pairs`);
                 renderPairCards();
+                syncPairsWithCarboxBackend(cleanPdb);
             } catch (e) {
                 console.warn('[PairCards] render error:', e);
             }
@@ -3422,7 +3423,7 @@
                         const isMetalBridge = nearestMetalDist <= 2.80;
 
                         const isUltraShort = minDistance <= 2.55;
-                        const isBuried = closestWater >= 3.2;
+                        const isBuried = closestWater > 3.00;
 
                         const occ1 = (bestO1 && typeof bestO1.occupancy === 'number') ? bestO1.occupancy : 1.0;
                         const occ2 = (bestO2 && typeof bestO2.occupancy === 'number') ? bestO2.occupancy : 1.0;
@@ -3500,6 +3501,65 @@
         }
     }
 
+    async function syncPairsWithCarboxBackend(pdbId) {
+        const clean = String(pdbId || currentPdbId || '').trim().toUpperCase();
+        if (!clean || clean.length !== 4 || !/^[A-Z0-9]{4}$/.test(clean)) return;
+        if (!discoveredPairs || !discoveredPairs.length) return;
+        try {
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 6000);
+            const resp = await fetch(`/api/analyze/${encodeURIComponent(clean)}?max_distance=3.00`, { signal: ctrl.signal });
+            clearTimeout(timer);
+            if (!resp.ok) return;
+            const payload = await resp.json();
+            if (!payload || payload.status !== 'success' || !Array.isArray(payload.records)) return;
+
+            const recByKey = new Map();
+            payload.records.forEach(rec => {
+                const p1 = String(rec.Res1 || '').split('_');
+                const p2 = String(rec.Res2 || '').split('_');
+                if (p1.length >= 2 && p2.length >= 2) {
+                    const kA = `${p1[0]}_${p1[1]}__${p2[0]}_${p2[1]}`;
+                    const kB = `${p2[0]}_${p2[1]}__${p1[0]}_${p1[1]}`;
+                    recByKey.set(kA, rec);
+                    recByKey.set(kB, rec);
+                }
+            });
+
+            let enrichedAny = false;
+            discoveredPairs.forEach(pair => {
+                const k = `${pair.chain1}_${pair.resi1}__${pair.chain2}_${pair.resi2}`;
+                const rec = recByKey.get(k);
+                if (!rec) return;
+                pair.propkaPka1 = typeof rec.pKa_Res1 === 'number' ? rec.pKa_Res1 : null;
+                pair.propkaPka2 = typeof rec.pKa_Res2 === 'number' ? rec.pKa_Res2 : null;
+                pair.propkaMax = typeof rec.pKa_Max === 'number' ? rec.pKa_Max : null;
+                pair.propkaEngine = rec.pKa_Engine || 'PROPKA';
+                pair.crystalPh = typeof rec.Crystal_pH === 'number' ? rec.Crystal_pH : null;
+                pair.rsccMin = typeof rec.RSCC_Min === 'number' ? rec.RSCC_Min : null;
+                pair.maxBz = typeof rec.Max_Bz === 'number' ? rec.Max_Bz : null;
+                pair.protPct74 = typeof rec.Protonated_Pct_pH74 === 'number' ? rec.Protonated_Pct_pH74 : null;
+                if (rec.Protonation_Verdict) pair.verdict = rec.Protonation_Verdict;
+                if (rec.pKa_Assessment) pair.pkaShift = rec.pKa_Assessment;
+                enrichedAny = true;
+            });
+
+            if (enrichedAny) {
+                renderPairCards();
+                if (activePairIdx >= 0 && discoveredPairs[activePairIdx]) {
+                    const active = discoveredPairs[activePairIdx];
+                    safeSet('studio-overlay-verdict', active.verdict);
+                    if (active.propkaMax !== null) {
+                        const phNote = active.crystalPh !== null ? ` · Crystal pH ${active.crystalPh}` : '';
+                        safeSet('studio-overlay-pka', `PROPKA max ${active.propkaMax.toFixed(2)}${phNote}`);
+                    }
+                }
+            }
+        } catch (e) {
+            // Static GitHub Pages or offline mode: gracefully retain local JS scanner telemetry
+        }
+    }
+
     function renderPairCards() {
         const container = document.getElementById('studio-pair-list');
         const countBadge = document.getElementById('studio-pairs-count');
@@ -3523,14 +3583,20 @@
             const dwText = pair.closestWater ? pair.closestWater.toFixed(2) + 'Å' : (lang === 'az' ? '>10Å (Qapalı)' : (lang === 'he' ? '>10Å (קבור)' : '>10Å (Buried)'));
             const metalTag = pair.isMetalBridge ? `<span style="font-size:9px;background:rgba(239,68,68,0.2);color:#f87171;padding:1px 4px;border-radius:3px;font-weight:600;margin-right:4px;">METAL</span>` : '';
             const occTag = `<span style="font-size:9px;color:${pair.occupancy === 1.0 ? 'var(--accent-emerald, #10b981)' : '#ef4444'};font-family:var(--font-mono);margin-left:4px;">q=${pair.occupancy !== undefined ? pair.occupancy.toFixed(2) : '1.00'}</span>`;
+            const pkaBadge = (typeof pair.propkaMax === 'number')
+                ? `<span style="font-size:9px;background:rgba(56,189,248,0.16);color:#38bdf8;padding:1px 4px;border-radius:3px;font-family:var(--font-mono);margin-left:4px;">pKa ${pair.propkaMax.toFixed(1)}</span>`
+                : '';
+            const rsccBadge = (typeof pair.rsccMin === 'number')
+                ? `<span style="font-size:9px;color:${pair.rsccMin >= 0.70 ? '#10b981' : '#ef4444'};font-family:var(--font-mono);margin-left:4px;">CC ${pair.rsccMin.toFixed(2)}</span>`
+                : '';
             card.innerHTML = `
                 <div class="pair-card-top">
                     <span>${metalTag}${pair.resn1} ${pair.chain1}:${pair.resi1} &middot;&middot;&middot; ${pair.resn2} ${pair.chain2}:${pair.resi2}</span>
-                    <span style="color: ${pair.isUltraShort ? '#ef4444' : '#f59e0b'}; font-family: var(--font-mono);">${pair.distance.toFixed(3)}Å${occTag}</span>
+                    <span style="color: ${pair.isUltraShort ? '#ef4444' : '#f59e0b'}; font-family: var(--font-mono);">${pair.distance.toFixed(3)}Å${occTag}${pkaBadge}${rsccBadge}</span>
                 </div>
                 <div class="pair-card-bottom">
                     <span>${locVerdict}</span>
-                    <span>dw: ${dwText}</span>
+                    <span>${typeof pair.crystalPh === 'number' ? 'pH ' + pair.crystalPh.toFixed(1) + ' · ' : ''}dw: ${dwText}</span>
                 </div>
             `;
             card.addEventListener('click', (e) => {

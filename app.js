@@ -1601,7 +1601,7 @@ function scanCarboxylPairsInModel(viewer) {
                     }
 
                     const isUltraShort = minDistance <= 2.55;
-                    const isBuried = closestWater >= 3.2;
+                    const isBuried = closestWater > 3.00;
 
                     let verdict = 'Possibly Protonated – Solvent Exposed';
                     let pkaShift = '+1.2 (Minor)';
