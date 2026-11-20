@@ -125,23 +125,43 @@
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
-        // Automatic Cache & Service Worker Invalidation Engine
+        // Automatic Cache & Service Worker Invalidation Engine (await cleanup before cache-busted reload)
         (function() {
-            const TARGET_BUILD = 'v0.5.5';
+            const TARGET_BUILD = 'v0.5.6';
             const curBuild = localStorage.getItem('carbox_build_ver');
-            if (curBuild !== TARGET_BUILD) {
-                localStorage.setItem('carbox_build_ver', TARGET_BUILD);
+            const isNgrokHost = window.location.hostname.includes('ngrok');
+            if (curBuild !== TARGET_BUILD || isNgrokHost) {
+                const tasks = [];
                 if ('caches' in window) {
-                    caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))).catch(() => {});
+                    tasks.push(
+                        caches.keys()
+                            .then(keys => Promise.all(keys.map(k => caches.delete(k))))
+                            .catch(() => {})
+                    );
                 }
                 if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistrations().then(regs => {
-                        for (let r of regs) r.unregister();
-                    }).catch(() => {});
+                    tasks.push(
+                        navigator.serviceWorker.getRegistrations()
+                            .then(regs => Promise.all(regs.map(r => r.unregister())))
+                            .catch(() => {})
+                    );
                 }
-                if (curBuild) {
-                    window.location.reload(true);
+                if (curBuild !== TARGET_BUILD) {
+                    Promise.allSettled(tasks).then(() => {
+                        localStorage.setItem('carbox_build_ver', TARGET_BUILD);
+                        if (curBuild) {
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('_v', TARGET_BUILD);
+                            window.location.replace(url.toString());
+                        }
+                    });
                 }
+            } else if (window.location.search.includes('_v=')) {
+                try {
+                    const cleanUrl = new URL(window.location.href);
+                    cleanUrl.searchParams.delete('_v');
+                    window.history.replaceState({}, '', cleanUrl.toString());
+                } catch (_) {}
             }
         })();
 
@@ -170,8 +190,8 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=0.5.5">
-    <script defer src="pwa-sync.js?v=0.5.5"></script>
+    <link rel="stylesheet" href="styles.css?v=0.5.6">
+    <script defer src="pwa-sync.js?v=0.5.6"></script>
 </head>
 <body>
     <div id="toast-container" class="toast-container"></div>

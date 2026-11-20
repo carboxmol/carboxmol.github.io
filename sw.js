@@ -1,8 +1,8 @@
 // Carbox & CarboxMol PWA Universal Service Worker
-// Version: v0.5.5 · High-Resilience Dynamic Updates & Auto-Sync Engine
+// Version: v0.5.6 · High-Resilience Dynamic Updates & Auto-Sync Engine
 'use strict';
 
-const PWA_VERSION = 'v0.5.5';
+const PWA_VERSION = 'v0.5.6';
 const CACHE_NAME = 'carboxmol-pwa-' + PWA_VERSION;
 const RUNTIME_CACHE = 'carboxmol-runtime-' + PWA_VERSION;
 
@@ -107,15 +107,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Never cache live development tunnels (ngrok) or localhost dev servers
+  if (self.location.hostname.includes('ngrok') || self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1') {
+    return;
+  }
+
   // 1. Live dynamic backend endpoints (do not cache mutable API by default)
   if (url.pathname.startsWith('/api/')) {
     return;
   }
 
-  // 2. Navigation Requests (HTML Pages): Network-First with fast fallback
+  // 2. Navigation Requests (HTML Pages): Network-First with cache revalidation & offline fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-cache' })
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const clone = networkResponse.clone();
@@ -148,11 +153,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 3. Static Assets (CSS, JS, Fonts, Images, Icons, Libs): Network-First for core scripts, Stale-While-Revalidate for media
+  // 3. Static Assets (CSS, JS): Network-First with cache revalidation so new releases apply immediately
   const isScriptOrStyle = url.pathname.endsWith('.js') || url.pathname.endsWith('.css');
   if (isScriptOrStyle) {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-cache' })
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const clone = networkResponse.clone();

@@ -1856,8 +1856,11 @@
             console.log('[CarboxMol PWA] App successfully installed.');
         });
 
-        // Register service worker if supported
-        if ('serviceWorker' in navigator) {
+        // Register service worker if supported (skip on live ngrok/localhost dev servers to avoid stale cache)
+        const isDevHost = window.location.hostname.includes('ngrok') ||
+                          window.location.hostname === 'localhost' ||
+                          window.location.hostname === '127.0.0.1';
+        if ('serviceWorker' in navigator && !isDevHost) {
             navigator.serviceWorker.register('sw.js').then((reg) => {
                 console.log('[CarboxMol SW] Service Worker registered:', reg.scope);
             }).catch((err) => {
@@ -3501,13 +3504,49 @@
         }
     }
 
+    function extractCrystalPhFromRawText(rawText) {
+        if (!rawText || typeof rawText !== 'string') return null;
+        try {
+            // mmCIF: _exptl_crystal_grow.pH 6.5
+            const cifMatch = rawText.match(/_exptl_crystal_grow\.pH\s+([0-9]+(?:\.[0-9]+)?)/i);
+            if (cifMatch) {
+                const ph = parseFloat(cifMatch[1]);
+                if (!isNaN(ph) && ph >= 0 && ph <= 14) return ph;
+            }
+            // PDB: REMARK 280 ... PH 6.5 or REMARK 200 ... PH : 6.5
+            const pdbMatch = rawText.match(/REMARK\s+(?:200|280)[^\n]*\bPH\s*[:=]?\s*([0-9]+(?:\.[0-9]+)?)/i);
+            if (pdbMatch) {
+                const ph = parseFloat(pdbMatch[1]);
+                if (!isNaN(ph) && ph >= 0 && ph <= 14) return ph;
+            }
+        } catch (_) {}
+        return null;
+    }
+
     async function syncPairsWithCarboxBackend(pdbId) {
         const clean = String(pdbId || currentPdbId || '').trim().toUpperCase();
         if (!clean || clean.length !== 4 || !/^[A-Z0-9]{4}$/.test(clean)) return;
         if (!discoveredPairs || !discoveredPairs.length) return;
+
+        // Immediately enrich Crystal pH client-side from PDB/mmCIF header (works on GitHub Pages & offline)
+        const parsedPh = extractCrystalPhFromRawText(currentModelData);
+        if (parsedPh !== null) {
+            discoveredPairs.forEach(pair => {
+                if (typeof pair.crystalPh !== 'number') pair.crystalPh = parsedPh;
+            });
+            renderPairCards();
+        }
+
+        // Skip /api/analyze on purely static GitHub Pages deployments (no Python backend)
+        const isStaticHost = typeof window !== 'undefined' && (
+            window.location.hostname.includes('github.io') ||
+            window.location.protocol === 'file:'
+        );
+        if (isStaticHost) return;
+
         try {
             const ctrl = new AbortController();
-            const timer = setTimeout(() => ctrl.abort(), 6000);
+            const timer = setTimeout(() => ctrl.abort(), 15000);
             const resp = await fetch(`/api/analyze/${encodeURIComponent(clean)}?max_distance=3.00`, { signal: ctrl.signal });
             clearTimeout(timer);
             if (!resp.ok) return;
@@ -3535,7 +3574,7 @@
                 pair.propkaPka2 = typeof rec.pKa_Res2 === 'number' ? rec.pKa_Res2 : null;
                 pair.propkaMax = typeof rec.pKa_Max === 'number' ? rec.pKa_Max : null;
                 pair.propkaEngine = rec.pKa_Engine || 'PROPKA';
-                pair.crystalPh = typeof rec.Crystal_pH === 'number' ? rec.Crystal_pH : null;
+                pair.crystalPh = typeof rec.Crystal_pH === 'number' ? rec.Crystal_pH : pair.crystalPh;
                 pair.rsccMin = typeof rec.RSCC_Min === 'number' ? rec.RSCC_Min : null;
                 pair.maxBz = typeof rec.Max_Bz === 'number' ? rec.Max_Bz : null;
                 pair.protPct74 = typeof rec.Protonated_Pct_pH74 === 'number' ? rec.Protonated_Pct_pH74 : null;
@@ -3556,7 +3595,7 @@
                 }
             }
         } catch (e) {
-            // Static GitHub Pages or offline mode: gracefully retain local JS scanner telemetry
+            // Offline or backend unavailable: gracefully retain local JS scanner telemetry
         }
     }
 

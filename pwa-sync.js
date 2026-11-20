@@ -8,7 +8,7 @@
 (function () {
     'use strict';
 
-    const PWA_VERSION = 'v0.5.5';
+    const PWA_VERSION = 'v0.5.6';
 
     // ─── Trilingual Translations for PWA Engine Parity ───────────────────────────
     const PWA_I18N = {
@@ -83,8 +83,16 @@
             }
         });
 
-        // Register Service Worker silently
-        if ('serviceWorker' in navigator) {
+        // Register Service Worker silently (disabled on ngrok/localhost dev servers so updates show immediately)
+        const isDevTunnel = window.location.hostname.includes('ngrok') ||
+                            window.location.hostname === 'localhost' ||
+                            window.location.hostname === '127.0.0.1';
+        if ('serviceWorker' in navigator && isDevTunnel) {
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                regs.forEach(r => r.unregister().catch(() => {}));
+            }).catch(() => {});
+        } else if ('serviceWorker' in navigator) {
+            let swReloadTriggered = false;
             navigator.serviceWorker.register('sw.js', { scope: './' }).then((reg) => {
                 swRegistration = reg;
                 console.log('[Carbox PWA] Service Worker registered silently:', reg.scope);
@@ -116,11 +124,17 @@
                 console.warn('[Carbox PWA] Registration error:', err);
             });
 
-            // Listen for messages from Service Worker
+            // Listen for messages from Service Worker and reload once when a newer release activates
             navigator.serviceWorker.addEventListener('message', (event) => {
                 if (!event.data) return;
-                if (event.data.type === 'PWA_ACTIVATED' || event.data.type === 'PWA_SYNC_COMPLETE') {
+                if (event.data.type === 'PWA_ACTIVATED') {
                     console.log('[Carbox PWA] Service Worker activated version:', event.data.version);
+                    if (event.data.version && event.data.version !== PWA_VERSION && !swReloadTriggered) {
+                        swReloadTriggered = true;
+                        window.location.reload();
+                    }
+                } else if (event.data.type === 'PWA_SYNC_COMPLETE') {
+                    console.log('[Carbox PWA] Sync complete:', event.data.version);
                 }
             });
         }
