@@ -127,7 +127,7 @@
     <script>
         // Automatic Cache & Service Worker Invalidation Engine (await cleanup before cache-busted reload)
         (function() {
-            const TARGET_BUILD = 'v0.5.6';
+            const TARGET_BUILD = 'v0.5.7';
             const curBuild = localStorage.getItem('carbox_build_ver');
             const isNgrokHost = window.location.hostname.includes('ngrok');
             if (curBuild !== TARGET_BUILD || isNgrokHost) {
@@ -190,8 +190,8 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="styles.css?v=0.5.6">
-    <script defer src="pwa-sync.js?v=0.5.6"></script>
+    <link rel="stylesheet" href="styles.css?v=0.5.7">
+    <script defer src="pwa-sync.js?v=0.5.7"></script>
 </head>
 <body>
     <div id="toast-container" class="toast-container"></div>

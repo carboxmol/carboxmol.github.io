@@ -7,7 +7,7 @@
     <script>
         // Automatic Cache & Service Worker Invalidation Engine (await cleanup before cache-busted reload)
         (function() {
-            const TARGET_BUILD = 'v0.5.6';
+            const TARGET_BUILD = 'v0.5.7';
             const curBuild = localStorage.getItem('carbox_build_ver');
             const isNgrokHost = window.location.hostname.includes('ngrok');
             if (curBuild !== TARGET_BUILD || isNgrokHost) {
@@ -196,8 +196,8 @@
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="studio.css?v=0.5.6">
-    <script defer src="pwa-sync.js?v=0.5.6"></script>
+    <link rel="stylesheet" href="studio.css?v=0.5.7">
+    <script defer src="pwa-sync.js?v=0.5.7"></script>
 
     <!-- 3Dmol.js Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.4/3Dmol-min.js"></script>
@@ -2144,8 +2144,8 @@ center_camera A:27 A:58 --zoom=14"
     </div>
 
     <!-- Studio Core Logic Script -->
-    <script src="structures.js?v=0.5.6"></script>
-    <script src="studio.js?v=0.5.6"></script>
+    <script src="structures.js?v=0.5.7"></script>
+    <script src="studio.js?v=0.5.7"></script>
 
 
 

@@ -8,7 +8,7 @@
 (function () {
     'use strict';
 
-    const PWA_VERSION = 'v0.5.6';
+    const PWA_VERSION = 'v0.5.7';
 
     // ─── Trilingual Translations for PWA Engine Parity ───────────────────────────
     const PWA_I18N = {
