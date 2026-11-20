@@ -7,7 +7,7 @@
     <script>
         // Automatic Cache & Service Worker Invalidation Engine (await cleanup before cache-busted reload)
         (function() {
-            const TARGET_BUILD = 'v0.5.7';
+            const TARGET_BUILD = 'v0.5.8';
             const curBuild = localStorage.getItem('carbox_build_ver');
             const isNgrokHost = window.location.hostname.includes('ngrok');
             if (curBuild !== TARGET_BUILD || isNgrokHost) {
@@ -196,8 +196,8 @@
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="studio.css?v=0.5.7">
-    <script defer src="pwa-sync.js?v=0.5.7"></script>
+    <link rel="stylesheet" href="studio.css?v=0.5.8">
+    <script defer src="pwa-sync.js?v=0.5.8"></script>
 
     <!-- 3Dmol.js Engine -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.0.4/3Dmol-min.js"></script>
@@ -329,7 +329,7 @@
                 <button type="button" class="btn-studio icon-only" id="btn-studio-ref-structures" title="Benchmark Reference Structures Gallery (Benchmarks)" aria-label="Benchmarks">
                     <i class="fa-solid fa-gem" style="color: #a855f7;"></i>
                 </button>
-                <button type="button" class="btn-studio icon-only" id="btn-studio-macro-console" title="CarboxMol .CXL Live Script Console (Console - M)" aria-label="Console">
+                <button type="button" class="btn-studio icon-only" id="btn-studio-macro-console" title="Carbox CLI &amp; .CXL Bottom Terminal (` or M)" aria-label="Carbox CLI and CXL Terminal">
                     <i class="fa-solid fa-terminal" style="color: #10b981;"></i>
                 </button>
                 <button type="button" class="btn-studio icon-only" id="btn-studio-ligands" title="Ligand &amp; Binding Pocket 3D Interactions Engine (Ligand 3D)" aria-label="Ligand 3D">
@@ -1419,6 +1419,164 @@
         <div class="studio-drawer-backdrop" id="studio-drawer-backdrop"></div>
     </main>
 
+    <!-- ─── Bottom-Docked Carbox CLI & .CXL Scientific Terminal Drawer ───────── -->
+    <section id="carbox-bottom-terminal" class="carbox-bottom-terminal collapsed" aria-label="Carbox CLI &amp; CXL Command Terminal">
+        <!-- Vertical Resize Handle (visible when expanded) -->
+        <div class="cxl-dock-resizer" id="cxl-dock-resizer" role="separator" aria-orientation="horizontal" aria-label="Resize Terminal Height" title="Drag to resize terminal height"></div>
+
+        <!-- Persistent Bottom Dock Header / Status Bar (always visible neatly at bottom) -->
+        <div class="cxl-dock-header" id="cxl-dock-header">
+            <div class="cxl-dock-header-left">
+                <button type="button" class="cxl-dock-toggle-btn" id="btn-cxl-dock-toggle" title="Toggle Bottom Carbox / CXL Terminal (` or M)" aria-expanded="false">
+                    <i class="fa-solid fa-chevron-up cxl-dock-chevron" id="cxl-dock-chevron"></i>
+                    <i class="fa-solid fa-terminal" style="color: #10b981;"></i>
+                    <span class="cxl-dock-brand">Carbox · CXL Terminal</span>
+                </button>
+                <span class="cxl-dock-status-pill" id="carbox-cli-status-pill" title="External Carbox CLI Integration Bridge Status">
+                    <span class="cxl-status-dot" id="carbox-cli-status-dot"></span>
+                    <span id="carbox-cli-status-text">Checking Carbox CLI…</span>
+                </span>
+            </div>
+
+            <!-- Accessible Single-Row Tablist (modern-web-guidance tabs pattern) -->
+            <div class="cxl-dock-tablist" id="cxl-dock-tablist" focusgroup="tablist nomemory" role="tablist" aria-label="Carbox Terminal Views">
+                <button type="button" role="tab" class="cxl-dock-tab" id="tab-term-shell" data-term-tab="shell" aria-selected="true" focusgroupstart>
+                    <i class="fa-solid fa-chevron-right"></i>
+                    <span>Carbox CLI &amp; CXL</span>
+                </button>
+                <button type="button" role="tab" class="cxl-dock-tab" id="tab-term-cxl" data-term-tab="cxl" aria-selected="false">
+                    <i class="fa-solid fa-file-code"></i>
+                    <span>.CXL Macro Editor</span>
+                </button>
+                <button type="button" role="tab" class="cxl-dock-tab" id="tab-term-refs" data-term-tab="refs" aria-selected="false">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>References &amp; Tools</span>
+                    <span class="cxl-tab-badge" id="cxl-refs-count-badge">18</span>
+                </button>
+            </div>
+
+            <div class="cxl-dock-header-right">
+                <span class="cxl-dock-hotkey-hint" title="Shortcut: Backtick (`) or M"><code>`</code> / <code>M</code></span>
+                <button type="button" class="cxl-dock-icon-btn" id="btn-term-copy-output" title="Copy Terminal Output">
+                    <i class="fa-regular fa-copy"></i>
+                </button>
+                <button type="button" class="cxl-dock-icon-btn" id="btn-term-clear-output" title="Clear Terminal (clear)">
+                    <i class="fa-solid fa-eraser"></i>
+                </button>
+                <button type="button" class="cxl-dock-icon-btn" id="btn-cxl-dock-maximize" title="Expand / Restore Terminal Height">
+                    <i class="fa-solid fa-up-right-and-down-left-from-center" id="icon-cxl-dock-max"></i>
+                </button>
+                <button type="button" class="cxl-dock-icon-btn" id="btn-cxl-dock-close" title="Collapse Terminal">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dock Body (3 Accessible Tabpanels; padding lives on inner wrapper for hidden="until-found" parity) -->
+        <div class="cxl-dock-body" id="cxl-dock-body">
+            <!-- Panel 1: Interactive Carbox CLI + CXL Live Command Shell -->
+            <div role="tabpanel" id="term-panel-shell" aria-labelledby="tab-term-shell" class="cxl-dock-panel">
+                <div class="cxl-panel-inner cxl-shell-inner">
+                    <!-- Quick Scientific Command Chips -->
+                    <div class="cxl-quick-cmds" id="carbox-term-quick-cmds">
+                        <span class="cxl-quick-label">Carbox CLI:</span>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox analyze {PDB}" title="Run official Carbox Murshudov 3.00Å + PROPKA 3.5 + RSCC analysis"><code>carbox analyze</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox validate {PDB}" title="Crystallographic B-factor &amp; geometric audit"><code>carbox validate</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox density {PDB}" title="2Fo-Fc &amp; Fo-Fc electron density sampling"><code>carbox density</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox ligands {PDB}" title="Screen HETATM ligands contacting Asp/Glu"><code>carbox ligands</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox scan {PDB}" title="Scan structure for anomalous carboxyl contacts"><code>carbox scan</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox macro {PDB}" title="Generate native CarboxMol .cxl macro script"><code>carbox macro</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox pdblist -r 1.2 -l 15" title="List ultra-high-resolution PDB entries"><code>carbox pdblist</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox aisearch &quot;low barrier hydrogen bond carboxyl&quot; --limit 5" title="Search Europe PMC / PubMed literature"><code>carbox aisearch</code></button>
+                        <button type="button" class="cxl-cmd-chip" data-cmd="carbox --help" title="List all installed Carbox CLI subcommands"><code>carbox --help</code></button>
+                        <button type="button" class="cxl-cmd-chip cxl-cmd-chip-ref" data-cmd="references" title="Print all peer-reviewed scientific tool references"><code>references</code></button>
+                    </div>
+
+                    <!-- Scrollable Monospace Output Stream -->
+                    <div class="cxl-term-output" id="carbox-term-output" role="log" aria-live="polite" aria-label="Carbox Terminal Output"></div>
+
+                    <!-- Command Input Line -->
+                    <div class="cxl-term-input-row">
+                        <span class="cxl-term-prompt" id="carbox-term-prompt">carbox@carboxmol:~$</span>
+                        <input type="text" id="carbox-term-input" class="cxl-term-input"
+                               placeholder="Type any Carbox CLI command (e.g. carbox analyze 3X2M, carbox density 1OEW, carbox pdblist -l 10) or CXL command (load 1CBS, references, help)..."
+                               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                               aria-label="Carbox and CXL terminal command input">
+                        <button type="button" class="cxl-term-run-btn" id="btn-carbox-term-run" title="Execute Command (Enter)">
+                            <i class="fa-solid fa-play"></i> <span>Run</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Multi-Line .CXL Batch Macro Editor -->
+            <div role="tabpanel" id="term-panel-cxl" aria-labelledby="tab-term-cxl" class="cxl-dock-panel" hidden="until-found">
+                <div class="cxl-panel-inner cxl-macro-inner">
+                    <div class="cxl-macro-toolbar">
+                        <div class="cxl-macro-toolbar-left">
+                            <button type="button" class="chip-btn primary" id="btn-cxl-run" style="background: linear-gradient(135deg, #10b981, #06b6d4); color: #fff; font-weight: 700; border: none; padding: 5px 12px; font-size: 11px;">
+                                <i class="fa-solid fa-play"></i> <span>Run Macro</span>
+                            </button>
+                            <button type="button" class="chip-btn" id="btn-cxl-load-sample" style="font-size: 11px;">
+                                <i class="fa-solid fa-file-code"></i> <span>Load Sample</span>
+                            </button>
+                            <button type="button" class="chip-btn" id="btn-cxl-clear" style="font-size: 11px;">
+                                <i class="fa-solid fa-trash-can"></i> <span>Clear</span>
+                            </button>
+                            <div id="cxl-dropzone" class="cxl-mini-dropzone" title="Click or drag-and-drop a .cxl or .py script">
+                                <i class="fa-solid fa-file-arrow-up"></i> <span>Open .CXL File</span>
+                                <input type="file" id="input-cxl-file" accept=".cxl,.pml,.py,.txt" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="cxl-macro-toolbar-right">
+                            <span id="cxl-exec-status" style="font-size: 11px; color: #10b981; font-family: var(--font-mono);">Ready</span>
+                            <button type="button" class="chip-btn" id="btn-cxl-export-file" style="font-size: 11px; border-color: #a855f7; color: #c084fc;">
+                                <i class="fa-solid fa-floppy-disk"></i> <span>Save .CXL</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="cxl-macro-split">
+                        <textarea id="cxl-editor-textarea" class="cxl-macro-editor" spellcheck="false" placeholder="# Enter .cxl macro or carbox CLI commands...
+load_structure 3X2M --source=pdbe
+carbox analyze 3X2M
+density_map 2fofc --sigma=1.4 --scope=pocket
+select_pair 0
+model_protonation_state --state=mono"></textarea>
+                        <div class="cxl-macro-log-pane">
+                            <div class="cxl-macro-log-hdr"><i class="fa-solid fa-square-terminal"></i> Macro Execution Log</div>
+                            <div id="cxl-log-output" class="cxl-macro-log-body">[CXL Ready] Supports both native .CXL directives and integrated external `carbox` CLI commands.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 3: Peer-Reviewed Scientific References & Integrated Tools Registry -->
+            <div role="tabpanel" id="term-panel-refs" aria-labelledby="tab-term-refs" class="cxl-dock-panel" hidden="until-found">
+                <div class="cxl-panel-inner cxl-refs-inner">
+                    <div class="cxl-refs-toolbar">
+                        <div class="cxl-refs-filters" id="cxl-refs-filters">
+                            <button type="button" class="cxl-ref-filter active" data-ref-cat="all">All Tools</button>
+                            <button type="button" class="cxl-ref-filter" data-ref-cat="core">Core Platform</button>
+                            <button type="button" class="cxl-ref-filter" data-ref-cat="crystallography">Crystallography &amp; pKa</button>
+                            <button type="button" class="cxl-ref-filter" data-ref-cat="simulation">MD &amp; 3D Graphics</button>
+                            <button type="button" class="cxl-ref-filter" data-ref-cat="databases">Databases &amp; Literature</button>
+                        </div>
+                        <div class="cxl-refs-actions">
+                            <input type="search" id="cxl-refs-search" class="cxl-refs-search" placeholder="Filter tools, authors, DOI..." aria-label="Filter scientific references">
+                            <button type="button" class="chip-btn" id="btn-refs-copy-all-bib" style="font-size: 11px; border-color: rgba(56,189,248,0.45); color: #38bdf8;">
+                                <i class="fa-regular fa-copy"></i> <span>Copy All BibTeX</span>
+                            </button>
+                            <button type="button" class="chip-btn" id="btn-refs-download-bib" style="font-size: 11px; border-color: rgba(16,185,129,0.45); color: #10b981;">
+                                <i class="fa-solid fa-download"></i> <span>Export .bib</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="cxl-refs-grid" id="cxl-refs-grid"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- ─── Enterprise "Go to Atom" Navigator Modal Dialog ───────────────────── -->
     <div id="modal-goto-atom" class="studio-modal-overlay" style="display: none;">
         <div class="modal-card goto-atom-card">
@@ -1707,72 +1865,6 @@
                 </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- ─── .CXL Macro Studio & Script Runner Modal ────────────────────────────── -->
-    <div id="modal-cxl-studio" class="studio-modal-overlay" style="display: none;">
-        <div class="modal-card cxl-modal-card" style="max-width: 820px; width: 92vw; max-height: 88vh; display: flex; flex-direction: column;">
-            <div class="modal-header">
-                <div class="modal-title-wrap">
-                    <i class="fa-solid fa-terminal" style="color: #a855f7;"></i>
-                    <span class="modal-title" data-i18n="modal_cxl_title">CarboxMol .CXL Macro Studio</span>
-                    <span class="modal-hotkey">Live Script Console &amp; Player</span>
-                </div>
-                <button class="modal-close-btn" id="btn-close-cxl-modal"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <div class="modal-body" style="padding: 16px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1;">
-                <!-- Drag & Drop Zone / Script Selector -->
-                <div id="cxl-dropzone" style="border: 2px dashed rgba(168,85,247,0.4); border-radius: 8px; padding: 14px; text-align: center; background: rgba(168,85,247,0.06); cursor: pointer; transition: all 0.2s;">
-                    <i class="fa-solid fa-file-arrow-up" style="color: #c084fc; font-size: 20px; margin-bottom: 4px;"></i>
-                    <div style="font-size: 12px; color: #fff; font-weight: 600;">Drag &amp; Drop a <code style="color: #c084fc;">.cxl</code> macro script here, or click to browse</div>
-                    <div style="font-size: 10px; color: var(--text-muted);">Supports native CarboxMol (.cxl) and Python (.py) session scripts</div>
-                    <input type="file" id="input-cxl-file" accept=".cxl,.pml,.py,.txt" style="display: none;">
-                </div>
-
-                <!-- Action Toolbar -->
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <div style="display: flex; gap: 6px;">
-                        <button class="chip-btn primary" id="btn-cxl-run" style="background: linear-gradient(135deg, #10b981, #06b6d4); color: #fff; font-weight: 700; border: none; padding: 6px 14px;">
-                            <i class="fa-solid fa-play"></i> <span>Run Macro (▶)</span>
-                        </button>
-                        <button class="chip-btn" id="btn-cxl-load-sample" style="font-size: 11px;">
-                            <i class="fa-solid fa-file-code"></i> <span>Load Sample</span>
-                        </button>
-                        <button class="chip-btn" id="btn-cxl-clear" style="font-size: 11px;">
-                            <i class="fa-solid fa-trash-can"></i> <span>Clear</span>
-                        </button>
-                    </div>
-                    <div style="display: flex; gap: 6px;">
-                        <button class="chip-btn" id="btn-cxl-export-file" style="font-size: 11px; border-color: #a855f7; color: #c084fc;">
-                            <i class="fa-solid fa-floppy-disk"></i> <span>Save .CXL File</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Monospace Macro Editor -->
-                <div style="position: relative; flex: 1; min-height: 220px; display: flex; flex-direction: column;">
-                    <textarea id="cxl-editor-textarea" spellcheck="false" placeholder="# Enter .cxl macro directives here...
-load_structure 4LGN --source=pdbe
-density_map 2fofc --sigma=1.0 --scope=pocket
-density_map fofc_positive --sigma=3.0 --scope=pocket
-select_pair site_1 --res1=A:27:OD2 --res2=A:58:OD1
-model_protonation_state --state=lbhb
-measure_distance dist_1 A:27:OD2 A:58:OD1 --target=2.410
-center_camera A:27 A:58 --zoom=14"
-                        style="width: 100%; flex: 1; min-height: 200px; max-height: 320px; background: rgba(10, 15, 30, 0.95); border: 1px solid rgba(168,85,247,0.3); border-radius: 6px; padding: 12px; font-family: var(--font-mono, monospace); font-size: 11.5px; color: #e2e8f0; line-height: 1.5; resize: vertical; outline: none;"></textarea>
-                </div>
-
-                <!-- Execution Output Console Log -->
-                <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; font-family: var(--font-mono, monospace); font-size: 10.5px; color: #94a3b8; max-height: 120px; overflow-y: auto;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 2px;">
-                        <span style="color: var(--accent-cyan); font-weight: 600;"><i class="fa-solid fa-square-terminal"></i> Console Log</span>
-                        <span id="cxl-exec-status" style="color: #10b981;">Ready</span>
-                    </div>
-                    <div id="cxl-log-output" style="white-space: pre-wrap; line-height: 1.4;">[Console Ready] Load or paste a .cxl macro script and click 'Run Macro' to execute in the active 3D viewport.</div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -2144,8 +2236,8 @@ center_camera A:27 A:58 --zoom=14"
     </div>
 
     <!-- Studio Core Logic Script -->
-    <script src="structures.js?v=0.5.7"></script>
-    <script src="studio.js?v=0.5.7"></script>
+    <script src="structures.js?v=0.5.8"></script>
+    <script src="studio.js?v=0.5.8"></script>
 
 
 

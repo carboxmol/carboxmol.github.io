@@ -2925,6 +2925,7 @@
 
         currentPdbId = cleanPdb;
         safeSet('studio-target-pdb', cleanPdb);
+        safeSet('carbox-term-prompt', `carbox@carboxmol [${cleanPdb}]:~$`);
 
         const pdbInput = document.getElementById('studio-pdb-input');
         if (pdbInput) pdbInput.value = cleanPdb;
@@ -13044,10 +13045,463 @@
             if (helpOverlay) helpOverlay.style.display = 'none';
         }
 
-        // ─── .CXL Macro Studio Modal Controller ───────────────────────────────
-        const modalCxl = document.getElementById('modal-cxl-studio');
+        // ─── Peer-Reviewed Scientific References & Integrated Tools Registry ──
+        const CARBOXMOL_SCIENTIFIC_REFERENCES = [
+            {
+                id: 'carbox_platform',
+                name: 'Carbox & CarboxMol Platform',
+                category: 'core',
+                catLabel: 'Core Platform',
+                role: 'Anomalous carboxyl protonation, LBHB detection, CXL scripting & 3D crystallographic workbench',
+                authors: 'Hajizadeh, S. M. & Murshudov, G. N.',
+                year: 2026,
+                title: 'Carbox & CarboxMol: Macromolecular Crystallographic Workbench for Anomalous Carboxyl Protonation States, Low-Barrier Hydrogen Bonds, and Microenvironment Dielectric Shielding',
+                journal: 'Institute of Molecular Biology (Baku) & MRC Laboratory of Molecular Biology (Cambridge)',
+                doi: '',
+                url: 'https://carboxmol.github.io/',
+                bibtex: `@software{hajizadeh2026carboxmol,
+  author       = {Hajizadeh, Suleiman M. and Murshudov, Garib N.},
+  title        = {Carbox and CarboxMol: Macromolecular Crystallographic Workbench for Anomalous Carboxyl Protonation States and Low-Barrier Hydrogen Bonds},
+  year         = {2026},
+  institution  = {Institute of Molecular Biology (Baku) and MRC Laboratory of Molecular Biology (Cambridge)},
+  url          = {https://carboxmol.github.io/}
+}`
+            },
+            {
+                id: 'gemmi',
+                name: 'GEMMI',
+                category: 'crystallography',
+                catLabel: 'Crystallography',
+                role: 'mmCIF/PDB structural parsing, crystallographic symmetry, CCP4 map interpolation & RSCC computation',
+                authors: 'Wojdyr, M.',
+                year: 2022,
+                title: 'GEMMI: A library for structural biology',
+                journal: 'Journal of Open Source Software, 7(73), 4200',
+                doi: '10.21105/joss.04200',
+                url: 'https://doi.org/10.21105/joss.04200',
+                bibtex: `@article{wojdyr2022gemmi,
+  author  = {Wojdyr, Marcin},
+  title   = {GEMMI: A library for structural biology},
+  journal = {Journal of Open Source Software},
+  year    = {2022},
+  volume  = {7},
+  number  = {73},
+  pages   = {4200},
+  doi     = {10.21105/joss.04200}
+}`
+            },
+            {
+                id: 'propka3',
+                name: 'PROPKA 3.5',
+                category: 'crystallography',
+                catLabel: 'pKa Prediction',
+                role: 'Empirical protein pKa shift estimation, Born desolvation & buried carboxyl protonation scoring',
+                authors: 'Olsson, M. H. M., Søndergaard, C. R., Rostkowski, M., & Jensen, J. H.',
+                year: 2011,
+                title: 'PROPKA3: Consistent Treatment of Internal and Surface Residues in Empirical pKa Predictions',
+                journal: 'Journal of Chemical Theory and Computation, 7(2), 525–537',
+                doi: '10.1021/ct100578z',
+                url: 'https://doi.org/10.1021/ct100578z',
+                bibtex: `@article{olsson2011propka3,
+  author  = {Olsson, Mats H. M. and S{\\o}ndergaard, Chresten R. and Rostkowski, Micha{\\l} and Jensen, Jan H.},
+  title   = {PROPKA3: Consistent Treatment of Internal and Surface Residues in Empirical pKa Predictions},
+  journal = {Journal of Chemical Theory and Computation},
+  year    = {2011},
+  volume  = {7},
+  number  = {2},
+  pages   = {525--537},
+  doi     = {10.1021/ct100578z}
+}`
+            },
+            {
+                id: 'propka3_ligands',
+                name: 'PROPKA 3 (Ligands & Coupling)',
+                category: 'crystallography',
+                catLabel: 'pKa Coupling',
+                role: 'Coupled Asp/Glu–Asp/Glu electrostatic perturbation and ligand-coupled pKa shifts',
+                authors: 'Søndergaard, C. R., Olsson, M. H. M., Rostkowski, M., & Jensen, J. H.',
+                year: 2011,
+                title: 'Improved Treatment of Ligands and Coupling Effects in Empirical Calculation and Rationalization of pKa Values',
+                journal: 'Journal of Chemical Theory and Computation, 7(7), 2284–2295',
+                doi: '10.1021/ct200133y',
+                url: 'https://doi.org/10.1021/ct200133y',
+                bibtex: `@article{sondergaard2011propka3ligands,
+  author  = {S{\\o}ndergaard, Chresten R. and Olsson, Mats H. M. and Rostkowski, Micha{\\l} and Jensen, Jan H.},
+  title   = {Improved Treatment of Ligands and Coupling Effects in Empirical Calculation and Rationalization of pKa Values},
+  journal = {Journal of Chemical Theory and Computation},
+  year    = {2011},
+  volume  = {7},
+  number  = {7},
+  pages   = {2284--2295},
+  doi     = {10.1021/ct200133y}
+}`
+            },
+            {
+                id: 'refmac5',
+                name: 'REFMAC5',
+                category: 'crystallography',
+                catLabel: 'Refinement',
+                role: 'Maximum-likelihood X-ray crystallographic refinement & external protonated carboxyl distance restraints',
+                authors: 'Murshudov, G. N., Skubák, P., Lebedev, A. A., Pannu, N. S., Steiner, R. A., Nicholls, R. A., Winn, M. D., Long, F., & Vagin, A. A.',
+                year: 2011,
+                title: 'REFMAC5 for the refinement of macromolecular crystal structures',
+                journal: 'Acta Crystallographica Section D, 67(4), 355–367',
+                doi: '10.1107/S0907444911001314',
+                url: 'https://doi.org/10.1107/S0907444911001314',
+                bibtex: `@article{murshudov2011refmac5,
+  author  = {Murshudov, Garib N. and Skub{\\'a}k, Pavol and Lebedev, Andrey A. and Pannu, Navraj S. and Steiner, Roberto A. and Nicholls, Robert A. and Winn, Martyn D. and Long, Fei and Vagin, Alexei A.},
+  title   = {REFMAC5 for the refinement of macromolecular crystal structures},
+  journal = {Acta Crystallographica Section D},
+  year    = {2011},
+  volume  = {67},
+  number  = {4},
+  pages   = {355--367},
+  doi     = {10.1107/S0907444911001314}
+}`
+            },
+            {
+                id: 'servalcat',
+                name: 'Servalcat',
+                category: 'crystallography',
+                catLabel: 'Cryo-EM Refinement',
+                role: 'Cryo-EM single-particle macromolecular refinement and weighted Fo-Fc difference map generation',
+                authors: 'Yamashita, K., Palmer, C. M., Burnley, T., & Murshudov, G. N.',
+                year: 2021,
+                title: 'Cryo-EM single-particle structure refinement and map calculation using Servalcat',
+                journal: 'Acta Crystallographica Section D, 77(10), 1282–1291',
+                doi: '10.1107/S2059798321009475',
+                url: 'https://doi.org/10.1107/S2059798321009475',
+                bibtex: `@article{yamashita2021servalcat,
+  author  = {Yamashita, Keitaro and Palmer, Colin M. and Burnley, Tom and Murshudov, Garib N.},
+  title   = {Cryo-EM single-particle structure refinement and map calculation using Servalcat},
+  journal = {Acta Crystallographica Section D},
+  year    = {2021},
+  volume  = {77},
+  number  = {10},
+  pages   = {1282--1291},
+  doi     = {10.1107/S2059798321009475}
+}`
+            },
+            {
+                id: 'ccp4',
+                name: 'CCP4 Software Suite',
+                category: 'crystallography',
+                catLabel: 'Crystallography',
+                role: 'Integrative macromolecular crystallography suite, MTZ reflection handling & refinement workflows',
+                authors: 'Agirre, J., Atanasova, M., Bagdonas, H., Ballard, C. B., Baslé, A., et al.',
+                year: 2023,
+                title: 'The CCP4 suite: integrative software for macromolecular crystallography',
+                journal: 'Acta Crystallographica Section D, 79(6), 449–461',
+                doi: '10.1107/S2059798323003595',
+                url: 'https://doi.org/10.1107/S2059798323003595',
+                bibtex: `@article{agirre2023ccp4,
+  author  = {Agirre, Jon and Atanasova, Mihaela and Bagdonas, Haroldas and Ballard, Charles B. and Basl{\\'e}, Arnaud and others},
+  title   = {The CCP4 suite: integrative software for macromolecular crystallography},
+  journal = {Acta Crystallographica Section D},
+  year    = {2023},
+  volume  = {79},
+  number  = {6},
+  pages   = {449--461},
+  doi     = {10.1107/S2059798323003595}
+}`
+            },
+            {
+                id: 'mrc2014',
+                name: 'CCP4 / MRC2014 Map Format',
+                category: 'crystallography',
+                catLabel: 'Density Maps',
+                role: 'Binary 3D volumetric header & voxel specification for 2mFo-DFc, mFo-DFc and Cryo-EM maps',
+                authors: 'Cheng, A., Henderson, R., Mastronarde, D., Ludtke, S. J., Schoenmakers, R. H. M., et al.',
+                year: 2015,
+                title: 'MRC2014: Extensions to the MRC format header for electron cryo-microscopy and tomography',
+                journal: 'Journal of Structural Biology, 192(2), 146–150',
+                doi: '10.1016/j.jsb.2015.04.002',
+                url: 'https://doi.org/10.1016/j.jsb.2015.04.002',
+                bibtex: `@article{cheng2015mrc2014,
+  author  = {Cheng, Anchi and Henderson, Richard and Mastronarde, David and Ludtke, Steven J. and Schoenmakers, Remco H. M. and others},
+  title   = {MRC2014: Extensions to the MRC format header for electron cryo-microscopy and tomography},
+  journal = {Journal of Structural Biology},
+  year    = {2015},
+  volume  = {192},
+  number  = {2},
+  pages   = {146--150},
+  doi     = {10.1016/j.jsb.2015.04.002}
+}`
+            },
+            {
+                id: 'molprobity',
+                name: 'MolProbity Validation Standards',
+                category: 'crystallography',
+                catLabel: 'Validation',
+                role: 'All-atom steric clashscore, Ramachandran dihedral & rotamer outlier validation criteria',
+                authors: 'Williams, C. J., Headd, J. J., Moriarty, N. W., Prisant, M. G., Videau, L. L., et al.',
+                year: 2018,
+                title: 'MolProbity: More and better reference data for improved all-atom structure validation',
+                journal: 'Protein Science, 27(1), 293–315',
+                doi: '10.1002/pro.3330',
+                url: 'https://doi.org/10.1002/pro.3330',
+                bibtex: `@article{williams2018molprobity,
+  author  = {Williams, Christopher J. and Headd, Jeffrey J. and Moriarty, Nigel W. and Prisant, Michael G. and Videau, Lizbeth L. and others},
+  title   = {MolProbity: More and better reference data for improved all-atom structure validation},
+  journal = {Protein Science},
+  year    = {2018},
+  volume  = {27},
+  number  = {1},
+  pages   = {293--315},
+  doi     = {10.1002/pro.3330}
+}`
+            },
+            {
+                id: 'tau4_metal',
+                name: 'Metal Coordination Index (τ₄)',
+                category: 'crystallography',
+                catLabel: 'Bioinorganic',
+                role: 'Quantitative tetrahedral vs. square-planar transition metal coordination geometry index',
+                authors: 'Yang, L., Powell, D. R., & Houser, R. P.',
+                year: 2007,
+                title: 'Structural variation in copper(I) complexes with pyridylmethylamide ligands: structural analysis with a new four-coordinate geometry index, τ₄',
+                journal: 'Dalton Transactions, (9), 955–964',
+                doi: '10.1039/B617136B',
+                url: 'https://doi.org/10.1039/B617136B',
+                bibtex: `@article{yang2007tau4,
+  author  = {Yang, Lei and Powell, Douglas R. and Houser, Robert P.},
+  title   = {Structural variation in copper(I) complexes with pyridylmethylamide ligands: structural analysis with a new four-coordinate geometry index, $\\tau_4$},
+  journal = {Dalton Transactions},
+  year    = {2007},
+  number  = {9},
+  pages   = {955--964},
+  doi     = {10.1039/B617136B}
+}`
+            },
+            {
+                id: '3dmol',
+                name: '3Dmol.js WebGL Engine',
+                category: 'simulation',
+                catLabel: '3D WebGL',
+                role: 'Hardware-accelerated browser WebGL macromolecular rendering, carved isosurfaces & atom picking',
+                authors: 'Rego, N., & Koes, D.',
+                year: 2015,
+                title: '3Dmol.js: molecular visualization with WebGL',
+                journal: 'Bioinformatics, 31(8), 1322–1324',
+                doi: '10.1093/bioinformatics/btu829',
+                url: 'https://doi.org/10.1093/bioinformatics/btu829',
+                bibtex: `@article{rego20153dmol,
+  author  = {Rego, Nicholas and Koes, David},
+  title   = {3Dmol.js: molecular visualization with WebGL},
+  journal = {Bioinformatics},
+  year    = {2015},
+  volume  = {31},
+  number  = {8},
+  pages   = {1322--1324},
+  doi     = {10.1093/bioinformatics/btu829}
+}`
+            },
+            {
+                id: 'gromacs',
+                name: 'GROMACS Molecular Dynamics',
+                category: 'simulation',
+                catLabel: 'Molecular Dynamics',
+                role: 'Topology preparation (pdb2gmx), solvation, energy minimization & MD relaxation (mdrun)',
+                authors: 'Abraham, M. J., Murtola, T., Schulz, R., Páll, S., Smith, J. C., Hess, B., & Lindahl, E.',
+                year: 2015,
+                title: 'GROMACS: High performance molecular simulations through multi-level parallelism from laptops to supercomputers',
+                journal: 'SoftwareX, 1–2, 19–25',
+                doi: '10.1016/j.softx.2015.06.001',
+                url: 'https://doi.org/10.1016/j.softx.2015.06.001',
+                bibtex: `@article{abraham2015gromacs,
+  author  = {Abraham, Mark James and Murtola, Teemu and Schulz, Roland and P{\\'a}ll, Szil{\\'a}rd and Smith, Jeremy C. and Hess, Berk and Lindahl, Erik},
+  title   = {GROMACS: High performance molecular simulations through multi-level parallelism from laptops to supercomputers},
+  journal = {SoftwareX},
+  year    = {2015},
+  volume  = {1--2},
+  pages   = {19--25},
+  doi     = {10.1016/j.softx.2015.06.001}
+}`
+            },
+            {
+                id: 'rcsb_pdb',
+                name: 'RCSB Protein Data Bank (wwPDB)',
+                category: 'databases',
+                catLabel: 'Database',
+                role: 'Primary 3D macromolecular coordinate archive & RCSB Search/Data APIs (fetch, pdblist)',
+                authors: 'Berman, H. M., Westbrook, J., Feng, Z., Gilliland, G., Bhat, T. N., et al. (2000); Burley, S. K., et al. (2023)',
+                year: 2000,
+                title: 'The Protein Data Bank & RCSB Protein Data Bank (RCSB.org)',
+                journal: 'Nucleic Acids Research, 28(1), 235–242; 51(D1), D488–D508',
+                doi: '10.1093/nar/28.1.235',
+                url: 'https://doi.org/10.1093/nar/28.1.235',
+                bibtex: `@article{berman2000pdb,
+  author  = {Berman, Helen M. and Westbrook, John and Feng, Zukang and Gilliland, Gary and Bhat, T. N. and Weissig, Helge and Shindyalov, Ilya N. and Bourne, Philip E.},
+  title   = {The Protein Data Bank},
+  journal = {Nucleic Acids Research},
+  year    = {2000},
+  volume  = {28},
+  number  = {1},
+  pages   = {235--242},
+  doi     = {10.1093/nar/28.1.235}
+}`
+            },
+            {
+                id: 'pdbe',
+                name: 'PDBe & PDBe-KB (EMBL-EBI)',
+                category: 'databases',
+                catLabel: 'Database & Maps',
+                role: 'Experimental CCP4 electron density map streaming (2Fo-Fc / Fo-Fc) & structural annotations',
+                authors: 'Varadi, M., Anyango, S., Armstrong, D., Berrisford, J., Choudhary, P., et al.',
+                year: 2022,
+                title: 'PDBe-KB: collaboratively defining the biological context of structural data',
+                journal: 'Nucleic Acids Research, 50(D1), D534–D542',
+                doi: '10.1093/nar/gkab988',
+                url: 'https://doi.org/10.1093/nar/gkab988',
+                bibtex: `@article{varadi2022pdbekb,
+  author  = {Varadi, Mihaly and Anyango, Stephen and Armstrong, David and Berrisford, John and Choudhary, Preeti and others},
+  title   = {PDBe-KB: collaboratively defining the biological context of structural data},
+  journal = {Nucleic Acids Research},
+  year    = {2022},
+  volume  = {50},
+  number  = {D1},
+  pages   = {D534--D542},
+  doi     = {10.1093/nar/gkab988}
+}`
+            },
+            {
+                id: 'pdb_redo',
+                name: 'PDB-REDO Databank',
+                category: 'databases',
+                catLabel: 'Re-Refined Maps',
+                role: 'Automated re-refined crystal models and optimized 2mFo-DFc / mFo-DFc CCP4 density maps',
+                authors: 'Joosten, R. P., Long, F., Murshudov, G. N., & Perrakis, A.',
+                year: 2014,
+                title: 'The PDB_REDO server for macromolecular structure model optimization',
+                journal: 'IUCrJ, 1(4), 213–220',
+                doi: '10.1107/S2052252514009324',
+                url: 'https://doi.org/10.1107/S2052252514009324',
+                bibtex: `@article{joosten2014pdbredo,
+  author  = {Joosten, Robbie P. and Long, Fei and Murshudov, Garib N. and Perrakis, Anastassis},
+  title   = {The PDB\\_REDO server for macromolecular structure model optimization},
+  journal = {IUCrJ},
+  year    = {2014},
+  volume  = {1},
+  number  = {4},
+  pages   = {213--220},
+  doi     = {10.1107/S2052252514009324}
+}`
+            },
+            {
+                id: 'alphafold_db',
+                name: 'AlphaFold & AlphaFold DB',
+                category: 'databases',
+                catLabel: 'Predicted 3D',
+                role: 'UniProt/AlphaFold predicted protein structure fetching and per-residue pLDDT inspection',
+                authors: 'Jumper, J., Evans, R., Pritzel, A., et al. (2021); Varadi, M., Bertoni, D., Magana, P., et al. (2024)',
+                year: 2021,
+                title: 'Highly accurate protein structure prediction with AlphaFold & AlphaFold Protein Structure Database',
+                journal: 'Nature, 596, 583–589; Nucleic Acids Research, 52(D1), D368–D375',
+                doi: '10.1038/s41586-021-03819-2',
+                url: 'https://doi.org/10.1038/s41586-021-03819-2',
+                bibtex: `@article{jumper2021alphafold,
+  author  = {Jumper, John and Evans, Richard and Pritzel, Alexander and Green, Tim and Figurnov, Michael and others},
+  title   = {Highly accurate protein structure prediction with AlphaFold},
+  journal = {Nature},
+  year    = {2021},
+  volume  = {596},
+  pages   = {583--589},
+  doi     = {10.1038/s41586-021-03819-2}
+}`
+            },
+            {
+                id: 'emdb',
+                name: 'Electron Microscopy Data Bank (EMDB)',
+                category: 'databases',
+                catLabel: 'Cryo-EM Maps',
+                role: 'Direct Cryo-EM volume streaming and contour level visualization for EMD-* entries',
+                authors: 'The wwPDB Consortium',
+                year: 2024,
+                title: 'EMDB—the Electron Microscopy Data Bank',
+                journal: 'Nucleic Acids Research, 52(D1), D456–D465',
+                doi: '10.1093/nar/gkad1019',
+                url: 'https://doi.org/10.1093/nar/gkad1019',
+                bibtex: `@article{wwpdb2024emdb,
+  author  = {{The wwPDB Consortium}},
+  title   = {EMDB---the Electron Microscopy Data Bank},
+  journal = {Nucleic Acids Research},
+  year    = {2024},
+  volume  = {52},
+  number  = {D1},
+  pages   = {D456--D465},
+  doi     = {10.1093/nar/gkad1019}
+}`
+            },
+            {
+                id: 'europepmc_scipy',
+                name: 'Europe PMC, NumPy & SciPy',
+                category: 'databases',
+                catLabel: 'Literature & Compute',
+                role: 'Biomedical literature search (carbox aisearch) & scientific numerical computing foundation',
+                authors: 'Europe PMC Consortium (2015); Harris, C. R., et al. (2020); Virtanen, P., et al. (2020)',
+                year: 2020,
+                title: 'Europe PMC Literature API, Array programming with NumPy, and SciPy 1.0 fundamental algorithms',
+                journal: 'NAR 43(D1):D1042; Nature 585:357–362; Nature Methods 17:261–272',
+                doi: '10.1038/s41586-020-2649-2',
+                url: 'https://doi.org/10.1038/s41586-020-2649-2',
+                bibtex: `@article{harris2020numpy,
+  author  = {Harris, Charles R. and Millman, K. Jarrod and van der Walt, St{\\'e}fan J. and Gommers, Ralf and Virtanen, Pauli and others},
+  title   = {Array programming with {NumPy}},
+  journal = {Nature},
+  year    = {2020},
+  volume  = {585},
+  number  = {7825},
+  pages   = {357--362},
+  doi     = {10.1038/s41586-020-2649-2}
+}
+
+@article{virtanen2020scipy,
+  author  = {Virtanen, Pauli and Gommers, Ralf and Oliphant, Travis E. and Haberland, Matt and Reddy, Tyler and others},
+  title   = {{SciPy} 1.0: fundamental algorithms for scientific computing in {Python}},
+  journal = {Nature Methods},
+  year    = {2020},
+  volume  = {17},
+  pages   = {261--272},
+  doi     = {10.1038/s41592-019-0686-2}
+}
+
+@article{europepmc2015,
+  author  = {{Europe PMC Consortium}},
+  title   = {Europe {PMC}: a full-text literature database for the life sciences and platform for innovation},
+  journal = {Nucleic Acids Research},
+  year    = {2015},
+  volume  = {43},
+  number  = {D1},
+  pages   = {D1042--D1048},
+  doi     = {10.1093/nar/gku1061}
+}`
+            }
+        ];
+
+        // ─── Bottom-Docked Carbox CLI & .CXL Scientific Terminal Controller ───
+        const bottomDockEl = document.getElementById('carbox-bottom-terminal');
         const btnOpenCxl = document.getElementById('btn-studio-macro-console');
-        const btnCloseCxl = document.getElementById('btn-close-cxl-modal');
+        const btnDockToggle = document.getElementById('btn-cxl-dock-toggle');
+        const btnDockClose = document.getElementById('btn-cxl-dock-close');
+        const btnDockMax = document.getElementById('btn-cxl-dock-maximize');
+        const iconDockMax = document.getElementById('icon-cxl-dock-max');
+        const dockResizer = document.getElementById('cxl-dock-resizer');
+        const dockTabs = Array.from(document.querySelectorAll('#cxl-dock-tablist [role="tab"]'));
+        const dockPanels = {
+            shell: document.getElementById('term-panel-shell'),
+            cxl: document.getElementById('term-panel-cxl'),
+            refs: document.getElementById('term-panel-refs')
+        };
+
+        const termOutputEl = document.getElementById('carbox-term-output');
+        const termInputEl = document.getElementById('carbox-term-input');
+        const termPromptEl = document.getElementById('carbox-term-prompt');
+        const btnTermRun = document.getElementById('btn-carbox-term-run');
+        const btnTermCopy = document.getElementById('btn-term-copy-output');
+        const btnTermClear = document.getElementById('btn-term-clear-output');
+        const cliStatusPill = document.getElementById('carbox-cli-status-pill');
+        const cliStatusText = document.getElementById('carbox-cli-status-text');
+
         const btnCxlRun = document.getElementById('btn-cxl-run');
         const btnCxlSample = document.getElementById('btn-cxl-load-sample');
         const btnCxlClear = document.getElementById('btn-cxl-clear');
@@ -13056,27 +13510,967 @@
         const cxlDropzone = document.getElementById('cxl-dropzone');
         const inputCxlFile = document.getElementById('input-cxl-file');
 
-        function openCxlModal() {
-            if (modalCxl) {
-                modalCxl.style.display = 'flex';
-                if (cxlTextarea && (!cxlTextarea.value || !cxlTextarea.value.trim())) {
-                    cxlTextarea.value = generateCxlContent();
+        const refsGridEl = document.getElementById('cxl-refs-grid');
+        const refsSearchEl = document.getElementById('cxl-refs-search');
+        const refsCountBadgeEl = document.getElementById('cxl-refs-count-badge');
+        const btnRefsCopyAllBib = document.getElementById('btn-refs-copy-all-bib');
+        const btnRefsDownloadBib = document.getElementById('btn-refs-download-bib');
+
+        let activeDockTab = 'shell';
+        let activeRefCategory = 'all';
+        let carboxCliStatus = { available: false, version: null, checked: false, commands: [] };
+        let termCommandHistory = [];
+        try {
+            const savedHist = JSON.parse(localStorage.getItem('carbox_term_history') || '[]');
+            if (Array.isArray(savedHist)) termCommandHistory = savedHist.slice(-80);
+        } catch (_) {}
+        let termHistoryIdx = termCommandHistory.length;
+        let termIsExecuting = false;
+
+        const CARBOX_CLI_SUBCOMMANDS = new Set([
+            'analyze', 'view', 'plot', 'pdblist', 'ligands', 'ligand', 'macro',
+            'refine', 'density', 'serve', 'aisearch', 'validate', 'audit',
+            'scan', 'fetch', 'batch', '--help', '-h', '--version', '-v'
+        ]);
+
+        const CXL_NATIVE_VERBS = new Set([
+            'load', 'load_structure', 'fetch_pdb', 'load_cif', 'load_file',
+            'set_view_preset', 'density_map', 'load_density', 'select_pair',
+            'model_protonation_state', 'protonate', 'measure_distance',
+            'focus_pocket', 'center_camera', 'style_cartoon', 'style_sticks',
+            'style_waters', 'set_background', 'background', 'restraint_distance',
+            'add_restraint', 'export_restraints', 'highlight', 'select', 'label',
+            'set_sigma', 'sigma', 'spin', 'rotate', 'stop_spin', 'spin_off',
+            'show', 'hide', 'zoom', 'clear_labels', 'screenshot', 'snapshot',
+            'echo', 'print', 'log', 'sleep', 'wait'
+        ]);
+
+        function resizeViewerAfterDockChange() {
+            const doResize = () => {
+                if (typeof viewer !== 'undefined' && viewer && typeof viewer.resize === 'function') {
+                    try {
+                        viewer.resize();
+                        viewer.render();
+                    } catch (_) {}
                 }
+            };
+            requestAnimationFrame(doResize);
+            setTimeout(doResize, 210);
+        }
+
+        function updateTerminalPromptLabel() {
+            if (!termPromptEl) return;
+            const pdbTag = currentPdbId ? ` [${String(currentPdbId).toUpperCase()}]` : '';
+            termPromptEl.textContent = `carbox@carboxmol${pdbTag}:~$`;
+        }
+
+        function switchTerminalTab(tabName) {
+            if (!dockPanels[tabName]) tabName = 'shell';
+            activeDockTab = tabName;
+
+            dockTabs.forEach(tabBtn => {
+                const isSelected = tabBtn.dataset.termTab === tabName;
+                tabBtn.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                if (isSelected) {
+                    tabBtn.setAttribute('focusgroupstart', '');
+                    tabBtn.setAttribute('tabindex', '0');
+                } else {
+                    tabBtn.removeAttribute('focusgroupstart');
+                    tabBtn.setAttribute('tabindex', '-1');
+                }
+            });
+
+            Object.entries(dockPanels).forEach(([name, panelEl]) => {
+                if (!panelEl) return;
+                if (name === tabName) {
+                    panelEl.removeAttribute('hidden');
+                } else {
+                    panelEl.setAttribute('hidden', 'until-found');
+                }
+            });
+
+            if (tabName === 'cxl' && cxlTextarea && (!cxlTextarea.value || !cxlTextarea.value.trim())) {
+                cxlTextarea.value = generateCxlContent();
+            }
+            if (tabName === 'refs') {
+                renderScientificReferences();
+            }
+            if (tabName === 'shell' && termInputEl && bottomDockEl && !bottomDockEl.classList.contains('collapsed')) {
+                setTimeout(() => termInputEl.focus(), 40);
             }
         }
 
-        function closeCxlModal() {
-            if (modalCxl) modalCxl.style.display = 'none';
+        function openBottomTerminal(tabName = 'shell', focusInput = true) {
+            if (!bottomDockEl) return;
+            bottomDockEl.classList.remove('collapsed');
+            if (btnDockToggle) btnDockToggle.setAttribute('aria-expanded', 'true');
+            if (btnOpenCxl) btnOpenCxl.classList.add('active');
+            switchTerminalTab(tabName);
+            updateTerminalPromptLabel();
+            resizeViewerAfterDockChange();
+            if (!carboxCliStatus.checked) {
+                probeCarboxCliStatus();
+            }
+            if (tabName === 'shell' && focusInput && termInputEl) {
+                setTimeout(() => termInputEl.focus(), 60);
+            }
         }
 
-        if (btnOpenCxl) btnOpenCxl.addEventListener('click', openCxlModal);
-        if (btnCloseCxl) btnCloseCxl.addEventListener('click', closeCxlModal);
-        if (modalCxl) {
-            modalCxl.addEventListener('click', (e) => {
-                if (e.target === modalCxl) closeCxlModal();
+        function closeBottomTerminal() {
+            if (!bottomDockEl) return;
+            bottomDockEl.classList.add('collapsed');
+            bottomDockEl.classList.remove('maximized');
+            if (btnDockToggle) btnDockToggle.setAttribute('aria-expanded', 'false');
+            if (btnOpenCxl) btnOpenCxl.classList.remove('active');
+            if (iconDockMax) iconDockMax.className = 'fa-solid fa-up-right-and-down-left-from-center';
+            resizeViewerAfterDockChange();
+        }
+
+        function toggleBottomTerminal(tabName = null) {
+            if (!bottomDockEl) return;
+            const isCollapsed = bottomDockEl.classList.contains('collapsed');
+            if (isCollapsed) {
+                openBottomTerminal(tabName || activeDockTab || 'shell', true);
+            } else if (tabName && tabName !== activeDockTab) {
+                switchTerminalTab(tabName);
+            } else {
+                closeBottomTerminal();
+            }
+        }
+
+        // Preserve backward-compatible names used by existing shortcuts & closeAllModals()
+        function openCxlModal(tabName = 'shell') {
+            toggleBottomTerminal(tabName);
+        }
+
+        function closeCxlModal() {
+            closeBottomTerminal();
+        }
+
+        if (btnOpenCxl) {
+            btnOpenCxl.addEventListener('click', () => toggleBottomTerminal());
+        }
+        if (btnDockToggle) {
+            btnDockToggle.addEventListener('click', () => toggleBottomTerminal());
+        }
+        if (btnDockClose) {
+            btnDockClose.addEventListener('click', () => closeBottomTerminal());
+        }
+        if (btnDockMax && bottomDockEl) {
+            btnDockMax.addEventListener('click', () => {
+                if (bottomDockEl.classList.contains('collapsed')) {
+                    openBottomTerminal(activeDockTab, true);
+                }
+                const isMax = bottomDockEl.classList.toggle('maximized');
+                if (iconDockMax) {
+                    iconDockMax.className = isMax
+                        ? 'fa-solid fa-down-left-and-up-right-to-center'
+                        : 'fa-solid fa-up-right-and-down-left-from-center';
+                }
+                resizeViewerAfterDockChange();
             });
         }
 
+        // Tab click + roving keyboard navigation + Find-in-Page beforematch synchronization
+        dockTabs.forEach((tabBtn, idx) => {
+            tabBtn.addEventListener('click', () => {
+                const targetTab = tabBtn.dataset.termTab || 'shell';
+                if (bottomDockEl && bottomDockEl.classList.contains('collapsed')) {
+                    openBottomTerminal(targetTab, targetTab === 'shell');
+                } else {
+                    switchTerminalTab(targetTab);
+                }
+            });
+            tabBtn.addEventListener('keydown', (e) => {
+                let nextIdx = -1;
+                if (e.key === 'ArrowRight') nextIdx = (idx + 1) % dockTabs.length;
+                else if (e.key === 'ArrowLeft') nextIdx = (idx - 1 + dockTabs.length) % dockTabs.length;
+                else if (e.key === 'Home') nextIdx = 0;
+                else if (e.key === 'End') nextIdx = dockTabs.length - 1;
+                if (nextIdx >= 0) {
+                    e.preventDefault();
+                    const nextTab = dockTabs[nextIdx];
+                    nextTab.focus();
+                    const targetTab = nextTab.dataset.termTab || 'shell';
+                    if (bottomDockEl && bottomDockEl.classList.contains('collapsed')) {
+                        openBottomTerminal(targetTab, false);
+                    } else {
+                        switchTerminalTab(targetTab);
+                    }
+                }
+            });
+        });
+
+        Object.entries(dockPanels).forEach(([tabName, panelEl]) => {
+            if (!panelEl) return;
+            panelEl.addEventListener('beforematch', () => {
+                openBottomTerminal(tabName, false);
+            });
+        });
+
+        // Vertical Drag Resizing of Bottom Terminal Drawer
+        if (dockResizer && bottomDockEl) {
+            let dragStartY = 0;
+            let dragStartHeight = 295;
+            const onPointerMove = (e) => {
+                const delta = dragStartY - e.clientY;
+                const minH = 150;
+                const maxH = Math.round(window.innerHeight * 0.76);
+                const nextH = Math.max(minH, Math.min(maxH, dragStartHeight + delta));
+                bottomDockEl.style.setProperty('--cxl-dock-height', `${nextH}px`);
+                if (typeof viewer !== 'undefined' && viewer && typeof viewer.resize === 'function') {
+                    try { viewer.resize(); viewer.render(); } catch (_) {}
+                }
+            };
+            const onPointerUp = () => {
+                bottomDockEl.classList.remove('resizing');
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
+                resizeViewerAfterDockChange();
+            };
+            dockResizer.addEventListener('pointerdown', (e) => {
+                if (bottomDockEl.classList.contains('collapsed')) return;
+                e.preventDefault();
+                bottomDockEl.classList.remove('maximized');
+                bottomDockEl.classList.add('resizing');
+                dragStartY = e.clientY;
+                dragStartHeight = bottomDockEl.getBoundingClientRect().height;
+                window.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerup', onPointerUp);
+            });
+        }
+
+        // Safe DOM-based Terminal Output Helpers (strictly textContent / createTextNode — zero innerHTML XSS)
+        function appendTerminalEntry({ command = '', stdout = '', stderr = '', info = '', statusText = '', isError = false, actions = [] }) {
+            if (!termOutputEl) return null;
+            const entry = document.createElement('div');
+            entry.className = 'cxl-term-entry';
+
+            if (command) {
+                const cmdLine = document.createElement('div');
+                cmdLine.className = 'cxl-term-cmd-line';
+
+                const leftSpan = document.createElement('span');
+                const prefixSpan = document.createElement('span');
+                prefixSpan.className = 'cxl-term-cmd-prefix';
+                prefixSpan.textContent = '$';
+                leftSpan.appendChild(prefixSpan);
+                leftSpan.appendChild(document.createTextNode(command));
+                cmdLine.appendChild(leftSpan);
+
+                if (statusText) {
+                    const metaSpan = document.createElement('span');
+                    metaSpan.className = `cxl-term-meta ${isError ? 'err' : 'ok'}`;
+                    metaSpan.textContent = statusText;
+                    cmdLine.appendChild(metaSpan);
+                }
+                entry.appendChild(cmdLine);
+            }
+
+            if (info) {
+                const preInfo = document.createElement('pre');
+                preInfo.className = 'cxl-term-pre info';
+                preInfo.textContent = info;
+                entry.appendChild(preInfo);
+            }
+            if (stdout) {
+                const preOut = document.createElement('pre');
+                preOut.className = 'cxl-term-pre';
+                preOut.textContent = stdout;
+                entry.appendChild(preOut);
+            }
+            if (stderr) {
+                const preErr = document.createElement('pre');
+                preErr.className = 'cxl-term-pre stderr';
+                preErr.textContent = stderr;
+                entry.appendChild(preErr);
+            }
+
+            if (actions && actions.length > 0) {
+                const actWrap = document.createElement('div');
+                actWrap.className = 'cxl-term-actions';
+                actions.forEach(act => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'cxl-term-action-btn';
+                    btn.textContent = act.label;
+                    btn.addEventListener('click', act.onClick);
+                    actWrap.appendChild(btn);
+                });
+                entry.appendChild(actWrap);
+            }
+
+            termOutputEl.appendChild(entry);
+            termOutputEl.scrollTop = termOutputEl.scrollHeight;
+            return entry;
+        }
+
+        function writeTerminalWelcomeBanner() {
+            if (!termOutputEl) return;
+            termOutputEl.textContent = '';
+            appendTerminalEntry({
+                info: [
+                    'CarboxMol Scientific Terminal — Integrated External Carbox CLI + Native .CXL Engine',
+                    '───────────────────────────────────────────────────────────────────────────────────',
+                    '• External Carbox CLI (zero code vendoring): carbox analyze <PDB> | validate | density | ligands | scan | macro | refine | pdblist | aisearch | fetch | view | plot | batch',
+                    '• Native 3D CXL commands: load <PDB>, density_map 2fofc --sigma=1.4, protonate lbhb, select_pair 0, show/hide cartoon, spin, zoom 14',
+                    '• Scientific Citations: type `references`, `bibtex`, or open the `References & Tools` tab above. Type `help` for full command guide.'
+                ].join('\n')
+            });
+        }
+
+        // Probe External Carbox CLI Backend Bridge Status
+        async function probeCarboxCliStatus() {
+            carboxCliStatus.checked = true;
+            const apiBase = getCarboxApiBase();
+            try {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 4500);
+                const resp = await fetch(`${apiBase}/api/terminal/status`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    signal: ctrl.signal
+                });
+                clearTimeout(timer);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    carboxCliStatus = {
+                        available: !!data.carbox_available,
+                        version: data.carbox_version || 'installed',
+                        checked: true,
+                        commands: Array.isArray(data.commands) ? data.commands : [],
+                        integration_mode: data.integration_mode || 'external-cli-package',
+                        python_version: data.python_version || ''
+                    };
+                    if (cliStatusPill && cliStatusText) {
+                        cliStatusPill.classList.remove('offline');
+                        cliStatusPill.classList.toggle('online', carboxCliStatus.available);
+                        cliStatusText.textContent = carboxCliStatus.available
+                            ? `Carbox CLI v${carboxCliStatus.version} · External Bridge`
+                            : 'Carbox CLI Unavailable';
+                    }
+                    return carboxCliStatus;
+                }
+            } catch (_) {}
+
+            carboxCliStatus = {
+                available: false,
+                version: null,
+                checked: true,
+                commands: Array.from(CARBOX_CLI_SUBCOMMANDS),
+                integration_mode: 'browser-fallback'
+            };
+            if (cliStatusPill && cliStatusText) {
+                cliStatusPill.classList.remove('online');
+                cliStatusPill.classList.add('offline');
+                cliStatusText.textContent = 'CXL Local + Public API Mode';
+            }
+            return carboxCliStatus;
+        }
+
+        // Execute External `carbox` CLI Command via CORS-Enabled Bridge (Zero Code Vendoring)
+        async function execExternalCarboxCli(rawCommand) {
+            const apiBase = getCarboxApiBase();
+            const ctrl = new AbortController();
+            const timer = setTimeout(() => ctrl.abort(), 95000);
+            try {
+                const resp = await fetch(`${apiBase}/api/terminal/exec`, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: rawCommand }),
+                    signal: ctrl.signal
+                });
+                clearTimeout(timer);
+                const data = await resp.json().catch(() => ({}));
+                return { ok: resp.ok && data.ok !== false, status: resp.status, data, bridgeReachable: true };
+            } catch (err) {
+                clearTimeout(timer);
+                return { ok: false, status: 0, error: err && err.message ? err.message : 'Network error', bridgeReachable: false };
+            }
+        }
+
+        // Client-Side / Public-API Fallback if Live Carbox Python Bridge is Offline
+        async function runOfflineCarboxFallback(subcmd, args) {
+            const targetPdb = (args.find(a => !a.startsWith('-')) || currentPdbId || '3X2M').toUpperCase();
+            if (subcmd === '--help' || subcmd === '-h') {
+                return {
+                    stdout: [
+                        'Carbox CLI (External Integration Reference — Live Bridge Offline):',
+                        '  carbox analyze <PDB>     Full Murshudov 3.00Å + PROPKA 3.5 + RSCC carboxyl analysis',
+                        '  carbox validate <PDB>    Crystallographic B-factor, occupancy & geometry audit',
+                        '  carbox density <PDB>     2mFo-DFc & mFo-DFc electron density sampling',
+                        '  carbox ligands <PDB>     Screen HETATM ligands contacting Asp/Glu carboxyls',
+                        '  carbox scan <PDB>        Rapid anomalous carboxyl pair scan',
+                        '  carbox macro <PDB>       Generate native CarboxMol .cxl visualization macro',
+                        '  carbox refine <PDB>      Generate REFMAC5 / Servalcat external restraint files',
+                        '  carbox pdblist [opts]    Query ultra-high-resolution PDB entries from RCSB',
+                        '  carbox aisearch <query>  Search Europe PMC / PubMed scientific literature',
+                        '  carbox view <PDB>        Load structure directly into CarboxMol 3D Studio',
+                        '  carbox fetch <PDB>       Download structure coordinates from RCSB/PDBe',
+                        '  carbox plot / batch      Batch survey analytics & figure generation',
+                        '',
+                        'Start the local Carbox bridge (`python server.py`) for full Python CLI execution.'
+                    ].join('\n'),
+                    detected_pdb: null
+                };
+            }
+            if (subcmd === 'view' || subcmd === 'fetch') {
+                await loadStructure(targetPdb);
+                return {
+                    stdout: `[Browser Bridge] Loaded structure ${targetPdb} directly into CarboxMol 3D Viewport.`,
+                    detected_pdb: targetPdb
+                };
+            }
+            if (subcmd === 'macro') {
+                const script = generateCxlContent(discoveredPairs[activePairIdx] || null);
+                if (cxlTextarea) cxlTextarea.value = script;
+                return {
+                    stdout: script,
+                    detected_pdb: targetPdb
+                };
+            }
+            if (subcmd === 'aisearch') {
+                const q = args.filter(a => !a.startsWith('-')).join(' ') || 'low barrier hydrogen bond carboxyl';
+                const url = `https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=${encodeURIComponent(q)}&format=json&pageSize=5`;
+                const r = await fetch(url);
+                if (!r.ok) throw new Error(`Europe PMC API HTTP ${r.status}`);
+                const j = await r.json();
+                const list = (j && j.resultList && j.resultList.result) ? j.resultList.result : [];
+                const lines = [`[Europe PMC Public API Fallback] Query: "${q}" (${j.hitCount || 0} total hits)`, ''];
+                list.forEach((item, i) => {
+                    lines.push(`${i + 1}. ${item.title || 'Untitled'} (${item.pubYear || 'n.d.'})`);
+                    lines.push(`   ${item.authorString || 'Unknown authors'} — ${item.journalTitle || ''}`);
+                    if (item.doi) lines.push(`   DOI: https://doi.org/${item.doi}`);
+                });
+                return { stdout: lines.join('\n'), detected_pdb: null };
+            }
+            if (subcmd === 'pdblist') {
+                const queryPayload = {
+                    query: {
+                        type: 'group',
+                        logical_operator: 'and',
+                        nodes: [
+                            { type: 'terminal', service: 'text', parameters: { attribute: 'rcsb_entry_info.resolution_combined', operator: 'less_or_equal', value: 1.2 } },
+                            { type: 'terminal', service: 'text', parameters: { attribute: 'exptl.method', operator: 'exact_match', value: 'X-RAY DIFFRACTION' } }
+                        ]
+                    },
+                    request_options: { paginate: { start: 0, rows: 15 }, sort: [{ sort_by: 'rcsb_entry_info.resolution_combined', direction: 'asc' }] },
+                    return_type: 'entry'
+                };
+                const r = await fetch('https://search.rcsb.org/rcsbsearch/v2/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(queryPayload)
+                });
+                if (!r.ok) throw new Error(`RCSB Search API HTTP ${r.status}`);
+                const j = await r.json();
+                const ids = (j.result_set || []).map(x => x.identifier);
+                return {
+                    stdout: `[RCSB Search API Fallback] Top ${ids.length} Ultra-High-Resolution X-Ray PDB Entries (≤1.2 Å):\n` + ids.join('  '),
+                    detected_pdb: ids[0] || null
+                };
+            }
+            if (subcmd === 'analyze' || subcmd === 'scan' || subcmd === 'validate') {
+                if (String(currentPdbId || '').toUpperCase() !== targetPdb) {
+                    await loadStructure(targetPdb);
+                }
+                const pairs = Array.isArray(discoveredPairs) ? discoveredPairs : [];
+                const lines = [
+                    `[Client-Side Carbox Engine Fallback] Structure: ${targetPdb} · Discovered Asp/Glu Pairs (≤3.00 Å): ${pairs.length}`,
+                    '────────────────────────────────────────────────────────────────────────'
+                ];
+                if (!pairs.length) {
+                    lines.push('No close carboxyl–carboxyl pairs (d_O···O ≤ 3.00 Å) detected.');
+                } else {
+                    pairs.forEach((p, idx) => {
+                        const dStr = typeof p.distance === 'number' ? `${p.distance.toFixed(3)} Å` : '--';
+                        const pkaStr = p.pka_effective != null ? `pKa ${Number(p.pka_effective).toFixed(1)}` : 'pKa --';
+                        const ccStr = p.rscc != null ? `CC ${Number(p.rscc).toFixed(2)}` : 'CC --';
+                        lines.push(`#${idx + 1} ${p.res1} ${p.chain1}:${p.resi1} (${p.atom1}) ··· ${p.res2} ${p.chain2}:${p.resi2} (${p.atom2}) | ${dStr} | ${pkaStr} | ${ccStr}`);
+                        if (p.verdict) lines.push(`    Verdict: ${p.verdict}`);
+                    });
+                }
+                return { stdout: lines.join('\n'), detected_pdb: targetPdb };
+            }
+            return {
+                stderr: `External Carbox Python bridge is currently unreachable for \`carbox ${subcmd}\`. Start \`python server.py\` locally or use \`carbox analyze\`, \`carbox pdblist\`, \`carbox aisearch\`, \`carbox macro\`, or \`carbox view\`.`,
+                detected_pdb: null
+            };
+        }
+
+        // Tokenize Command Line Safely (supports single & double quotes)
+        function tokenizeTerminalLine(line) {
+            const tokens = [];
+            const regex = /[^\s"']+|"([^"]*)"|'([^']*)'/g;
+            let m;
+            while ((m = regex.exec(line)) !== null) {
+                tokens.push(m[1] !== undefined ? m[1] : (m[2] !== undefined ? m[2] : m[0]));
+            }
+            return tokens;
+        }
+
+        // Main Interactive Terminal Dispatcher (Carbox CLI + CXL + Built-ins)
+        async function runTerminalCommand(rawCommand, { openDock = false } = {}) {
+            const cmd = String(rawCommand || '').trim();
+            if (!cmd) return;
+            if (openDock) openBottomTerminal('shell', false);
+
+            // Persist history
+            if (termCommandHistory[termCommandHistory.length - 1] !== cmd) {
+                termCommandHistory.push(cmd);
+                if (termCommandHistory.length > 80) termCommandHistory.shift();
+                try { localStorage.setItem('carbox_term_history', JSON.stringify(termCommandHistory)); } catch (_) {}
+            }
+            termHistoryIdx = termCommandHistory.length;
+
+            const tokens = tokenizeTerminalLine(cmd);
+            if (!tokens.length) return;
+            const first = tokens[0].toLowerCase();
+
+            // 1. Built-in Terminal Commands
+            if (first === 'clear' || first === 'cls') {
+                writeTerminalWelcomeBanner();
+                return;
+            }
+
+            if (first === 'help' || first === '?') {
+                appendTerminalEntry({
+                    command: cmd,
+                    statusText: 'built-in',
+                    stdout: [
+                        'CarboxMol Integrated Command Reference',
+                        '══════════════════════════════════════════════════════════════════════',
+                        '1) External Carbox CLI (executed via isolated Carbox package bridge):',
+                        '   carbox --help                   Full Carbox CLI help & options',
+                        '   carbox --version                Show installed Carbox CLI version',
+                        '   carbox analyze <PDB>            Murshudov 3.00Å + PROPKA 3.5 + RSCC analysis',
+                        '   carbox validate <PDB>           B-factor, occupancy & geometry audit',
+                        '   carbox density <PDB>            2mFo-DFc & mFo-DFc electron density analysis',
+                        '   carbox ligands <PDB>            Screen HETATM ligands near Asp/Glu carboxyls',
+                        '   carbox scan <PDB>               Scan structure for anomalous carboxyl contacts',
+                        '   carbox macro <PDB>              Generate CarboxMol .cxl macro script',
+                        '   carbox refine <PDB>             Generate REFMAC5 / Servalcat restraint scripts',
+                        '   carbox pdblist -r 1.2 -l 15     Query high-resolution PDB structures',
+                        '   carbox aisearch "<query>"       Search Europe PMC / PubMed literature',
+                        '   carbox view <PDB>               Load PDB directly into 3D viewport',
+                        '   carbox fetch <PDB>              Fetch PDB/mmCIF structure files',
+                        '',
+                        '2) Native 3D Viewport .CXL Commands:',
+                        '   load <PDB>                      Fetch & visualize PDB/AlphaFold/EMDB entry',
+                        '   density_map 2fofc --sigma=1.4   Toggle & contour 2Fo-Fc / fofc_pos / fofc_neg / trimap',
+                        '   protonate <none|anionic|ash|glh|lbhb>  Switch carboxyl protonation state',
+                        '   select_pair <index>             Focus active Asp/Glu carboxyl pair',
+                        '   show|hide <cartoon|pocket|waters>  Toggle 3D representation layers',
+                        '   spin [speed] / stop_spin        Toggle 3D rotation',
+                        '   zoom <factor> / center_camera / set_background <#hex> / snapshot',
+                        '',
+                        '3) Scientific Citations & Terminal Utilities:',
+                        '   references [filter]             List peer-reviewed references for all integrated tools',
+                        '   bibtex [filter]                 Print BibTeX citations for manuscript bibliographies',
+                        '   status / history / clear        Bridge diagnostics, history & clear screen'
+                    ].join('\n')
+                });
+                return;
+            }
+
+            if (first === 'history') {
+                appendTerminalEntry({
+                    command: cmd,
+                    statusText: `${termCommandHistory.length} cmds`,
+                    stdout: termCommandHistory.map((h, i) => `${String(i + 1).padStart(3, ' ')}  ${h}`).join('\n')
+                });
+                return;
+            }
+
+            if (first === 'status') {
+                const st = await probeCarboxCliStatus();
+                appendTerminalEntry({
+                    command: cmd,
+                    statusText: st.available ? 'online' : 'fallback',
+                    stdout: [
+                        `API Bridge Endpoint : ${getCarboxApiBase()}`,
+                        `Integration Mode    : ${st.integration_mode || 'external-cli-package'} (zero code vendoring)`,
+                        `External Carbox CLI : ${st.available ? `v${st.version} (ACTIVE)` : 'Offline (Browser CXL + Public API fallback active)'}`,
+                        st.python_version ? `Python Runtime      : ${st.python_version}` : '',
+                        `Active 3D Structure : ${currentPdbId || 'None'} (${(discoveredPairs || []).length} carboxyl pairs)`
+                    ].filter(Boolean).join('\n')
+                });
+                return;
+            }
+
+            if (first === 'references' || first === 'citations' || first === 'cite' || first === 'refs') {
+                const q = tokens.slice(1).join(' ').toLowerCase();
+                const matched = CARBOXMOL_SCIENTIFIC_REFERENCES.filter(ref =>
+                    !q || `${ref.name} ${ref.authors} ${ref.title} ${ref.role} ${ref.doi} ${ref.catLabel}`.toLowerCase().includes(q)
+                );
+                const text = matched.map((r, i) =>
+                    `[${i + 1}] ${r.name} (${r.catLabel}) — ${r.role}\n    ${r.authors} (${r.year}). ${r.title}. ${r.journal}.${r.doi ? ` DOI: https://doi.org/${r.doi}` : ` URL: ${r.url}`}`
+                ).join('\n\n') || `No references matched "${q}".`;
+                appendTerminalEntry({
+                    command: cmd,
+                    statusText: `${matched.length} refs`,
+                    stdout: text,
+                    actions: [
+                        { label: 'Open References & BibTeX Tab', onClick: () => switchTerminalTab('refs') },
+                        { label: 'Copy All BibTeX', onClick: () => copyBibtexToClipboard(matched) }
+                    ]
+                });
+                return;
+            }
+
+            if (first === 'bibtex') {
+                const q = tokens.slice(1).join(' ').toLowerCase();
+                const matched = CARBOXMOL_SCIENTIFIC_REFERENCES.filter(ref =>
+                    !q || `${ref.id} ${ref.name} ${ref.authors} ${ref.title} ${ref.doi}`.toLowerCase().includes(q)
+                );
+                const bibText = matched.map(r => r.bibtex).join('\n\n') || `% No BibTeX entries matched "${q}"`;
+                appendTerminalEntry({
+                    command: cmd,
+                    statusText: `${matched.length} BibTeX`,
+                    stdout: bibText,
+                    actions: [
+                        { label: 'Copy BibTeX', onClick: () => copyBibtexToClipboard(matched) },
+                        { label: 'Export .bib File', onClick: () => downloadBibtexFile(matched) }
+                    ]
+                });
+                return;
+            }
+
+            // 2. Native Single-Line .CXL 3D Viewport Commands
+            if (CXL_NATIVE_VERBS.has(first)) {
+                const normalized = first === 'load' ? `load_structure ${tokens.slice(1).join(' ')}` : cmd;
+                await executeCxlScript(normalized, { silentToast: true, fromTerminal: true });
+                const logEl = document.getElementById('cxl-log-output');
+                appendTerminalEntry({
+                    command: cmd,
+                    statusText: 'CXL · 3D OK',
+                    stdout: logEl ? logEl.textContent : `Executed CXL directive: ${normalized}`
+                });
+                updateTerminalPromptLabel();
+                return;
+            }
+
+            // 3. External Carbox CLI Commands (with or without leading `carbox`)
+            const isCarboxCmd = first === 'carbox' || CARBOX_CLI_SUBCOMMANDS.has(first);
+            if (isCarboxCmd) {
+                const normalizedCmd = first === 'carbox' ? cmd : `carbox ${cmd}`;
+                const subTokens = tokenizeTerminalLine(normalizedCmd).slice(1);
+                const subcmd = (subTokens[0] || '--help').toLowerCase();
+                const subArgs = subTokens.slice(1);
+
+                termIsExecuting = true;
+                if (btnTermRun) btnTermRun.disabled = true;
+                const pendingEntry = appendTerminalEntry({
+                    command: normalizedCmd,
+                    statusText: 'running…',
+                    info: `Dispatching to external Carbox CLI (${getCarboxApiBase()}/api/terminal/exec)…`
+                });
+
+                try {
+                    const res = await execExternalCarboxCli(normalizedCmd);
+                    if (pendingEntry && pendingEntry.parentNode) pendingEntry.parentNode.removeChild(pendingEntry);
+
+                    if (res.bridgeReachable && res.data) {
+                        const d = res.data;
+                        const actions = [];
+                        if (d.detected_pdb) {
+                            const pdbUpper = String(d.detected_pdb).toUpperCase();
+                            actions.push({
+                                label: `Load ${pdbUpper} in 3D Viewport`,
+                                onClick: () => { loadStructure(pdbUpper); }
+                            });
+                            actions.push({
+                                label: `Load 2Fo-Fc Density (${pdbUpper})`,
+                                onClick: async () => {
+                                    if (String(currentPdbId || '').toUpperCase() !== pdbUpper) {
+                                        await loadStructure(pdbUpper);
+                                    }
+                                    const btnTri = document.getElementById('btn-density-trimap');
+                                    if (btnTri) btnTri.click();
+                                }
+                            });
+                        }
+                        if (subcmd === 'macro' && d.stdout) {
+                            actions.push({
+                                label: 'Open in .CXL Macro Editor',
+                                onClick: () => {
+                                    if (cxlTextarea) cxlTextarea.value = d.stdout;
+                                    switchTerminalTab('cxl');
+                                }
+                            });
+                        }
+
+                        const exitOk = d.exit_code === 0 && res.ok;
+                        const meta = `${d.carbox_version ? `carbox v${d.carbox_version} · ` : ''}exit ${d.exit_code ?? res.status}${d.duration_ms != null ? ` · ${d.duration_ms}ms` : ''}`;
+                        appendTerminalEntry({
+                            command: normalizedCmd,
+                            stdout: d.stdout || '',
+                            stderr: d.stderr || (d.error && !d.stdout ? d.error : ''),
+                            statusText: meta,
+                            isError: !exitOk,
+                            actions
+                        });
+
+                        if (d.ui_action && d.ui_action.type === 'load_structure' && d.ui_action.pdb) {
+                            await loadStructure(d.ui_action.pdb);
+                            updateTerminalPromptLabel();
+                        }
+                    } else {
+                        // Live bridge unreachable → execute graceful client/public-API fallback
+                        const fb = await runOfflineCarboxFallback(subcmd, subArgs);
+                        const actions = [];
+                        if (fb.detected_pdb) {
+                            const pdbUpper = String(fb.detected_pdb).toUpperCase();
+                            actions.push({
+                                label: `Load ${pdbUpper} in 3D Viewport`,
+                                onClick: () => { loadStructure(pdbUpper); }
+                            });
+                        }
+                        appendTerminalEntry({
+                            command: normalizedCmd,
+                            stdout: fb.stdout || '',
+                            stderr: fb.stderr || '',
+                            statusText: fb.stderr ? 'bridge offline' : 'client fallback',
+                            isError: !!fb.stderr,
+                            actions
+                        });
+                    }
+                } catch (err) {
+                    if (pendingEntry && pendingEntry.parentNode) pendingEntry.parentNode.removeChild(pendingEntry);
+                    appendTerminalEntry({
+                        command: normalizedCmd,
+                        stderr: err && err.message ? err.message : String(err),
+                        statusText: 'error',
+                        isError: true
+                    });
+                } finally {
+                    termIsExecuting = false;
+                    if (btnTermRun) btnTermRun.disabled = false;
+                    if (termInputEl) termInputEl.focus();
+                }
+                return;
+            }
+
+            appendTerminalEntry({
+                command: cmd,
+                stderr: `Unknown command '${tokens[0]}'. Type 'help' to see all external Carbox CLI and native .CXL commands.`,
+                statusText: 'unknown',
+                isError: true
+            });
+        }
+
+        // Terminal Input Handlers (Enter, History ↑/↓, Tab Autocomplete, Escape)
+        const TERMINAL_AUTOCOMPLETE_WORDS = [
+            'carbox analyze ', 'carbox validate ', 'carbox density ', 'carbox ligands ',
+            'carbox scan ', 'carbox macro ', 'carbox refine ', 'carbox pdblist ',
+            'carbox aisearch ', 'carbox view ', 'carbox fetch ', 'carbox plot ',
+            'carbox batch ', 'carbox --help', 'carbox --version',
+            'load ', 'density_map 2fofc --sigma=1.4', 'protonate lbhb', 'select_pair 0',
+            'show cartoon', 'hide waters', 'spin', 'stop_spin', 'zoom 14', 'snapshot',
+            'references', 'bibtex', 'status', 'history', 'help', 'clear'
+        ];
+
+        if (termInputEl) {
+            termInputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (termIsExecuting) return;
+                    const val = termInputEl.value;
+                    termInputEl.value = '';
+                    runTerminalCommand(val);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (termCommandHistory.length > 0 && termHistoryIdx > 0) {
+                        termHistoryIdx--;
+                        termInputEl.value = termCommandHistory[termHistoryIdx] || '';
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (termHistoryIdx < termCommandHistory.length - 1) {
+                        termHistoryIdx++;
+                        termInputEl.value = termCommandHistory[termHistoryIdx] || '';
+                    } else {
+                        termHistoryIdx = termCommandHistory.length;
+                        termInputEl.value = '';
+                    }
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const cur = termInputEl.value.toLowerCase();
+                    if (!cur) return;
+                    const hit = TERMINAL_AUTOCOMPLETE_WORDS.find(w => w.startsWith(cur));
+                    if (hit) termInputEl.value = hit;
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeBottomTerminal();
+                }
+            });
+        }
+
+        if (btnTermRun && termInputEl) {
+            btnTermRun.addEventListener('click', () => {
+                if (termIsExecuting) return;
+                const val = termInputEl.value;
+                termInputEl.value = '';
+                runTerminalCommand(val);
+            });
+        }
+
+        if (btnTermClear) {
+            btnTermClear.addEventListener('click', () => {
+                writeTerminalWelcomeBanner();
+                if (termInputEl) termInputEl.focus();
+            });
+        }
+
+        if (btnTermCopy && termOutputEl) {
+            btnTermCopy.addEventListener('click', async () => {
+                const txt = termOutputEl.innerText || termOutputEl.textContent || '';
+                try {
+                    await navigator.clipboard.writeText(txt);
+                    showToast('Copied terminal output to clipboard.', 'success');
+                } catch (_) {
+                    showToast('Clipboard permission blocked by browser.', 'warning');
+                }
+            });
+        }
+
+        // Quick Command Chips
+        document.querySelectorAll('#carbox-term-quick-cmds .cxl-cmd-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const template = chip.dataset.cmd || '';
+                const activePdb = (currentPdbId && currentPdbId.trim()) ? currentPdbId.trim().toUpperCase() : '3X2M';
+                const cmd = template.replace(/\{PDB\}/g, activePdb);
+                runTerminalCommand(cmd, { openDock: true });
+            });
+        });
+
+        // ─── Scientific References Renderer & BibTeX Export ───────────────────
+        function copyBibtexToClipboard(entries) {
+            const list = Array.isArray(entries) ? entries : [entries];
+            const bib = list.map(r => r.bibtex).join('\n\n');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(bib).then(() => {
+                    showToast(`Copied ${list.length} BibTeX reference${list.length === 1 ? '' : 's'} to clipboard.`, 'success');
+                }).catch(() => {
+                    showToast('Clipboard write failed — try Export .bib instead.', 'warning');
+                });
+            }
+        }
+
+        function downloadBibtexFile(entries) {
+            const list = Array.isArray(entries) && entries.length ? entries : CARBOXMOL_SCIENTIFIC_REFERENCES;
+            const header = [
+                '% CarboxMol & Carbox Integrated Scientific Software References',
+                `% Exported: ${new Date().toISOString()}`,
+                `% Total Peer-Reviewed References: ${list.length}`,
+                ''
+            ].join('\n');
+            const bib = header + list.map(r => r.bibtex).join('\n\n') + '\n';
+            const blob = new Blob([bib], { type: 'application/x-bibtex;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'carboxmol_references.bib';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast(`Exported carboxmol_references.bib (${list.length} references).`, 'success');
+        }
+
+        function renderScientificReferences() {
+            if (!refsGridEl) return;
+            if (refsCountBadgeEl) {
+                refsCountBadgeEl.textContent = String(CARBOXMOL_SCIENTIFIC_REFERENCES.length);
+            }
+            const query = (refsSearchEl ? refsSearchEl.value : '').trim().toLowerCase();
+            const filtered = CARBOXMOL_SCIENTIFIC_REFERENCES.filter(ref => {
+                if (activeRefCategory !== 'all' && ref.category !== activeRefCategory) return false;
+                if (!query) return true;
+                return `${ref.name} ${ref.authors} ${ref.title} ${ref.journal} ${ref.role} ${ref.doi} ${ref.catLabel}`.toLowerCase().includes(query);
+            });
+
+            refsGridEl.textContent = '';
+            if (!filtered.length) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.style.cssText = 'color:#94a3b8;font-size:12px;padding:14px;';
+                emptyDiv.textContent = 'No scientific references match your current filter.';
+                refsGridEl.appendChild(emptyDiv);
+                return;
+            }
+
+            filtered.forEach(ref => {
+                const card = document.createElement('article');
+                card.className = 'cxl-ref-card';
+
+                const top = document.createElement('div');
+                top.className = 'cxl-ref-card-top';
+                const nameEl = document.createElement('div');
+                nameEl.className = 'cxl-ref-tool-name';
+                nameEl.textContent = ref.name;
+                const catEl = document.createElement('span');
+                catEl.className = 'cxl-ref-cat-tag';
+                catEl.textContent = ref.catLabel;
+                top.appendChild(nameEl);
+                top.appendChild(catEl);
+                card.appendChild(top);
+
+                const roleEl = document.createElement('div');
+                roleEl.className = 'cxl-ref-role';
+                roleEl.textContent = ref.role;
+                card.appendChild(roleEl);
+
+                const citeEl = document.createElement('div');
+                citeEl.className = 'cxl-ref-citation';
+                citeEl.textContent = `${ref.authors} (${ref.year}). ${ref.title}. ${ref.journal}.`;
+                card.appendChild(citeEl);
+
+                const footer = document.createElement('div');
+                footer.className = 'cxl-ref-card-footer';
+                const linkEl = document.createElement('a');
+                linkEl.className = 'cxl-ref-doi-link';
+                linkEl.href = ref.url;
+                linkEl.target = '_blank';
+                linkEl.rel = 'noopener noreferrer';
+                linkEl.textContent = ref.doi ? `DOI: ${ref.doi}` : ref.url;
+                footer.appendChild(linkEl);
+
+                const bibBtn = document.createElement('button');
+                bibBtn.type = 'button';
+                bibBtn.className = 'cxl-ref-bib-btn';
+                bibBtn.textContent = 'Copy BibTeX';
+                bibBtn.addEventListener('click', () => copyBibtexToClipboard([ref]));
+                footer.appendChild(bibBtn);
+
+                card.appendChild(footer);
+                refsGridEl.appendChild(card);
+            });
+        }
+
+        document.querySelectorAll('#cxl-refs-filters .cxl-ref-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                activeRefCategory = btn.dataset.refCat || 'all';
+                document.querySelectorAll('#cxl-refs-filters .cxl-ref-filter').forEach(b => {
+                    b.classList.toggle('active', b === btn);
+                });
+                renderScientificReferences();
+            });
+        });
+        if (refsSearchEl) {
+            refsSearchEl.addEventListener('input', renderScientificReferences);
+        }
+        if (btnRefsCopyAllBib) {
+            btnRefsCopyAllBib.addEventListener('click', () => copyBibtexToClipboard(CARBOXMOL_SCIENTIFIC_REFERENCES));
+        }
+        if (btnRefsDownloadBib) {
+            btnRefsDownloadBib.addEventListener('click', () => downloadBibtexFile(CARBOXMOL_SCIENTIFIC_REFERENCES));
+        }
+
+        // Initialize welcome banner, references count, and background CLI probe
+        writeTerminalWelcomeBanner();
+        renderScientificReferences();
+        probeCarboxCliStatus();
+
+        // Tab 2 (.CXL Macro Editor) Controls
         if (btnCxlRun && cxlTextarea) {
             btnCxlRun.addEventListener('click', () => {
                 executeCxlScript(cxlTextarea.value);
@@ -13122,7 +14516,7 @@
                     const reader = new FileReader();
                     reader.onload = (evt) => {
                         cxlTextarea.value = evt.target.result;
-                        showToast(`Loaded ${file.name} into .CXL Macro Studio.`, 'success');
+                        showToast(`Loaded ${file.name} into .CXL Macro Editor.`, 'success');
                     };
                     reader.readAsText(file);
                 }
@@ -13131,25 +14525,25 @@
             cxlDropzone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 cxlDropzone.style.borderColor = '#c084fc';
-                cxlDropzone.style.background = 'rgba(168,85,247,0.15)';
+                cxlDropzone.style.background = 'rgba(168,85,247,0.18)';
             });
 
             cxlDropzone.addEventListener('dragleave', (e) => {
                 e.preventDefault();
-                cxlDropzone.style.borderColor = 'rgba(168,85,247,0.4)';
-                cxlDropzone.style.background = 'rgba(168,85,247,0.06)';
+                cxlDropzone.style.borderColor = 'rgba(168,85,247,0.55)';
+                cxlDropzone.style.background = 'rgba(168,85,247,0.08)';
             });
 
             cxlDropzone.addEventListener('drop', (e) => {
                 e.preventDefault();
-                cxlDropzone.style.borderColor = 'rgba(168,85,247,0.4)';
-                cxlDropzone.style.background = 'rgba(168,85,247,0.06)';
+                cxlDropzone.style.borderColor = 'rgba(168,85,247,0.55)';
+                cxlDropzone.style.background = 'rgba(168,85,247,0.08)';
                 if (e.dataTransfer.files && e.dataTransfer.files.length) {
                     const file = e.dataTransfer.files[0];
                     const reader = new FileReader();
                     reader.onload = (evt) => {
                         cxlTextarea.value = evt.target.result;
-                        showToast(`Loaded ${file.name} into .CXL Macro Studio.`, 'success');
+                        showToast(`Loaded ${file.name} into .CXL Macro Editor.`, 'success');
                     };
                     reader.readAsText(file);
                 }
@@ -13197,10 +14591,12 @@
             });
         }
 
-        // ─── .CXL Live Script Interpreter ─────────────────────────────────────
-        async function executeCxlScript(scriptText) {
+        // ─── .CXL Live Script Interpreter (Native CXL + External Carbox CLI) ──
+        async function executeCxlScript(scriptText, options = {}) {
             if (!scriptText || !scriptText.trim()) {
-                showToast('Please enter or load a .cxl macro script to run.', 'warning');
+                if (!options.silentToast) {
+                    showToast('Please enter or load a .cxl macro script to run.', 'warning');
+                }
                 return;
             }
 
@@ -13268,13 +14664,15 @@
                     }
 
                     switch (verb) {
+                        case 'load':
                         case 'load_structure':
                         case 'fetch_pdb':
                         case 'load_cif':
                         case 'load_file': {
                             const pdbId = args[0] || kwargs.pdb || kwargs.id;
                             if (pdbId) {
-                                await loadPdb(pdbId);
+                                await loadStructure(pdbId);
+                                updateTerminalPromptLabel();
                                 await sleep(400);
                             }
                             break;
@@ -13582,9 +14980,36 @@
                             break;
                         }
 
-                        default:
-                            logBuffer += `  → [UNKNOWN directive: ${verb}] — skipped\n`;
-                            console.log('[CXL Directive]', verb, args, kwargs);
+                        default: {
+                            if (verb === 'carbox' || CARBOX_CLI_SUBCOMMANDS.has(verb)) {
+                                const cliLine = verb === 'carbox' ? line : `carbox ${line}`;
+                                const res = await execExternalCarboxCli(cliLine);
+                                if (res.bridgeReachable && res.data) {
+                                    if (res.data.stdout) {
+                                        logBuffer += `${res.data.stdout.trim()}\n`;
+                                    }
+                                    if (res.data.stderr) {
+                                        logBuffer += `  [STDERR] ${res.data.stderr.trim()}\n`;
+                                    }
+                                    if (res.data.ui_action && res.data.ui_action.type === 'load_structure' && res.data.ui_action.pdb) {
+                                        await loadStructure(res.data.ui_action.pdb);
+                                        updateTerminalPromptLabel();
+                                    }
+                                    if (!res.ok) errors++;
+                                } else {
+                                    const subToks = tokenizeTerminalLine(cliLine).slice(1);
+                                    const fb = await runOfflineCarboxFallback((subToks[0] || '--help').toLowerCase(), subToks.slice(1));
+                                    if (fb.stdout) logBuffer += `${fb.stdout.trim()}\n`;
+                                    if (fb.stderr) {
+                                        logBuffer += `  [WARN] ${fb.stderr.trim()}\n`;
+                                        errors++;
+                                    }
+                                }
+                            } else {
+                                logBuffer += `  → [UNKNOWN directive: ${verb}] — skipped\n`;
+                                console.log('[CXL Directive]', verb, args, kwargs);
+                            }
+                        }
                     }
 
                     executedCount++;
@@ -13604,7 +15029,9 @@
                 statusEl.textContent = errors === 0 ? 'Success (✓)' : `Completed with ${errors} warnings`;
                 statusEl.style.color = errors === 0 ? '#10b981' : '#f59e0b';
             }
-            showToast(`.CXL Macro executed successfully (${executedCount} directives).`, 'success');
+            if (!options.silentToast) {
+                showToast(`.CXL Macro executed successfully (${executedCount} directives).`, 'success');
+            }
         }
 
         // ─── Cross-Platform Download Hub Controller ───────────────────────────
@@ -14604,6 +16031,11 @@
 
         // ─── Master Keyboard Navigation Engine ────────────────────────────────
         window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === '`') {
+                e.preventDefault();
+                toggleBottomTerminal('shell');
+                return;
+            }
             const tag = (e.target && e.target.tagName) ? e.target.tagName.toUpperCase() : '';
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
                 if (e.key === 'Escape') e.target.blur();
@@ -14692,10 +16124,11 @@
                     const btnSnap = document.getElementById('btn-studio-snapshot');
                     if (btnSnap) btnSnap.click();
                     break;
+                case '`':
                 case 'm':
                 case 'M':
                     e.preventDefault();
-                    openCxlModal();
+                    toggleBottomTerminal('shell');
                     break;
                 case '1':
                     selectProtonState('none');
