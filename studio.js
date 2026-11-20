@@ -4032,10 +4032,13 @@
             return baseColor;
         }
 
-        // Smooth cubic Hermite interpolation factor with bounded dimming (preserves 24-30% dark silhouette)
+        // Smooth cubic Hermite interpolation factor with bounded dimming
+        // In 'all' density scope, preserve peripheral stick visibility so atoms never disappear under bright meshes
         const u = Math.min(1.0, (dist - rNear) / (rFar - rNear));
         const hermite = u * u * (3.0 - 2.0 * u);
-        const maxDim = Math.min(0.76, 0.48 + depthContrastLevel * 0.28);
+        const maxDim = (typeof densityScope !== 'undefined' && densityScope === 'all')
+            ? Math.min(0.42, 0.20 + depthContrastLevel * 0.22)
+            : Math.min(0.76, 0.48 + depthContrastLevel * 0.28);
         const t = hermite * maxDim;
 
         // Dark background obsidian color: #090d16
@@ -4845,7 +4848,11 @@
                 viewer.setStyle({ hetflag: true, resn: WATER_RESNAMES }, {});
             }
             reRenderActiveMeasurements();
+            if (is2FoFcActive || isFoFcPosActive || isFoFcNegActive) {
+                renderActiveDensitySurfaces();
+            }
             enableAtomClickInteraction();
+            applyDepthCueingAndContrast();
             viewer.render();
             return;
         }
@@ -5308,19 +5315,46 @@
             const ints = new Int32Array(rawBuf, 0, 56);
             const floats = new Float32Array(rawBuf, 0, 56);
 
-            const origNX = ints[0], origNY = ints[1], origNZ = ints[2];
-            const origStartU = ints[4], origStartV = ints[5], origStartW = ints[6];
+            const origNC = ints[0], origNR = ints[1], origNS = ints[2];
+            const origStartC = ints[4], origStartR = ints[5], origStartS = ints[6];
             const MX = ints[7], MY = ints[8], MZ = ints[9];
             const a = floats[10], b = floats[11], c = floats[12];
             const alpha = floats[13] || 90.0, beta = floats[14] || 90.0, gamma = floats[15] || 90.0;
+            const mapC = ints[16] || 1, mapR = ints[17] || 2, mapS = ints[18] || 3;
 
-            if (origNX <= 0 || origNY <= 0 || origNZ <= 0 || a <= 1.0 || b <= 1.0 || c <= 1.0) {
+            // Preserve Cryo-EM / MRC2014 volumes that use explicit Cartesian origin offsets
+            if (Math.abs(floats[49]) > 1e-3 || Math.abs(floats[50]) > 1e-3 || Math.abs(floats[51]) > 1e-3) {
                 return rawBuf;
             }
 
-            const gridMX = (MX > 0) ? MX : origNX;
-            const gridMY = (MY > 0) ? MY : origNY;
-            const gridMZ = (MZ > 0) ? MZ : origNZ;
+            if (origNC <= 0 || origNR <= 0 || origNS <= 0 || a <= 1.0 || b <= 1.0 || c <= 1.0) {
+                return rawBuf;
+            }
+
+            // Map CCP4 (Columns, Rows, Sections) axes to crystallographic (a=1, b=2, c=3) axes
+            const axesCRS = [mapC, mapR, mapS];
+            const idxU = axesCRS.indexOf(1);
+            const idxV = axesCRS.indexOf(2);
+            const idxW = axesCRS.indexOf(3);
+            if (idxU < 0 || idxV < 0 || idxW < 0) {
+                return rawBuf;
+            }
+
+            const dimsCRS = [origNC, origNR, origNS];
+            const startsCRS = [origStartC, origStartR, origStartS];
+            const stridesCRS = [1, origNC, origNC * origNR];
+
+            const sizeU = dimsCRS[idxU], sizeV = dimsCRS[idxV], sizeW = dimsCRS[idxW];
+            const origStartU = startsCRS[idxU], origStartV = startsCRS[idxV], origStartW = startsCRS[idxW];
+            const strideU = stridesCRS[idxU], strideV = stridesCRS[idxV], strideW = stridesCRS[idxW];
+
+            const gridMX = (MX > 0) ? MX : sizeU;
+            const gridMY = (MY > 0) ? MY : sizeV;
+            const gridMZ = (MZ > 0) ? MZ : sizeW;
+
+            const isPeriodicU = (gridMX > 0 && sizeU >= gridMX);
+            const isPeriodicV = (gridMY > 0 && sizeV >= gridMY);
+            const isPeriodicW = (gridMZ > 0 && sizeW >= gridMZ);
 
             const toRad = Math.PI / 180.0;
             const ar = alpha * toRad, br = beta * toRad, gr = gamma * toRad;
@@ -5358,11 +5392,11 @@
             if (!isFinite(minU)) return rawBuf;
 
             const curMinU = origStartU / (gridMX || 1);
-            const curMaxU = (origStartU + origNX) / (gridMX || 1);
+            const curMaxU = (origStartU + sizeU) / (gridMX || 1);
             const curMinV = origStartV / (gridMY || 1);
-            const curMaxV = (origStartV + origNY) / (gridMY || 1);
+            const curMaxV = (origStartV + sizeV) / (gridMY || 1);
             const curMinW = origStartW / (gridMZ || 1);
-            const curMaxW = (origStartW + origNZ) / (gridMZ || 1);
+            const curMaxW = (origStartW + sizeW) / (gridMZ || 1);
 
             const isAlreadyInside = (
                 minU >= curMinU + 0.01 && maxU <= curMaxU - 0.01 &&
@@ -5370,7 +5404,8 @@
                 minW >= curMinW + 0.01 && maxW <= curMaxW - 0.01
             );
 
-            if (isAlreadyInside) {
+            // If already strictly inside a non-periodic or canonical map, preserve native buffer directly
+            if (isAlreadyInside || (!isPeriodicU && !isPeriodicV && !isPeriodicW)) {
                 return rawBuf;
             }
 
@@ -5419,13 +5454,16 @@
             newInts[7] = gridMX;
             newInts[8] = gridMY;
             newInts[9] = gridMZ;
+            newInts[16] = 1; // Canonical MAPC = X (a)
+            newInts[17] = 2; // Canonical MAPR = Y (b)
+            newInts[18] = 3; // Canonical MAPS = Z (c)
             newInts[23] = 0; // NSYMBT = 0: rawMode2 voxel data starts immediately at byte offset 1024
             newFloats[49] = 0.0;
             newFloats[50] = 0.0;
             newFloats[51] = 0.0;
 
             const nsymbt = ints[23] || 0;
-            const srcData = new Float32Array(rawBuf, 1024 + nsymbt, origNX * origNY * origNZ);
+            const srcData = new Float32Array(rawBuf, 1024 + nsymbt, origNC * origNR * origNS);
             const dstData = new Float32Array(newBuf, 1024, totalVoxels);
 
             function pmod(val, mod) {
@@ -5433,16 +5471,22 @@
             }
 
             for (let w = 0; w < newNZ; w++) {
-                const origW = pmod(startW + w - origStartW, origNZ);
+                const relW = startW + w - origStartW;
+                const origW = isPeriodicW ? pmod(relW, gridMZ) : relW;
+                if (!isPeriodicW && (origW < 0 || origW >= sizeW)) continue;
                 const wOffNew = w * newNY;
-                const wOffOrig = origW * origNY;
+                const wOffSrc = origW * strideW;
                 for (let v = 0; v < newNY; v++) {
-                    const origV = pmod(startV + v - origStartV, origNY);
+                    const relV = startV + v - origStartV;
+                    const origV = isPeriodicV ? pmod(relV, gridMY) : relV;
+                    if (!isPeriodicV && (origV < 0 || origV >= sizeV)) continue;
                     const dstRow = (wOffNew + v) * newNX;
-                    const srcRow = (wOffOrig + origV) * origNX;
+                    const wvOffSrc = wOffSrc + origV * strideV;
                     for (let u = 0; u < newNX; u++) {
-                        const origU = pmod(startU + u - origStartU, origNX);
-                        dstData[dstRow + u] = srcData[srcRow + origU];
+                        const relU = startU + u - origStartU;
+                        const origU = isPeriodicU ? pmod(relU, gridMX) : relU;
+                        if (!isPeriodicU && (origU < 0 || origU >= sizeU)) continue;
+                        dstData[dstRow + u] = srcData[wvOffSrc + origU * strideU];
                     }
                 }
             }
@@ -5774,7 +5818,7 @@
 
         if (densityScope === 'pocket') rad = '4.5 Å';
         else if (densityScope === 'residue') rad = '2.0 Å';
-        else if (densityScope === 'all') rad = 'Full Model';
+        else if (densityScope === 'all') rad = '2.0 Å Carve';
 
         labelEl.textContent = text;
         if (radiusTag) {
@@ -5826,9 +5870,9 @@
         const allAtoms = viewer.selectedAtoms({}) || [];
         if (!allAtoms.length) return null;
 
-        // When scope is explicitly 'all', render entire map without carving overhead
+        // When scope is explicitly 'all', voxel-space atom carving is applied in renderActiveDensitySurfaces
         if (scope === 'all') {
-            updateDensityFocusUI('Full Macromolecule');
+            updateDensityFocusUI('All Visible Atoms');
             return null;
         }
 
@@ -5971,17 +6015,208 @@
             seldist: isDifference ? (densityMapRadius - 0.5) : (densityMapRadius || 6.5)
         };
     }
+    /**
+     * Collects all visibly rendered model atoms for exact crystallographic density carving.
+     * Excludes hidden crystallographic waters (HOH) when solvent waters are toggled off,
+     * preventing floating density peaks around undisplayed water molecules.
+     */
+    function getVisibleModelAtomsForCarving() {
+        if (!viewer) return [];
+        const allAtoms = viewer.selectedAtoms({}) || [];
+        if (!allAtoms.length) return [];
+        const waterSet = new Set(WATER_RESNAMES.map(w => w.toUpperCase()));
+        const nonWaterAtoms = allAtoms.filter(a => !waterSet.has(String(a.resn || '').trim().toUpperCase()));
+        // If the loaded structure is a pure solvent box (no macromolecule/ligands), carve around all solvent atoms
+        if (!nonWaterAtoms.length) return allAtoms;
+        return showWaters ? allAtoms : nonWaterAtoms;
+    }
+
+    /**
+     * Fast O(N) Voxel-Space Crystallographic Atom Carving Engine (PyMOL `carve` / ChimeraX `volume zone` parity).
+     * Masks out unmodeled crystal symmetry mates and distant bulk-solvent Fourier noise in ~2-15ms
+     * for any crystal system (triclinic, monoclinic, orthorhombic, hexagonal, cubic), while strictly
+     * preserving the original unmasked crystallographic RMSD for exact sigma-level contouring.
+     */
+    function createCarvedVolumeData(volData, atoms, carveRadiusA) {
+        if (!volData || !volData.data || !volData.size || !atoms || !atoms.length) return volData;
+        const nx = volData.size.x, ny = volData.size.y, nz = volData.size.z;
+        const total = nx * ny * nz;
+        if (total <= 0 || volData.data.length < total) return volData;
+
+        const cacheKey = `${carveRadiusA.toFixed(2)}_${atoms.length}_${showWaters ? 1 : 0}`;
+        if (volData._carvedCache && volData._carvedCache.key === cacheKey && volData._carvedCache.vol) {
+            return volData._carvedCache.vol;
+        }
+
+        // Trigger 3Dmol's native Matrix4 inverse computation when a crystallographic matrix is present
+        let m = null, inv = null;
+        if (volData.matrix) {
+            try { volData.getIndex(0, 0, 0); } catch (_) {}
+            if (volData.matrix.elements && volData.inversematrix && volData.inversematrix.elements) {
+                m = volData.matrix.elements;
+                inv = volData.inversematrix.elements;
+            }
+        }
+
+        const ox = volData.origin ? Number(volData.origin.x || 0) : 0;
+        const oy = volData.origin ? Number(volData.origin.y || 0) : 0;
+        const oz = volData.origin ? Number(volData.origin.z || 0) : 0;
+        const ux = volData.unit ? Number(volData.unit.x || 1) : 1;
+        const uy = volData.unit ? Number(volData.unit.y || 1) : 1;
+        const uz = volData.unit ? Number(volData.unit.z || 1) : 1;
+
+        const R = carveRadiusA;
+        const rSq = R * R;
+
+        // Exact Cauchy-Schwarz grid half-extents guaranteed to bound a sphere of radius R in oblique lattices
+        let rx, ry, rz;
+        if (inv) {
+            rx = Math.ceil(R * Math.hypot(inv[0], inv[4], inv[8]));
+            ry = Math.ceil(R * Math.hypot(inv[1], inv[5], inv[9]));
+            rz = Math.ceil(R * Math.hypot(inv[2], inv[6], inv[10]));
+        } else {
+            rx = Math.ceil(R / Math.max(Math.abs(ux), 1e-4));
+            ry = Math.ceil(R / Math.max(Math.abs(uy), 1e-4));
+            rz = Math.ceil(R / Math.max(Math.abs(uz), 1e-4));
+        }
+
+        const mask = new Uint8Array(total);
+        const yStride = nz;
+        const xStride = ny * nz;
+
+        if (m && inv) {
+            const m0 = m[0], m1 = m[1], m2 = m[2];
+            const m4 = m[4], m5 = m[5], m6 = m[6];
+            const m8 = m[8], m9 = m[9], m10 = m[10];
+            const m12 = m[12], m13 = m[13], m14 = m[14];
+            const i0 = inv[0], i1 = inv[1], i2 = inv[2];
+            const i4 = inv[4], i5 = inv[5], i6 = inv[6];
+            const i8 = inv[8], i9 = inv[9], i10 = inv[10];
+            const i12 = inv[12], i13 = inv[13], i14 = inv[14];
+
+            for (let aIdx = 0; aIdx < atoms.length; aIdx++) {
+                const at = atoms[aIdx];
+                const ax = Number(at.x), ay = Number(at.y), az = Number(at.z);
+                if (isNaN(ax) || isNaN(ay) || isNaN(az)) continue;
+
+                const cgx = i0 * ax + i4 * ay + i8 * az + i12;
+                const cgy = i1 * ax + i5 * ay + i9 * az + i13;
+                const cgz = i2 * ax + i6 * ay + i10 * az + i14;
+
+                const ix0 = Math.max(0, Math.floor(cgx - rx));
+                const ix1 = Math.min(nx - 1, Math.ceil(cgx + rx));
+                const iy0 = Math.max(0, Math.floor(cgy - ry));
+                const iy1 = Math.min(ny - 1, Math.ceil(cgy + ry));
+                const iz0 = Math.max(0, Math.floor(cgz - rz));
+                const iz1 = Math.min(nz - 1, Math.ceil(cgz + rz));
+                if (ix0 > ix1 || iy0 > iy1 || iz0 > iz1) continue;
+
+                for (let ix = ix0; ix <= ix1; ix++) {
+                    const xOff = ix * xStride;
+                    const bx0 = m0 * ix + m12 - ax;
+                    const by0 = m1 * ix + m13 - ay;
+                    const bz0 = m2 * ix + m14 - az;
+                    for (let iy = iy0; iy <= iy1; iy++) {
+                        const xyOff = xOff + iy * yStride;
+                        const bxy0 = bx0 + m4 * iy;
+                        const bxy1 = by0 + m5 * iy;
+                        const bxy2 = bz0 + m6 * iy;
+                        for (let iz = iz0; iz <= iz1; iz++) {
+                            const idx = xyOff + iz;
+                            if (mask[idx]) continue;
+                            const dx = bxy0 + m8 * iz;
+                            const dy = bxy1 + m9 * iz;
+                            const dz = bxy2 + m10 * iz;
+                            if (dx * dx + dy * dy + dz * dz <= rSq) {
+                                mask[idx] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (let aIdx = 0; aIdx < atoms.length; aIdx++) {
+                const at = atoms[aIdx];
+                const ax = Number(at.x), ay = Number(at.y), az = Number(at.z);
+                if (isNaN(ax) || isNaN(ay) || isNaN(az)) continue;
+
+                const cgx = (ax - ox) / ux;
+                const cgy = (ay - oy) / uy;
+                const cgz = (az - oz) / uz;
+
+                const ix0 = Math.max(0, Math.floor(cgx - rx));
+                const ix1 = Math.min(nx - 1, Math.ceil(cgx + rx));
+                const iy0 = Math.max(0, Math.floor(cgy - ry));
+                const iy1 = Math.min(ny - 1, Math.ceil(cgy + ry));
+                const iz0 = Math.max(0, Math.floor(cgz - rz));
+                const iz1 = Math.min(nz - 1, Math.ceil(cgz + rz));
+                if (ix0 > ix1 || iy0 > iy1 || iz0 > iz1) continue;
+
+                for (let ix = ix0; ix <= ix1; ix++) {
+                    const dx = ox + ix * ux - ax;
+                    const dx2 = dx * dx;
+                    if (dx2 > rSq) continue;
+                    const xOff = ix * xStride;
+                    for (let iy = iy0; iy <= iy1; iy++) {
+                        const dy = oy + iy * uy - ay;
+                        const dxy2 = dx2 + dy * dy;
+                        if (dxy2 > rSq) continue;
+                        const xyOff = xOff + iy * yStride;
+                        for (let iz = iz0; iz <= iz1; iz++) {
+                            const idx = xyOff + iz;
+                            if (mask[idx]) continue;
+                            const dz = oz + iz * uz - az;
+                            if (dxy2 + dz * dz <= rSq) {
+                                mask[idx] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        const origData = volData.data;
+        const carvedData = new Float32Array(total);
+        for (let i = 0; i < total; i++) {
+            if (mask[i]) carvedData[i] = origData[i];
+        }
+
+        const carvedVol = Object.create(Object.getPrototypeOf(volData));
+        carvedVol.size = volData.size;
+        carvedVol.origin = volData.origin;
+        carvedVol.unit = volData.unit;
+        carvedVol.matrix = volData.matrix;
+        carvedVol.inversematrix = volData.inversematrix;
+        carvedVol.dimensionorder = volData.dimensionorder;
+        carvedVol.data = carvedData;
+        carvedVol._cachedRMS = volData._cachedRMS;
+
+        volData._carvedCache = { key: cacheKey, vol: carvedVol };
+        return carvedVol;
+    }
+
     function renderActiveDensitySurfaces() {
         if (!viewer) return;
         clearDensityMeshes();
 
         const carveInfo2FoFc = getActiveCarveCoords(densityScope, false);
         const carveInfoDiff = getActiveCarveCoords(densityScope, true);
+        const visibleAtoms = getVisibleModelAtomsForCarving();
+
+        // Carve radii matching crystallographic software standards (PyMOL carve / ChimeraX volume zone):
+        // 2Fo-Fc tightly envelops visible atoms (2.0Å-2.2Å), excluding unshown crystal symmetry mates & bulk solvent.
+        // ±Fo-Fc preserves genuine local difference peaks near the model (3.0Å-3.2Å: missing waters, ligands, protons, rotamers)
+        // while eliminating far-away symmetry-mate and empty-solvent noise.
+        const atomCarve2FoFcA = (densityScope === 'all') ? 2.0 : 2.2;
+        const atomCarveDiffA = (densityScope === 'all') ? 3.0 : 3.2;
 
         // 1. Render 2Fo-Fc Map (Blue Wireframe Mesh, 1.4σ crisp default)
         if (is2FoFcActive && activeDensityVolData2FoFc) {
             const rms = computeMapRMS(activeDensityVolData2FoFc, activeDensityBuffer2FoFc);
             const isoval = densityContourSigma * rms;
+            const vol2FoFc = visibleAtoms.length
+                ? createCarvedVolumeData(activeDensityVolData2FoFc, visibleAtoms, atomCarve2FoFcA)
+                : activeDensityVolData2FoFc;
             const shapeOpts = {
                 isoval: isoval,
                 color: '#38bdf8',
@@ -5993,16 +6228,25 @@
                 shapeOpts.seldist = carveInfo2FoFc.seldist;
             }
             try {
-                activeDensityMesh2FoFc = viewer.addIsosurface(activeDensityVolData2FoFc, shapeOpts);
+                activeDensityMesh2FoFc = viewer.addIsosurface(vol2FoFc, shapeOpts);
             } catch (e) {
                 console.warn('Error adding 2Fo-Fc isosurface:', e);
             }
         }
 
+        // Pre-compute carved difference map once for both +Fo-Fc and -Fo-Fc channels
+        let volDiffCarved = activeDensityVolDataFoFc;
+        let rmsDiff = 1.0;
+        if ((isFoFcPosActive || isFoFcNegActive) && activeDensityVolDataFoFc) {
+            rmsDiff = computeMapRMS(activeDensityVolDataFoFc, activeDensityBufferFoFc);
+            volDiffCarved = visibleAtoms.length
+                ? createCarvedVolumeData(activeDensityVolDataFoFc, visibleAtoms, atomCarveDiffA)
+                : activeDensityVolDataFoFc;
+        }
+
         // 2. Render +Fo-Fc Positive Difference Map (Green Wireframe Mesh, +Fo-Fc Sigma)
-        if (isFoFcPosActive && activeDensityVolDataFoFc) {
-            const rms = computeMapRMS(activeDensityVolDataFoFc, activeDensityBufferFoFc);
-            const posIso = densityPosDiffSigma * rms;
+        if (isFoFcPosActive && volDiffCarved) {
+            const posIso = densityPosDiffSigma * rmsDiff;
             const posOpts = {
                 isoval: posIso,
                 color: '#22c55e',
@@ -6014,16 +6258,15 @@
                 posOpts.seldist = carveInfoDiff.seldist;
             }
             try {
-                activeDensityMeshFoFcPos = viewer.addIsosurface(activeDensityVolDataFoFc, posOpts);
+                activeDensityMeshFoFcPos = viewer.addIsosurface(volDiffCarved, posOpts);
             } catch (e) {
                 console.warn('Error adding +Fo-Fc isosurface:', e);
             }
         }
 
         // 3. Render -Fo-Fc Negative Difference Map (Red Wireframe Mesh, -Fo-Fc Sigma)
-        if (isFoFcNegActive && activeDensityVolDataFoFc) {
-            const rms = computeMapRMS(activeDensityVolDataFoFc, activeDensityBufferFoFc);
-            const negIso = -densityNegDiffSigma * rms;
+        if (isFoFcNegActive && volDiffCarved) {
+            const negIso = -densityNegDiffSigma * rmsDiff;
             const negOpts = {
                 isoval: negIso,
                 color: '#ef4444',
@@ -6035,7 +6278,7 @@
                 negOpts.seldist = carveInfoDiff.seldist;
             }
             try {
-                activeDensityMeshFoFcNeg = viewer.addIsosurface(activeDensityVolDataFoFc, negOpts);
+                activeDensityMeshFoFcNeg = viewer.addIsosurface(volDiffCarved, negOpts);
             } catch (e) {
                 console.warn('Error adding -Fo-Fc isosurface:', e);
             }
@@ -13905,13 +14148,19 @@
         const btnScopeAll = document.getElementById('btn-density-scope-all');
 
         function updateScopeUI(scope) {
+            const prevScope = densityScope;
             densityScope = scope;
             if (btnScopeSphere) btnScopeSphere.classList.toggle('active', scope === 'sphere');
             if (btnScopePocket) btnScopePocket.classList.toggle('active', scope === 'pocket');
             if (btnScopeResidue) btnScopeResidue.classList.toggle('active', scope === 'residue');
             if (btnScopeAll) btnScopeAll.classList.toggle('active', scope === 'all');
             updateDensityFocusUI();
-            renderActiveDensitySurfaces();
+            if ((prevScope === 'all') !== (scope === 'all')) {
+                // Refresh peripheral atom contrast so sticks stay clearly visible under All Atoms density
+                renderProtonationModel(currentProtonState);
+            } else {
+                renderActiveDensitySurfaces();
+            }
             updateDensityStatusText();
         }
 
@@ -13936,7 +14185,7 @@
         if (btnScopeAll) {
             btnScopeAll.addEventListener('click', () => {
                 updateScopeUI('all');
-                showToast('Density Scope: ALL Atoms (Full Macromolecule)', 'info');
+                showToast('Density Scope: All Visible Atoms (Carved 2.0Å 2Fo-Fc / 3.0Å ±Fo-Fc)', 'info');
             });
         }
 

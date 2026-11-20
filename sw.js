@@ -1,8 +1,8 @@
 // Carbox & CarboxMol PWA Universal Service Worker
-// Version: v0.5.4 · High-Resilience Dynamic Updates & Auto-Sync Engine
+// Version: v0.5.5 · High-Resilience Dynamic Updates & Auto-Sync Engine
 'use strict';
 
-const PWA_VERSION = 'v0.5.4';
+const PWA_VERSION = 'v0.5.5';
 const CACHE_NAME = 'carboxmol-pwa-' + PWA_VERSION;
 const RUNTIME_CACHE = 'carboxmol-runtime-' + PWA_VERSION;
 
